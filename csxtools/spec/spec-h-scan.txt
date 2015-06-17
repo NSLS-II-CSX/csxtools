@@ -1,0 +1,162 @@
+80.SIXC> ubr 0.7 0 0
+
+
+81.SIXC> wh
+
+H K L =  0.7  -4.8869e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 40.975  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  40.9746   -4.4991    0.0000   24.9860    0.0000    0.0000
+
+
+82.SIXC> ubr 0.8 0 0
+
+
+83.SIXC> wh
+
+H K L =  0.8  -5.5851e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 47.156  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  47.1564   -1.4082    0.0000   24.9860    0.0000    0.0000
+
+
+84.SIXC> ubr 0.9 0 0
+
+x22cuser's state is stored
+
+
+85.SIXC> wh
+
+H K L =  0.9  -6.2832e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 53.487  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  53.4874    1.7573    0.0000   24.9860    0.0000    0.0000
+
+
+86.SIXC> ubr 1 0 0
+
+
+87.SIXC> wh
+
+H K L =  1  -6.9813e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 60  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  60.0000    5.0136    0.0000   24.9860    0.0000    0.0000
+
+
+88.SIXC> ubr 1.1 0 0
+
+
+89.SIXC> wh
+
+H K L =  1.1  -7.6794e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 66.734  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  66.7340    8.3806    0.0000   24.9860    0.0000    0.0000
+
+
+93.SIXC> ubr 1.2 0 0
+
+
+94.SIXC> wh
+
+H K L =  1.2  -8.3776e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 73.74  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  73.7398   11.8835    0.0000   24.9860    0.0000    0.0000
+
+
+95.SIXC> ubr 1.3 0 0
+
+
+96.SIXC> wh
+
+H K L =  1.3  -9.0757e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 81.083  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  81.0832   15.5552    0.0000   24.9860    0.0000    0.0000
+
+
+97.SIXC> ubr 1.4 0 0
+
+
+98.SIXC> wh
+
+H K L =  1.4  -9.7738e-06  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 88.854  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  88.8540   19.4406    0.0000   24.9860    0.0000    0.0000
+
+
+99.SIXC> ubr 1.5 0 0
+
+
+100.SIXC> wh
+
+H K L =  1.5  -1.0472e-05  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 97.181  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+  97.1808   23.6040    0.0000   24.9860    0.0000    0.0000
+
+
+101.SIXC> ubr 1.6 0 0
+
+
+102.SIXC> wh
+
+H K L =  1.6  -1.117e-05  0
+Alpha = 0  Beta = 0  Azimuth = -90
+Two Theta = 106.26  Omega = -24.986  Lambda = 1.54
+
+    Delta     Theta       Chi       Phi        Mu     Gamma
+ 106.2602   28.1437    0.0000   24.9860    0.0000    0.0000
+
+107.SIXC> pa
+
+Six-Circle Geometry, Omega fixed (four circle, Mu = Gamma = 0) (mode 0)
+Sector 0
+
+  Primary Reflection (at lambda 1.54):
+   del th chi phi mu gam = 60 30 0 0 0 0
+                   H K L = 1 0 0
+
+  Secondary Reflection (at lambda 1.54):
+   del th chi phi mu gam = 60 30 0 90 0 0
+                   H K L = 0 1 0
+
+  Lattice Constants (lengths / angles):
+              real space = 1.54 1.54 1.54 / 90 90 90
+        reciprocal space = 4.08 4.08 4.08 / 90 90 90
+
+  Azimuthal Reference:
+                   H K L = 0 0 1
+               sigma tau = 0 0
+
+        Gamma-arm length = 585 mm
+          Gamma tracking = Off
+
+  Monochromator:
+           d-spacing = 0 Angstoms
+                  Lambda = 1.54
+
+  Cut Points:
+      del   th  chi  phi   mu  gam
+     -180 -180 -180 -180 -180 -180
