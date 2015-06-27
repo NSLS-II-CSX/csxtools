@@ -141,4 +141,32 @@ def print_estimate_table_det_cols(estimate_dict):
         print(table)
 
 
+import epics
+import numpy as np
+from datetime import datetime
+import matplotlib.pyplot as plt
+
+def sum_img_pv(pv_name, func=np.sum):
+    fig, ax = plt.subplots()
+    line_artist, = ax.plot([], [], 'o', ms=15, label=pv_name)
+    pv = epics.PV(pv_name, auto_monitor=True)
+
+    timestamps = []
+    data = []
+    def update_plot(timestamp=None, value=None, **kw):
+#        print('timestamp = {}'.format(timestamp))
+#        print('value = {}'.format(value))
+        data.append(func(value))
+        timestamps.append(datetime.fromtimestamp(timestamp))
+        line_artist.set_data(timestamps, data)
+        #ax.cla()
+        #ax.plot(timestamps, data)
+#        line.set_data(np.random.random(10), np.random.random(10))
+        ax.relim()
+        ax.autoscale_view(tight=True)
+        ax.legend(loc=0)
+        fig.canvas.draw()
+
+    pv.add_callback(update_plot)
+    return pv
 
