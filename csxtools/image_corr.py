@@ -20,9 +20,7 @@ def subtract_background(image, dark_image, gain=(1, 4, 8)):
     cor_image -= gain_mask_4 * dark_image[1]
     cor_image -= gain_mask_1 * dark_image[0]
 
-    gain_image = (gain_mask_8 * gain[2]) +
-                 (gain_mask_4 * gain[1]) +
-                 (gain_mask_1 * gain[0])
+    gain_image = (gain_mask_8 * gain[2]) + (gain_mask_4 * gain[1]) + (gain_mask_1 * gain[0])
 
     return (cor_image * gain_image), gain_image
 
