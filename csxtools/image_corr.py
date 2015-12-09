@@ -9,6 +9,17 @@ from databroker.pivot import pivot_timeseries, zip_events, reset_time
 
 
 def subtract_background(image, dark_image, gain=(1, 4, 8)):
+    '''Subtract background images from FastCCD images
+
+    Parameters
+    ----------
+    image : array
+        Input array of CCD images
+    dark_image : array
+        Dark images for the 3 gain settings.
+    gain : tuple
+        Gain multipliers for teh 3 gain settings
+    '''
     gain_mask_8 = (image & 0xC000) == 0xC000
     gain_mask_4 = (image & 0xC000) == 0x8000
     gain_mask_1 = (image & 0xC000) == 0x0000
