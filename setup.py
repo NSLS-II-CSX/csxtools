@@ -10,6 +10,11 @@ fastccd = Extension('fastccd',
                     extra_compile_args=['-fopenmp'],
                     extra_link_args=['-lgomp'])
 
+image = Extension('image',
+                  sources=['src/imagemodule.c',
+                           'src/image.c'],
+                  extra_compile_args=['-fopenmp'],
+                  extra_link_args=['-lgomp'])
 setup(
     name='csxtools',
     version=versioneer.get_version(),
@@ -18,7 +23,7 @@ setup(
     packages=setuptools.find_packages(exclude=['src', 'tests']),
     ext_package='csxtools.ext',
     include_dirs=[np.get_include()],
-    ext_modules=[fastccd],
+    ext_modules=[fastccd, image],
     tests_require=['pytest'],
     install_requires=['numpy'],  # essential deps only
     setup_requires=['pytest-runner'],
