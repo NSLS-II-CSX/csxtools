@@ -40,9 +40,55 @@
  
  */
 
+#include <omp.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
+#include <stdint.h>
+
+#include "fastccd.h"
 
 
+// Correct fast ccd images by looping over all images correcting for background
+int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, int ndims, index_t *dims){
+  index_t nimages,i,k;
+  int n;
 
+  if(ndims > 2){
+    nimages = dims[0];
+    for(n=1;n<(ndims-2);n++){
+      nimages = nimages * dims[n];
+    }   
+  } else {
+    nimages = 1;
+  }
+
+  index_t imsize = dims[ndims-1] * dims[ndims-2];
+
+  data_t *bgp;
+  uint16_t *inp;
+  data_t *outp;
+
+#pragma omp parallel for private(k,i,bgp,inp,outp) shared(in, out, bg, imsize)
+  for(k=0;k<nimages;k++){
+    // Reset the background pointer each time
+    bgp = bg;
+    inp = in + (k * imsize);
+    outp = out + (k * imsize);
+    for(i=0;i<imsize;i++){
+      if((*inp & BAD_PIXEL) == BAD_PIXEL){
+        *outp = NAN;
+      } else if((*inp & GAIN_1) == GAIN_1){
+        *outp = 8 * ((data_t)(*inp & PIXEL_MASK) - *(bgp + 2 * imsize));
+      } else if((*inp & GAIN_2) == GAIN_2){
+        *outp = 4 * ((data_t)(*inp & PIXEL_MASK) - *(bgp + imsize));
+      } else {
+        *outp = (data_t)(*inp & PIXEL_MASK) - *bgp;
+      }
+      outp++; inp++; bgp++;
+    }
+  }
+
+  return 0;
+}
 

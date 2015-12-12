@@ -6,7 +6,9 @@ import versioneer
 
 fastccd = Extension('fastccd',
                     sources=['src/fastccdmodule.c',
-                             'src/fastccd.c'])
+                             'src/fastccd.c'],
+                    extra_compile_args=['-fopenmp'],
+                    extra_link_args=['-lgomp'])
 
 setup(
     name='csxtools',
