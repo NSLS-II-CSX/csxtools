@@ -47,6 +47,7 @@ typedef float data_t;
 #define BAD_PIXEL   0x2000
 #define PIXEL_MASK  0x1FFF
 
-int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, int ndims, index_t *dims);
+int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
+                        int ndims, index_t *dims, data_t *gain);
 
 #endif

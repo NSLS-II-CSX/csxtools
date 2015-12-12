@@ -48,28 +48,55 @@
 static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
   PyObject *_input = NULL;
   PyObject *_bgnd = NULL;
+  PyObject *_flat = NULL;
   PyArrayObject *input = NULL;
   PyArrayObject *bgnd = NULL;
+  PyArrayObject *flat = NULL;
   PyArrayObject *out = NULL;
   npy_intp *dims;
+  npy_intp *dims_bgnd;
+  npy_intp *dims_flat;
   int ndims;
+  float gain[3];
 
 
-  if(!PyArg_ParseTuple(args, "OO", &_input, &_bgnd)){
+  if(!PyArg_ParseTuple(args, "OOO(fff)", &_input, &_bgnd, &_flat,
+                                         &gain[0], &gain[1], &gain[2])){
     return NULL;
   }
 
-  input = (PyArrayObject*)PyArray_FROM_OTF(_input, NPY_UINT16, NPY_ARRAY_IN_ARRAY);
+  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_UINT16, 3, 0,NPY_ARRAY_IN_ARRAY);
   if(!input){
     goto error;
   }
-  bgnd = (PyArrayObject*)PyArray_FROM_OTF(_bgnd, NPY_FLOAT, NPY_ARRAY_IN_ARRAY);
+  bgnd = (PyArrayObject*)PyArray_FROMANY(_bgnd, NPY_FLOAT, 3, 3, NPY_ARRAY_IN_ARRAY);
   if(!bgnd){
+    goto error;
+  }
+
+  flat = (PyArrayObject*)PyArray_FROMANY(_flat, NPY_FLOAT, 2,2, NPY_ARRAY_IN_ARRAY);
+  if(!flat){
     goto error;
   }
 
   ndims = PyArray_NDIM(input);
   dims = PyArray_DIMS(input);
+  dims_bgnd = PyArray_DIMS(bgnd);
+  dims_flat = PyArray_DIMS(flat);
+
+  // Check array dimensions 0 and 1 are the same
+  if(dims_bgnd[0] != 3){
+    PyErr_SetString(PyExc_ValueError, "Backgound array must have dimenion 0 = 3");
+    goto error;
+  }
+  if((dims[ndims-2] != dims_bgnd[1]) && (dims[ndims-2] != dims_flat[0])){
+    PyErr_SetString(PyExc_ValueError, "Dimensions of image array (0) do not match");
+    goto error;
+  }
+  if((dims[ndims-1] != dims_bgnd[2]) && (dims[ndims-1] != dims_flat[1])){
+    PyErr_SetString(PyExc_ValueError, "Dimensions of image array (1) do not match");
+    goto error;
+  }
 
   out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT);
   if(!out){
@@ -79,16 +106,19 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
   correct_fccd_images((uint16_t*)PyArray_DATA(input), 
                       (data_t*)PyArray_DATA(out),
                       (data_t*)PyArray_DATA(bgnd),
-                      ndims, (index_t*)dims);
+                      (data_t*)PyArray_DATA(flat),
+                      ndims, (index_t*)dims, (data_t*)gain);
 
   Py_XDECREF(input);
   Py_XDECREF(bgnd);
+  Py_XDECREF(flat);
   return Py_BuildValue("N", out);
 
 error:
   Py_XDECREF(input);
   Py_XDECREF(bgnd);
   Py_XDECREF(out);
+  Py_XDECREF(flat);
   return NULL;
 }
 
