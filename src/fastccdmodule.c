@@ -86,7 +86,7 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
 
   // Check array dimensions 0 and 1 are the same
   if(dims_bgnd[0] != 3){
-    PyErr_SetString(PyExc_ValueError, "Backgound array must have dimenion 0 = 3");
+    PyErr_SetString(PyExc_ValueError, "Background array must have dimenion 0 = 3");
     goto error;
   }
   if((dims[ndims-2] != dims_bgnd[1]) && (dims[ndims-2] != dims_flat[0])){
