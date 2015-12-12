@@ -34,6 +34,7 @@
  *
  */
 
+#include <stdio.h>
 #include <Python.h>
 
 /* Include python and numpy header files */
@@ -44,9 +45,56 @@
 
 #include "fastccd.h"
 
+static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
+  PyObject *_input = NULL;
+  PyObject *_bgnd = NULL;
+  PyArrayObject *input = NULL;
+  PyArrayObject *bgnd = NULL;
+  PyArrayObject *out = NULL;
+  npy_intp *dims;
+  int ndims;
+
+
+  if(!PyArg_ParseTuple(args, "OO", &_input, &_bgnd)){
+    return NULL;
+  }
+
+  input = (PyArrayObject*)PyArray_FROM_OTF(_input, NPY_UINT16, NPY_ARRAY_IN_ARRAY);
+  if(!input){
+    goto error;
+  }
+  bgnd = (PyArrayObject*)PyArray_FROM_OTF(_bgnd, NPY_FLOAT, NPY_ARRAY_IN_ARRAY);
+  if(!bgnd){
+    goto error;
+  }
+
+  ndims = PyArray_NDIM(input);
+  dims = PyArray_DIMS(input);
+
+  out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT);
+  if(!out){
+    goto error;
+  }
+   
+  correct_fccd_images((uint16_t*)PyArray_DATA(input), 
+                      (data_t*)PyArray_DATA(out),
+                      (data_t*)PyArray_DATA(bgnd),
+                      ndims, (index_t*)dims);
+
+  Py_XDECREF(input);
+  Py_XDECREF(bgnd);
+  return Py_BuildValue("N", out);
+
+error:
+  Py_XDECREF(input);
+  Py_XDECREF(bgnd);
+  Py_XDECREF(out);
+  return NULL;
+}
+
 static PyMethodDef FastCCDMethods[] = {
-  //{"system",  spam_system, METH_VARARGS,
-  // "Execute a shell command."},
+  { "correct_images", fastccd_correct_images, METH_VARARGS,
+    "Correct FastCCD Images"},
   {NULL, NULL, 0, NULL}
 };
 
