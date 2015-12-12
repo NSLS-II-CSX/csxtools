@@ -5,4 +5,4 @@ del get_versions
 
 # Now import useful functions
 
-from .image_corr import subtract_background
+from .image_corr import correct_images
