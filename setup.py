@@ -15,11 +15,13 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     author='Brookhaven National Laboratory',
-    packages=setuptools.find_packages(exclude=['src']),
+    packages=setuptools.find_packages(exclude=['src', 'tests']),
     ext_package='csxtools.ext',
     include_dirs=[np.get_include()],
     ext_modules=[fastccd],
+    tests_require=['pytest'],
     install_requires=['numpy'],  # essential deps only
+    setup_requires=['pytest-runner'],
     url='http://github.com/NSLS-II_CSX/csxtools',
     keywords='Xray Analysis',
     license='BSD'
