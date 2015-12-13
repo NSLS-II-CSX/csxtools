@@ -1,18 +1,12 @@
 import numpy as np
-from ..ext import fastccd as fccd
-
-
-def get_fastccd_images(light, dark = None):
-    """Retreive the
-
-    """
+from ..ext import fastccd
 
 
 def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     """Subtract backgrond and gain correct images
 
     This routine subtrtacts the backgrond and corrects the images
-    for the multigain fastccd ADC.
+    for the multigain FastCCD ADC.
 
     Parameters
     ----------
@@ -43,4 +37,4 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     if flat is None:
         flat = np.ones(images.shape[-2:], dtype=np.float32)
 
-    return fccd.correct_images(images, dark, flat, gain)
+    return fastccd.correct_images(images, dark, flat, gain)
