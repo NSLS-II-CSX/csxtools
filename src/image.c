@@ -61,7 +61,7 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
 #pragma omp parallel shared(in,out,map,N,M,imsize,nimages)
   {
     index_t i;
-#pragma omp for private(i)
+#pragma omp for private(i) 
     for(i=0;i<imsize;i++){
       index_t *mapp = map + i;
       index_t a, b;
@@ -76,7 +76,7 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
     }
 
     index_t n;
-#pragma omp for private(n)
+#pragma omp for private(n) schedule(dynamic,imsize)
     for(n=0;n<(nimages*imsize);n++){
       data_t *inp = in + (imsize * (n / imsize));
       data_t *outp = out + n;
@@ -87,30 +87,3 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
   free(map);
 }
 
-void fliprows(data_t *data, index_t nimages, index_t M, index_t N){
-  index_t n;
-#pragma omp parallel for shared(data, N, M) private (n)
-  for(n=0;n<(nimages*N);n++){
-    data_t *datap = data + (n * M);
-    index_t i;
-    for(i=0;i<M/2;i++){
-      data_t temp = datap[i];
-      datap[i] = datap[M-i-1];
-      datap[M-i-1] = temp;
-    }
-  }
-}
-
-void flipcols(data_t *data, index_t nimages, index_t M, index_t N){
-  index_t n;
-#pragma omp parallel for shared(data, N, M) private (n)
-  for(n=0;n<(nimages*M);n++){
-    data_t *datap = data + n%M + (n/M)*(N*M);
-    index_t i;
-    for(i=0;i<N/2;i++){
-      data_t temp = datap[i*M];
-      datap[i*M] = datap[M * (N-i-1)];
-      datap[M * (N-i-1)] = temp;
-    }
-  }
-}
