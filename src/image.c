@@ -42,39 +42,6 @@
 
 #include "image.h"
 
-void rotate90fast(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
-  index_t nimages = dims[0];
-  index_t M = dims[ndims-1];
-  index_t N = dims[ndims-2];
-  index_t imsize = M * N;
-  int i;
-  for(i=1;i<(ndims-2);i++){
-    nimages = nimages * dims[i];
-  }   
-
-  // First lets setup a translation mask.
-  
-  index_t *map = malloc(sizeof(index_t) * imsize);
-  if(!map){
-    return;
-  }
-
-  // Remember:
-  // x' = x cos T - y sin T
-  // y' = x sin T + y cos T
-  //
-  // x' = -y 
-  // y' = x
-
-  int n, m;
-  data_t *outp = out;
-  for(n=0;n<N;n++){
-    for(m=0;m<M;m++){
-      //*outp = m*      
-    }
-  }
-}
-
 void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
@@ -91,30 +58,32 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
     return;
   }
 
-  index_t i;
-#pragma omp parallel for shared(map,N,M,imsize) private(i)
-  for(i=0;i<imsize;i++){
-    index_t *mapp = map + i;
-    index_t a, b;
-    if(sense){
-      a = M - 1 - (i / N);
-      b = i % N;
-    } else {
-      a = i / N;
-      b = N - 1 - (i % N);
+#pragma omp parallel shared(in,out,map,N,M,imsize,nimages)
+  {
+    index_t i;
+#pragma omp for private(i)
+    for(i=0;i<imsize;i++){
+      index_t *mapp = map + i;
+      index_t a, b;
+      if(sense){
+        a = M - 1 - (i / N);
+        b = i % N;
+      } else {
+        a = i / N;
+        b = N - 1 - (i % N);
+      }
+      *mapp = M*b + a;
     }
-    *mapp = M*b + a;
-  }
 
-  index_t n;
-#pragma omp parallel for shared(in,out,map,imsize,nimages) private(n)
-  for(n=0;n<(nimages*imsize);n++){
-    data_t *inp = in + (imsize * (n / imsize));
-    data_t *outp = out + n;
-    index_t *mapp = map + (n % imsize);
-    *outp = inp[*mapp];
+    index_t n;
+#pragma omp for private(n)
+    for(n=0;n<(nimages*imsize);n++){
+      data_t *inp = in + (imsize * (n / imsize));
+      data_t *outp = out + n;
+      index_t *mapp = map + (n % imsize);
+      *outp = inp[*mapp];
+    }
   }
-
   free(map);
 }
 
