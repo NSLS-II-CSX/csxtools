@@ -5,6 +5,9 @@ __pycache__/
 # NFS crud
 .nfs*
 
+# Notebook checkpoints
+.ipynb_checkpoints
+
 # C extensions
 *.so
 
