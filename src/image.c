@@ -42,42 +42,80 @@
 
 #include "image.h"
 
-void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
+void rotate90fast(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
   index_t nimages = dims[0];
-  index_t imsize = dims[ndims-1] * dims[ndims-2];
-
-  int n;
-  for(n=1;n<(ndims-2);n++){
-    nimages = nimages * dims[n];
-  }   
-
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
+  index_t imsize = M * N;
+  int i;
+  for(i=1;i<(ndims-2);i++){
+    nimages = nimages * dims[i];
+  }   
 
-  transpose(in, out, nimages, imsize, M, N);
-  // Remember ! we now have a N x M array not M x N
-  if(!sense){
-    fliprows(out, nimages, N, M);
-  } else {
-    flipcols(out, nimages, N, M);
+  // First lets setup a translation mask.
+  
+  index_t *map = malloc(sizeof(index_t) * imsize);
+  if(!map){
+    return;
+  }
+
+  // Remember:
+  // x' = x cos T - y sin T
+  // y' = x sin T + y cos T
+  //
+  // x' = -y 
+  // y' = x
+
+  int n, m;
+  data_t *outp = out;
+  for(n=0;n<N;n++){
+    for(m=0;m<M;m++){
+      //*outp = m*      
+    }
   }
 }
 
-void transpose(data_t *in, data_t *out, index_t nimages, index_t imsize, index_t M, index_t N){
+void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
+  index_t nimages = dims[0];
+  index_t M = dims[ndims-1];
+  index_t N = dims[ndims-2];
+  index_t imsize = N*M;
+
+  int x;
+  for(x=1;x<(ndims-2);x++){
+    nimages = nimages * dims[x];
+  }   
+
+  index_t *map = malloc(sizeof(index_t) * imsize);
+  if(!map){
+    return;
+  }
+
+  index_t i;
+#pragma omp parallel for shared(map,N,M,imsize) private(i)
+  for(i=0;i<imsize;i++){
+    index_t *mapp = map + i;
+    index_t a, b;
+    if(sense){
+      a = M - 1 - (i / N);
+      b = i % N;
+    } else {
+      a = i / N;
+      b = N - 1 - (i % N);
+    }
+    *mapp = M*b + a;
+  }
 
   index_t n;
-#pragma omp parallel for shared(N,M,in,out,imsize) private(n)
-  for(n=0;n<nimages;n++){
-    data_t *inp = in + (n * imsize);
-    data_t *outp = out + (n * imsize);
-    index_t i;
-    for(i=0;i<imsize;i++){
-      index_t a = i / N;
-      index_t b = i % N;
-      *outp = inp[M*b + a];
-      outp++;
-    }
+#pragma omp parallel for shared(in,out,map,imsize,nimages) private(n)
+  for(n=0;n<(nimages*imsize);n++){
+    data_t *inp = in + (imsize * (n / imsize));
+    data_t *outp = out + n;
+    index_t *mapp = map + (n % imsize);
+    *outp = inp[*mapp];
   }
+
+  free(map);
 }
 
 void fliprows(data_t *data, index_t nimages, index_t M, index_t N){
