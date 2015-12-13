@@ -43,8 +43,5 @@ typedef float data_t;
 
 // Function prototypes
 void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense);
-void transpose(data_t *in, data_t *out, index_t nimages, index_t imsize, index_t M, index_t N);
-void fliprows(data_t *data, index_t nimages, index_t M, index_t N);
-void flipcols(data_t *data, index_t nimages, index_t M, index_t N);
 
 #endif
