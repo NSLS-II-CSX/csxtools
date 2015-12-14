@@ -5,4 +5,4 @@ del get_versions
 
 # Now import useful functions
 
-from .image_corr import correct_images
+from .images import correct_images
