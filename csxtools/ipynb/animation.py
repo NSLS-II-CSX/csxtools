@@ -1,8 +1,30 @@
 from matplotlib import animation
 from matplotlib import pyplot as plt
 from IPython.display import HTML
+from ipywidgets import interact
 from tempfile import NamedTemporaryFile
 import base64
+
+
+def show_image_stack(images, minmax, fontsize=20, cmap='CMRmap'):
+    n = images.shape[0]
+
+    def view_frame(i, vmin, vmax):
+        fig = plt.figure(figsize=(12, 10))
+        ax = fig.add_subplot(111)
+        im = ax.imshow(images[i], cmap=cmap, interpolation='none',
+                       vmin=vmin, vmax=vmax)
+        cbar = fig.colorbar(im)
+        cbar.ax.tick_params(labelsize=fontsize)
+        cbar.set_label(r"Intensity [ADU]", size=fontsize, weight='bold')
+        ax.set_title('Frame {} Min = {} Max = {}'.format(i, vmin, vmax),
+                     fontsize=fontsize, fontweight='bold')
+        for item in ([ax.xaxis.label, ax.yaxis.label] +
+                     ax.get_xticklabels() + ax.get_yticklabels()):
+            item.set_fontsize(fontsize)
+            item.set_fontweight('bold')
+        plt.show()
+    interact(view_frame, i=(0, n-1), vmin=minmax, vmax=minmax)
 
 
 def image_stack_to_movie(images, frames=None, vmin=None, vmax=None,
@@ -15,7 +37,9 @@ def image_stack_to_movie(images, frames=None, vmin=None, vmax=None,
     ax = fig.add_subplot(111)
     im = plt.imshow(images[1], vmin=vmin, vmax=vmax, cmap=cmap,
                     interpolation='none')
-    fig.colorbar(im)
+    cbar = fig.colorbar(im)
+    cbar.ax.tick_params(labelsize=14)
+    cbar.set_label(r"Intensity [ADU]", size=14,)
     for item in ([ax.xaxis.label, ax.yaxis.label] +
                  ax.get_xticklabels() + ax.get_yticklabels()):
         item.set_fontsize(14)
@@ -29,19 +53,21 @@ def image_stack_to_movie(images, frames=None, vmin=None, vmax=None,
     anim = animation.FuncAnimation(fig, animate, frames=frames,
                                    interval=1, blit=True)
     plt.close(anim._fig)
-    return HTML(anim_to_html(anim, fps))
+    # return anim.to_html5_video()
+    return HTML(_anim_to_html(anim, fps))
 
 
-def anim_to_html(anim, fps):
-    VIDEO_TAG = """<video controls>
+def _anim_to_html(anim, fps):
+    VIDEO_TAG = """<video autoplay loop controls>
     <source src="data:video/x-m4v;base64,{0}" type="video/mp4">
     Your browser does not support the video tag.
     </video>"""
 
     if not hasattr(anim, '_encoded_video'):
         with NamedTemporaryFile(suffix='.mp4') as f:
-            anim.save(f.name, fps=fps, extra_args=['-vcodec', 'libx264',
-                                                   '-pix_fmt', 'yuv420p'])
+            anim.save(f.name, fps=fps,
+                      extra_args=['-vcodec', 'libx264',
+                                  '-pix_fmt', 'yuv420p'])
             video = open(f.name, "rb").read()
         anim._encoded_video = base64.b64encode(video)
     return VIDEO_TAG.format(anim._encoded_video.decode("utf-8"))
