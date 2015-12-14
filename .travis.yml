@@ -1,11 +1,45 @@
 language: python
 sudo: false
+
 python:
   - "3.4"
   - "3.5"
+
+before_install:
+  # use latest because why not?
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p /home/travis/mc
+  - export PATH=/home/travis/mc/bin:$PATH
+
 install:
+  - export GIT_FULL_HASH=`git rev-parse HEAD`
+  - conda config --set always_yes true
+  - conda update conda
+  # pin to numpy < 1.10 because pandas 0.16 and numpy 1.10 do not play nice
+  - conda create -n testenv pip nose python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2
+  - source activate testenv
+  # deps needed for metadatastore/filestore
+  - conda install -n testenv pyyaml
+  # Dependencies not in official conda have been uploaded to binstar orgs.
+  - conda config --add channels lightsource2
+  - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
+  - conda install databroker datamuxer
+  # install all the pip deps
   - pip install coveralls
+  - pip install codecov
+  # these next three will be replaced by the following two lines soon once
+  # conda-forge is activated on metadatastore, filestore and channelarchiver
+  # - conda config --add channels lightsource2-dev
+  # - conda install -n testenv metadatastore filestore channelarchiver
+  #- pip install https://github.com/NSLS-II/metadatastore/zipball/master#egg=metadatastore
+  #- pip install https://github.com/NSLS-II/filestore/zipball/master#egg=filestore
+  #- pip install https://github.com/NSLS-II/channelarchiver/zipball/master#egg=channelarchiver
+  - python setup.py install
+
 script:
   - coverage run --source=csxtools setup.py test
+
 after_success:
   - coveralls
+  - codecov
