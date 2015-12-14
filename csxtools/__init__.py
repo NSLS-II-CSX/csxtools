@@ -5,4 +5,4 @@ del get_versions
 
 # Now import useful functions
 
-from .utils import get_fastccd_images
+# from .utils import get_fastccd_images
