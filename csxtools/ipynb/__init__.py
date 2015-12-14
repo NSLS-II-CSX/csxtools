@@ -5,4 +5,4 @@ del get_versions
 
 # Now import useful functions
 
-from .animation import image_stack_to_movie
+from .animation import image_stack_to_movie, show_image_stack
