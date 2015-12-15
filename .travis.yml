@@ -5,6 +5,11 @@ python:
   - "3.4"
   - "3.5"
 
+addons:
+  apt:
+    packages:
+      - ffmpeg
+
 before_install:
   # use latest because why not?
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -20,7 +25,7 @@ install:
   - conda create -n testenv pip nose python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2
   - source activate testenv
   # deps needed for metadatastore/filestore
-  - conda install -n testenv pyyaml ipywidgets
+  - conda install -n testenv pyyaml ipywidgets ffmpeg
   # Dependencies not in official conda have been uploaded to binstar orgs.
   - conda config --add channels lightsource2
   - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
