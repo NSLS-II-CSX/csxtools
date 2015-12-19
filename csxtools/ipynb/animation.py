@@ -6,30 +6,77 @@ from tempfile import NamedTemporaryFile
 import base64
 
 
-def show_image_stack(images, minmax, fontsize=20, cmap='CMRmap'):
+def show_image_stack(images, minmax, fontsize=18, cmap='CMRmap',
+                     zlabel=r'Intensty [ADU]', figsize=(12, 10)):
+    """Show an Interactive Image Stack in an IPython Notebook
+
+    Parameters
+    ----------
+    images : array_like
+        Stack of images of shape (N, y, x) where N is the number of images
+        to show.
+    minmax : tuple
+        Value for the minimum and maximum of the stack in the form
+        ``(min, max)``
+    fontsize : int
+        Fontsize for axis labels.
+    cmap : string
+        Colormap to use for image (from matplotlib)
+    zlabel : string
+        Axis label for the color bar (z-axis)
+    figsize : tuple
+        Figure size (from matplotlib)
+
+
+    """
     n = images.shape[0]
 
     def view_frame(i, vmin, vmax):
-        fig = plt.figure(figsize=(12, 10))
+        fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot(111)
+
         im = ax.imshow(images[i], cmap=cmap, interpolation='none',
                        vmin=vmin, vmax=vmax)
+
         cbar = fig.colorbar(im)
         cbar.ax.tick_params(labelsize=fontsize)
-        cbar.set_label(r"Intensity [ADU]", size=fontsize, weight='bold')
+        cbar.set_label(zlabel, size=fontsize, weight='bold')
+
         ax.set_title('Frame {} Min = {} Max = {}'.format(i, vmin, vmax),
                      fontsize=fontsize, fontweight='bold')
+
         for item in ([ax.xaxis.label, ax.yaxis.label] +
                      ax.get_xticklabels() + ax.get_yticklabels()):
             item.set_fontsize(fontsize)
             item.set_fontweight('bold')
+
         plt.show()
+
     interact(view_frame, i=(0, n-1), vmin=minmax, vmax=minmax)
 
 
 def image_stack_to_movie(images, frames=None, vmin=None, vmax=None,
                          figsize=(6, 5), cmap='CMRmap', fps=10):
+    """Convert image stack to movie and show in notebook.
 
+    Parameters
+    ----------
+    images : array_like
+        Stack of images to show as a movie of shape (N, y, x).
+    frames : int
+        Number of frames to process
+    vmin : number
+        Minimum value to display for ``imshow``
+    vmax : number
+        Maximum value to display for ``imshow``
+    figsize : tuple
+        Figure size for each frame
+    cmap : string
+        Colormap to use for plotting image
+    fps : int
+        Framerate for created movie
+
+    """
     if frames is None:
         frames = images.shape[0]
 
