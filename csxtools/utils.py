@@ -5,16 +5,16 @@ from .image import rotate90
 
 
 def get_fastccd_images(light_header, dark_headers=(None, None, None),
-                       flat=None, gain=None, tag='fccd_image_lightfield'):
+                       flat=None, gain=(1, 4, 8), tag='fccd_image_lightfield'):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
 
-        -   Bad Pixels (converted to ``np.nan``)
-        -   Backgorund.
-        -   Multigain bits.
-        -   Flatfield correction.
-        =   Rotation (returned images are rotated 90 deg cw)
+    -   Bad Pixels (converted to ``np.nan``)
+    -   Backgorund.
+    -   Multigain bits.
+    -   Flatfield correction.
+    -   Rotation (returned images are rotated 90 deg cw)
 
     Parameters
     ----------
@@ -41,7 +41,7 @@ def get_fastccd_images(light_header, dark_headers=(None, None, None),
 
     Returns
     -------
-    array
+    np.array
         Stack of corrected images
 
     """
