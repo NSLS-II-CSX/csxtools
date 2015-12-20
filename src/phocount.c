@@ -55,10 +55,12 @@ int count(data_t *in, data_t *out, data_t *stddev,
   }   
 
   index_t i;
+#pragma omp parallel shared(in, out, stddev) private(i)
   for(i=0;i<nimages;i++){
     // Find the start pointers of the image
     data_t *inp = in + (i*imsize);
     data_t *outp = out + (i*imsize);
+    data_t *stddevp = stddev + (i*imsize);
 
     index_t j;
     index_t start = M + 1;
@@ -69,10 +71,10 @@ int count(data_t *in, data_t *out, data_t *stddev,
     
     for(j=0;j<start;j++){
       *outp = 0;
-      *stddev = 0;
+      *stddevp = 0;
       inp++;
       outp++;
-      stddev++;
+      stddevp++;
     }
 
     // Now start the search
@@ -118,24 +120,25 @@ int count(data_t *in, data_t *out, data_t *stddev,
           for(n=0;n<9;n++){
             mean += pixel[n];
           }
+          mean = mean / 9;
           for(n=0;n<9;n++){
             var += pow(pixel[n] - mean, 2);
           }
 
-          *stddev = pow(var / 9, 0.5);
+          *stddevp = pow(var / 9, 0.5);
         }
       }
 
       inp++;
       outp++;
-      stddev++;
+      stddevp++;
     }
     for(j=stop;j<imsize;j++){
       *outp = 0;
-      *stddev = 0;
+      *stddevp = 0;
       inp++;
       outp++;
-      stddev++;
+      stddevp++;
     }
   }
 
