@@ -42,7 +42,8 @@
 
 #include "phocount.h"
 
-int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, data_t *thresh){
+int count(data_t *in, data_t *out, data_t *stddev, 
+          int ndims, index_t *dims, data_t *thresh, int sum_max){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
@@ -64,9 +65,8 @@ int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, da
     index_t stop = imsize - start;
     data_t pixel[9];
 
-    int sum_max = 9;
-    //
     // Clear out the parts of the output array we don't use
+    
     for(j=0;j<start;j++){
       *outp = 0;
       *stddev = 0;
@@ -78,7 +78,6 @@ int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, da
     // Now start the search
     for(j=start;j<stop;j++){
       if((*inp >= thresh[0]) && (*inp < thresh[1])){
-        //fprintf(stderr, "Found Pixel %f %ld\n", *inp, j);
         // The pixel is above thresh
         // Now get the surrounding 9 pixels. 
         pixel[0] = *inp;
@@ -96,10 +95,9 @@ int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, da
         int n;
         int flag = 0;
         for(n=1;n<9;n++){
-          fprintf(stderr, "Pixel %d = %f\n", n, pixel[n]);
           if(pixel[n] > pixel[0]){
             flag = 1;
-            continue;
+            break;
           }
         }
        
@@ -110,7 +108,6 @@ int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, da
           data_t sum = 0;
           for(n=0;n<sum_max;n++){
             sum += pixel[n];
-            fprintf(stderr, "Sorted Pixel %d = %f\n", n, pixel[n]);
           }
           *outp = sum;
 
@@ -126,7 +123,6 @@ int count(data_t *in, data_t *out, data_t * stddev, int ndims, index_t *dims, da
           }
 
           *stddev = pow(var / 9, 0.5);
-          fprintf(stderr, "Brightest Pixel %ld Sum = %f\n", j, sum);
         }
       }
 

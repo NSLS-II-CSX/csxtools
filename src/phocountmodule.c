@@ -53,9 +53,16 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   npy_intp *dims;
   int ndims;
   float thresh[2];
+  int sum_max;
 
-  if(!PyArg_ParseTuple(args, "O(ff)", &_input, &thresh[0], &thresh[1])){
+  if(!PyArg_ParseTuple(args, "O(ff)i", &_input, &thresh[0], &thresh[1],
+                                       &sum_max)){
     return NULL;
+  }
+
+  if(sum_max < 0 || sum_max >= 9){
+    PyErr_SetString(PyExc_ValueError, "Maximum sum value must be between 0 and 9");
+    goto error;
   }
 
   input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_FLOAT, 3, 0,NPY_ARRAY_IN_ARRAY);
@@ -79,7 +86,7 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   
   count((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
         (data_t*)PyArray_DATA(stddev),
-           ndims, dims, thresh);
+        ndims, dims, thresh, sum_max);
 
   Py_XDECREF(input);
   return Py_BuildValue("(NN)", out, stddev);
