@@ -42,7 +42,8 @@
 typedef long index_t;
 typedef float data_t;
 
-int count(data_t *in, data_t *out, data_t *stddev, int ndims, index_t *dims, data_t *thresh);
+int count(data_t *in, data_t *out, data_t *stddev, 
+          int ndims, index_t *dims, data_t *thresh, int sum_max);
 void sort(data_t *array, int n);
 
 #endif
