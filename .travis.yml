@@ -34,8 +34,11 @@ install:
 
 script:
   - coverage run --source=csxtools setup.py test
-  - cd docs && make html
+  - cd $TRAVIS_BUILD_DIR/docs
+  - make html
+  - cd $TRAVIS_BUILD_DIR
 
 after_success:
   - coveralls
   - codecov
+# Note the following command sets a new directory
