@@ -34,8 +34,9 @@ after_success:
 - coveralls
 - codecov
 - cd $TRAVIS_BUILD_DIR/docs
-- echo "https://stuwilkins:${GH_TOKEN}@github.com" > $HOME/.git-credentials
 - git config credential.helper store --file=$HOME/.git-credentials
+- echo "https://stuwilkins:${GH_TOKEN}@github.com" > $HOME/.git-credentials
+= cat $HOME/.git-credentials
 - git config --global user.email "stuwilkins@travis.ci"
 - git config --global user.name "stuwilkins"
 - git --get remote.origin.url
