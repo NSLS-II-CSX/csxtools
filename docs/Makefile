@@ -18,9 +18,9 @@ else
 endif
 
 ifdef TRAVIS
-	GH_COMMIT = '--author "travisci <noreply@travis.ci>"'
+	GH_COMMIT = --author "travisci <noreply@travis.ci>"
 else
-	GHG_COMMIT = ''
+	GHG_COMMIT = 
 endif
 
 # User-friendly check for sphinx-build
