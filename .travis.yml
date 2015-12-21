@@ -43,5 +43,9 @@ after_success:
   - coveralls
   - codecov
   - cd $TRAVIS_BUILD_DIR/docs
+  - git config credential.helper store
+  - echo "https://${GH_TOKEN}:@github.com" > $HOME/.git-credentials
+  - git config --global user.email "donotreply@travis.ci"
+  - git config --global user.name "travis ci"
   - make gh-pages
 # Note the following command sets a new directory
