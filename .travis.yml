@@ -30,6 +30,7 @@ install:
   # install all the pip deps
   - pip install coveralls
   - pip install codecov
+  - pip install travis-sphinx
   - python setup.py install
 
 script:
@@ -41,4 +42,6 @@ script:
 after_success:
   - coveralls
   - codecov
+  - cd $TRAVIS_BUILD_DIR/docs
+  - make gh_pages
 # Note the following command sets a new directory
