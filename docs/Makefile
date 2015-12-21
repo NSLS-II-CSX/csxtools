@@ -7,6 +7,12 @@ SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = build
 
+# For auto gh-pages
+GH_PAGES_SOURCES = doc/Makefile doc/source 
+GH_PAGES_DIR := $(shell mktemp -d)
+GH_PAGES_URL = https://github.com/NSLS-II-CSX/csxtools.git
+TOP := $(dir $(lastword $(MAKEFILE_LIST)))
+
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
 $(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
@@ -190,3 +196,14 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+gh-pages: html
+	git clone $(GH_PAGES_URL) $(GH_PAGES_DIR)
+	cd $(GH_PAGES_DIR) && git checkout gh-pages
+	cd $(GH_PAGES_DIR) && git rm -rf . 
+	cd $(GH_PAGES_DIR) && touch .nojekyll
+	cp -rv build/html/* $(GH_PAGES_DIR)
+	cd $(GH_PAGES_DIR) && git add -A  && \
+		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
+		git push origin gh-pages 
+	rm -rf $(GH_PAGES_DIR)
