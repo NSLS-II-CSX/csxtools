@@ -36,7 +36,7 @@ after_success:
 - cd $TRAVIS_BUILD_DIR/docs
 - git config credential.helper store --file=$HOME/.git-credentials
 - echo "https://stuwilkins:${GH_TOKEN}@github.com" > $HOME/.git-credentials
-= cat $HOME/.git-credentials
+- cat $HOME/.git-credentials
 - git config --global user.email "stuwilkins@travis.ci"
 - git config --global user.name "stuwilkins"
 - git config --get remote.origin.url
