@@ -43,5 +43,5 @@ after_success:
   - coveralls
   - codecov
   - cd $TRAVIS_BUILD_DIR/docs
-  - make gh_pages
+  - make gh-pages
 # Note the following command sets a new directory
