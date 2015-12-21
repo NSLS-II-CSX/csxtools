@@ -35,7 +35,7 @@ after_success:
 - codecov
 - cd $TRAVIS_BUILD_DIR/docs
 - echo "https://${GH_TOKEN}@github.com" > $HOME/.git-credentials
-- git config credential.helper store "store --file=$HOME/.git-credentials"
+- git config credential.helper store --file=$HOME/.git-credentials
 - git config --global user.email "donotreply@travis.ci"
 - git config --global user.name "travis ci"
 - make gh-pages
