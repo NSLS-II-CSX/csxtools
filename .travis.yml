@@ -5,11 +5,6 @@ python:
   - "3.4"
   - "3.5"
 
-addons:
-  apt:
-    packages:
-      - ffmpeg
-
 before_install:
   # use latest because why not?
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -22,7 +17,7 @@ install:
   - conda config --set always_yes true
   - conda update conda
   # pin to numpy < 1.10 because pandas 0.16 and numpy 1.10 do not play nice
-  - conda create -n testenv pip nose python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2
+  - conda create -n testenv pip nose python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx sphinx-bootstrap-theme
   - source activate testenv
   # deps needed for metadatastore/filestore
   - conda install -n testenv pyyaml ipywidgets 
@@ -37,6 +32,7 @@ install:
 
 script:
   - coverage run --source=csxtools setup.py test
+  - cd docs && make html
 
 after_success:
   - coveralls
