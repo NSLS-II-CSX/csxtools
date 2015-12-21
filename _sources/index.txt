@@ -26,7 +26,7 @@ beamline at NSLS-II, (CSX, 23-ID)
 .. image:: https://img.shields.io/github/license/NSLS-II_CSX/csxtools.svg
     :target:
 
-To chat to the CSX team:
+To chat to the CSX team please use the ``#support`` channel on slack.
 
 .. raw:: html
 
