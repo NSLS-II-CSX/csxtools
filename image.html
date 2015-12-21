@@ -121,6 +121,33 @@
 <h1>Image Processing Routines<a class="headerlink" href="#image-processing-routines" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-csxtools.image">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.image" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csxtools.image.rotate90">
+<code class="descclassname">csxtools.image.</code><code class="descname">rotate90</code><span class="sig-paren">(</span><em>a</em>, <em>sense='ccw'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/image/transform.html#rotate90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.image.rotate90" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate a stack of images by 90 degrees</p>
+<p>This routine rotates a stack of images by 90. The rotation is performed
+on the last two axes. i.e. For a stack of images of shape (N, y, x)
+N rotations of the image of size (y, x) are performed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array_like</em>) &#8211; Input array to be rotated. This should be of shape (N, y, x).</li>
+<li><strong>sense</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; &#8216;cw&#8217; to rotate clockwise, &#8216;ccw&#8217; to rotate anitclockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Rotated stack of images of shape (N, x, y)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/library/array.html#module-array" title="(in Python v2.7)">array</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 

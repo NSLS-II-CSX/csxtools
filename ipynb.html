@@ -120,6 +120,53 @@
 <h1>IPython Notebook Routines<a class="headerlink" href="#ipython-notebook-routines" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-csxtools.ipynb">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.ipynb" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csxtools.ipynb.image_stack_to_movie">
+<code class="descclassname">csxtools.ipynb.</code><code class="descname">image_stack_to_movie</code><span class="sig-paren">(</span><em>images</em>, <em>frames=None</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>figsize=(6</em>, <em>5)</em>, <em>cmap='CMRmap'</em>, <em>fps=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/ipynb/animation.html#image_stack_to_movie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.ipynb.image_stack_to_movie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert image stack to movie and show in notebook.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> (<em>array_like</em>) &#8211; Stack of images to show as a movie of shape (N, y, x).</li>
+<li><strong>frames</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of frames to process</li>
+<li><strong>vmin</strong> (<em>number</em>) &#8211; Minimum value to display for <code class="docutils literal"><span class="pre">imshow</span></code></li>
+<li><strong>vmax</strong> (<em>number</em>) &#8211; Maximum value to display for <code class="docutils literal"><span class="pre">imshow</span></code></li>
+<li><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Figure size for each frame</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Colormap to use for plotting image</li>
+<li><strong>fps</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Framerate for created movie</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="csxtools.ipynb.show_image_stack">
+<code class="descclassname">csxtools.ipynb.</code><code class="descname">show_image_stack</code><span class="sig-paren">(</span><em>images</em>, <em>minmax</em>, <em>fontsize=18</em>, <em>cmap='CMRmap'</em>, <em>zlabel='Intensty [ADU]'</em>, <em>figsize=(12</em>, <em>10)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/ipynb/animation.html#show_image_stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.ipynb.show_image_stack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show an Interactive Image Stack in an IPython Notebook</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> (<em>array_like</em>) &#8211; Stack of images of shape (N, y, x) where N is the number of images
+to show.</li>
+<li><strong>minmax</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Value for the minimum and maximum of the stack in the form
+<code class="docutils literal"><span class="pre">(min,</span> <span class="pre">max)</span></code></li>
+<li><strong>fontsize</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Fontsize for axis labels.</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Colormap to use for image (from matplotlib)</li>
+<li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Axis label for the color bar (z-axis)</li>
+<li><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Figure size (from matplotlib)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 

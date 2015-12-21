@@ -121,6 +121,47 @@
 <h1>FastCCD Routines<a class="headerlink" href="#fastccd-routines" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-csxtools.fastccd">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.fastccd" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csxtools.fastccd.correct_images">
+<code class="descclassname">csxtools.fastccd.</code><code class="descname">correct_images</code><span class="sig-paren">(</span><em>images</em>, <em>dark=None</em>, <em>flat=None</em>, <em>gain=(1</em>, <em>4</em>, <em>8)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/fastccd/images.html#correct_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.fastccd.correct_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtract backgrond and gain correct images</p>
+<p>This routine subtrtacts the backgrond and corrects the images
+for the multigain FastCCD ADC.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in</strong> (<em>array_like</em>) &#8211; Input array of images to correct of shape (N, y, x)  where N is the
+number of images and x and y are the image size.</li>
+<li><strong>dark</strong> (<em>array_like, optional</em>) &#8211; Input array of dark images. This should be of shape (3, y, x).
+dark[0] is the gain 8 (most sensitive setting) dark image with
+dark[2] being the gain 1 (least sensitive) dark image.</li>
+<li><strong>flat</strong> (<em>array_like, optional</em>) &#8211; Input array for the flatfield correction. This should be of shape
+(y, x)</li>
+<li><strong>gain</strong> (<em>tuple, optional</em>) &#8211; These are the gain multiplication factors for the three different
+gain settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array of corrected images of shape (N, y, x)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array_like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="csxtools.fastccd.phocount">
+<code class="descclassname">csxtools.fastccd.</code><code class="descname">phocount</code><span class="sig-paren">(</span><em>data</em>, <em>thresh</em>, <em>nsum=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/fastccd/phocount.html#phocount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.fastccd.phocount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do single photon counting on CCD image</p>
+<p>This routine does single photon counting by cluster analysis. The image
+is searched for bright pixels within a threshold</p>
+</dd></dl>
+
 </div>
 </div>
 
