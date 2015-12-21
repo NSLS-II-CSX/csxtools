@@ -38,6 +38,7 @@ after_success:
 - git config credential.helper store --file=$HOME/.git-credentials
 - git config --global user.email "stuwilkins@travis.ci"
 - git config --global user.name "stuwilkins"
+- git --get remote.origin.url
 - make gh-pages
 env:
   global:
