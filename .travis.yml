@@ -3,9 +3,6 @@ sudo: false
 python:
 - '3.4'
 - '3.5'
-env:
-  global:
-    secure: ad3sPV1BhnXXxk0rc3M+1NMBEPcKEIPw3v3ZqSeQQbxqzEP1ZYs08UaLLwbbgf7gjXqeQOfrhR0r4FxMFU8Q9YN3D18CDi7T1gkEByze1krDhSoawIU+XxypHWP3Osh0qhWMXBF7+g1BnFOFTP8OBJp7ZRSxy6ssNIg1HmzVHzYEtNOSqTjhtj++zJT+wzuXr69QZfyNmRxxKnbLkL9pnG+0z73DdTc8Hs3b2z5bWUnMwLMdciWJbNEwdM/fsU6/Rb4MjImHRCm7T3Zc0HJjzQY6yXjM+57ps8wDl4yiF0l+7dVWsRW6s3UE6W/vMrOcGpuEV5mG9RMk8zRfL85au5YEMp6sQyQzwjuOM2MH4E01OAfQzkcSPCe8FadqQ2Ac2eRjzJEAa/q7lOsiHLJoJ/x7VRd7kqY8LjWGe4xyTzCJk8C52uChgLsRHxtNUJbrEEoOXK+46LmoeG0q4bFIDZsm7nc2VcC9bYGLSjKI9QGa8FbvsdTg5af9WWJIQkLX3qBF+Mkzu9W+f+Wb5/itL6OGpfXR0zzmj9sBIzYARx9f0M7Ntp5Bty369cmHNgkAOfr2TBiXfoRRlkZTVr+KDyncEmKhdqeUy5lBnqAJHPP4VU3mmXJGU+uwINGz4ibLolz/+i80AoK6Z+dN6NzaT52Y4wO5IyNjUycOqrMGJ1I=
 before_install:
 - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
 - chmod +x miniconda.sh
@@ -44,3 +41,6 @@ after_success:
 - git config --global user.name "stuwilkins"
 - git config --get remote.origin.url
 - make gh-pages
+env:
+  global:
+    secure: hIZ4ZUT0mGDKDbHXnunCvnuOeNKAGoKJSlWqun/Vo7CLaPfceigab9EWfzJE/iHHwfhapSwKBYXrJvplGe0vL7AgwjpQ2P6p7qQc/y/2XySxqICIT0WdAll3rJtnVBrHx9mn36TUn+3nGUned6dWIheLCOLOVaMjJtfYMdkHvDFUiuhIlRvTXo2SYEN+dZrSSpDiJDh1+J3lkg2zDUkL/CP+KRhpI3m/OjIDdJHvAdrLn+dB/gFoobrcxOWJGzkMoLHuLnc64lM4oq96jbGXbPyNcaQxr9TbqfVTypDcTpw9HfJNR6yKck1cBdqyxSVqQs/BNWDEoqjDevee+xQgekXjCxDbqpqnXUh9G6FY0543hcxQcMdpUPXDFkpt+N06m/Kseiiom9pJLGY7OstNgpc0Sl5O/aDhajY6eggFVjX4sc3MlbTwAc1EXBxaRfKaIijsnytsPMWundSae9XCV7zNIkOY4kCd9SfsiJwOhRO8b0b5tuHdywZKXrHSe+NUGbXwESPSmV60gjLNi7U4bN6MIfZ7KPCdr/tAmxG4/YEwSxE3uPrhmaSop/IvZpo6sqU+3tkQPvlOJMkGdqvHSUj6PZWzFWSGtQAQtgZasalEKIpshSwaYtUoU0o36J5cg5lMYA+FS8dp/WSc2PF6lAtmNOk7D2CvBjA67DjHIkk=
