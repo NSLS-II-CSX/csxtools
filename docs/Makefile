@@ -8,10 +8,20 @@ PAPER         =
 BUILDDIR      = build
 
 # For auto gh-pages
-GH_PAGES_SOURCES = doc/Makefile doc/source 
 GH_PAGES_DIR := $(shell mktemp -d)
-GH_PAGES_URL = https://github.com/NSLS-II-CSX/csxtools.git
-TOP := $(dir $(lastword $(MAKEFILE_LIST)))
+GH_REPO = NSLS-II-CSX/csxtools.git
+
+ifdef GH_TOKEN
+	GH_PAGES_URL = https://$(GH_TOKEN)@github.com/$(GH_REPO)
+else
+	GH_PAGES_URL = https://github.com/$(GH_REPO)
+endif
+
+ifdef TRAVIS
+	GH_COMMIT = '--author "travisci <noreply@travis.ci>"'
+else
+	GHG_COMMIT = ''
+endif
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -204,6 +214,7 @@ gh-pages: html
 	cd $(GH_PAGES_DIR) && touch .nojekyll
 	cp -rv build/html/* $(GH_PAGES_DIR)
 	cd $(GH_PAGES_DIR) && git add -A  && \
-		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
+		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" \
+		  $(GH_COMMIT) && \
 		git push origin gh-pages 
 	rm -rf $(GH_PAGES_DIR)
