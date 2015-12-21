@@ -17,13 +17,13 @@ install:
   - conda config --set always_yes true
   - conda update conda
   # pin to numpy < 1.10 because pandas 0.16 and numpy 1.10 do not play nice
-  - conda create -n testenv pip nose python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx
+  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx
   - source activate testenv
   # deps needed for metadatastore/filestore
   - conda install -n testenv pyyaml ipywidgets 
   # Dependencies not in official conda have been uploaded to binstar orgs.
   - conda config --add channels lightsource2
-  - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile sphinx-bootstrap-theme 
+  - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
   - conda install databroker
   # install all the pip deps
   - pip install coveralls
