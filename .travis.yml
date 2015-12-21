@@ -1,51 +1,44 @@
 language: python
 sudo: false
-
 python:
-  - "3.4"
-  - "3.5"
-
+- '3.4'
+- '3.5'
 before_install:
-  # use latest because why not?
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b -p /home/travis/mc
-  - export PATH=/home/travis/mc/bin:$PATH
-
+- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+- chmod +x miniconda.sh
+- "./miniconda.sh -b -p /home/travis/mc"
+- export PATH=/home/travis/mc/bin:$PATH
 install:
-  - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda config --set always_yes true
-  - conda update conda
-  # pin to numpy < 1.10 because pandas 0.16 and numpy 1.10 do not play nice
-  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx
-  - source activate testenv
-  # deps needed for metadatastore/filestore
-  - conda install -n testenv pyyaml ipywidgets 
-  # Dependencies not in official conda have been uploaded to binstar orgs.
-  - conda config --add channels lightsource2
-  - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
-  - conda install databroker
-  - conda config --add channels bokeh
-  - conda install sphinx-bootstrap-theme
-  # install all the pip deps
-  - pip install coveralls
-  - pip install codecov
-  - pip install travis-sphinx
-  - python setup.py install
-
+- export GIT_FULL_HASH=`git rev-parse HEAD`
+- conda config --set always_yes true
+- conda update conda
+- conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas
+  h5py coverage jsonschema jinja2 sphinx
+- source activate testenv
+- conda install -n testenv pyyaml ipywidgets
+- conda config --add channels lightsource2
+- conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
+- conda install databroker
+- conda config --add channels bokeh
+- conda install sphinx-bootstrap-theme
+- pip install coveralls
+- pip install codecov
+- pip install travis-sphinx
+- python setup.py install
 script:
-  - coverage run --source=csxtools setup.py test
-  - cd $TRAVIS_BUILD_DIR/docs
-  - make html
-  - cd $TRAVIS_BUILD_DIR
-
+- coverage run --source=csxtools setup.py test
+- cd $TRAVIS_BUILD_DIR/docs
+- make html
+- cd $TRAVIS_BUILD_DIR
 after_success:
-  - coveralls
-  - codecov
-  - cd $TRAVIS_BUILD_DIR/docs
-  - git config credential.helper store
-  - echo "https://${GH_TOKEN}:@github.com" > $HOME/.git-credentials
-  - git config --global user.email "donotreply@travis.ci"
-  - git config --global user.name "travis ci"
-  - make gh-pages
-# Note the following command sets a new directory
+- coveralls
+- codecov
+- cd $TRAVIS_BUILD_DIR/docs
+- echo "https://${GH_TOKEN}@github.com" > $HOME/.git-credentials
+- git config credential.helper store "store --file=$HOME/.git-credentials"
+- git config --global user.email "donotreply@travis.ci"
+- git config --global user.name "travis ci"
+- make gh-pages
+env:
+  global:
+    secure: Pn9jYSSjh9kPUWYLpKqIJwD2cLMyKa5KtJIzGBStwgOz7NXKTlbKW2FzqpwIJrVjVXujXo8/oyt4423x5H72jkq45sm8bMXGpg4CJMLD1GhNDsf4ekYNSQ//JY39n5s2L7HHYX55qkK3MkATS4+af1PPnJwQDhRjLvPtJe1NX7lFOyqO6uePowlHMAteKyIbfAINKC+S2Un5dmZmiwR22VO+4OANm9yjIcXy6HlMv93MSng2XW5Xh+CCt0iBKcWjmTQjrrcLsf9CNtKlAJ/mgE+tBEs3mAUEFbzIbNkpedSyxpbbZV5aREYs6GdcT2mc581VHrjwNe+jfoznxZ4PYPzsbG2A2P72iCKe/WdT8jvxf8/TP5RKCNMjrKr4FsWjQL5S4b1DeF6oyinsi1t6kuRXQphPJfORnnb9q2IOei6JxHMhCz8NuAT4aELbv5j/4TinzNT9APq15ti3i2K//Txt4eD+rKIXpJUaQ+aEmUbuQa9vk6X47hVg4n0Srh0/cZdD37MgqfEbPp22tLDCXOZ5myqQnRTWzaIvtXdkJpPXoR5qnhHqNIeL7KzSV6UN5mt50zZGUX0cF1ohcOByMwSnYKuKGXaB03bia9GK+xVcesg+05X0b5+RouQjoZJIHMFpo6E25/8N8foDbkaH2OcRnDDNjcKel5IcFf4Mud4=
