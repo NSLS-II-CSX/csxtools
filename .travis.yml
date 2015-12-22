@@ -34,7 +34,7 @@ after_success:
 - git config --global user.name "travisci"
 - git config --global credential.helper store --file=$HOME/.git-credentials
 - echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
-- $TRAVIS_BUILD_DIR/docs && ./build_docs
+- cd $TRAVIS_BUILD_DIR/docs && make gh-pages
 env:
   global:
    - GH_USER=stuwilkins
