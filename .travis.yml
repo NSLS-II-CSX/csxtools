@@ -40,7 +40,9 @@ script:
 after_success:
 - cd $TRAVIS_BUILD_DIR && coveralls
 - cd $TRAVIS_BUILD_DIR && codecov
-- [ "$TRAVIS_PULL_REQUEST" = "false"  &&  "$TRAVIS_BRANCH" = "master" ] && (cd $TRAVIS_BUILD_DIR/docs && make gh-pages)
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
+    cd $TRAVIS_BUILD_DIR/docs && make gh-pages;
+  fi;
 env:
   global:
    - GH_USER=stuwilkins
