@@ -33,7 +33,6 @@ install:
 - conda install sphinx-bootstrap-theme
 - pip install coveralls
 - pip install codecov
-- pip install travis-sphinx
 - python setup.py install
 script:
 - coverage run --source=csxtools setup.py test
