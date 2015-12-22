@@ -9,19 +9,6 @@ BUILDDIR      = build
 
 # For auto gh-pages
 GH_PAGES_DIR := $(shell mktemp -d)
-GH_REPO = NSLS-II-CSX/csxtools.git
-
-ifdef GH_TOKEN
-	GH_PAGES_URL = https://$(GH_TOKEN)@github.com/$(GH_REPO)
-else
-	GH_PAGES_URL = https://github.com/$(GH_REPO)
-endif
-
-ifdef TRAVIS
-	GH_COMMIT = --author "travisci <noreply@travis.ci>"
-else
-	GHG_COMMIT = 
-endif
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -208,13 +195,12 @@ pseudoxml:
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
 gh-pages: html
-	git clone $(GH_PAGES_URL) $(GH_PAGES_DIR)
-	cd $(GH_PAGES_DIR) && git checkout gh-pages
+	git clone `git config --get remote.origin.url` $(GH_PAGES_DIR)
+	cd $(GH_PAGES_DIR) && (git checkout gh-pages || git checkout --orphan gh-pages)
 	cd $(GH_PAGES_DIR) && git rm -rf . 
 	cd $(GH_PAGES_DIR) && touch .nojekyll
 	cp -rv build/html/* $(GH_PAGES_DIR)
 	cd $(GH_PAGES_DIR) && git add -A  && \
-		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" \
-		  $(GH_COMMIT) && \
+		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
 		git push origin gh-pages 
 	rm -rf $(GH_PAGES_DIR)
