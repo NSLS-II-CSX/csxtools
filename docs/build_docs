@@ -5,7 +5,7 @@ if [ -n "${GH_TOKEN}" ]; then
 	git config --global user.email "donotreply@travis.ci"
 	git config --global user.name "stuwilkins"
 	git config --global credential.helper store --file=$HOME/.git-credentials
-	echo "https://${GH_TOKEN}@github.com" > $HOME/.git-credentials
+	echo "https://stuwilkins:${GH_TOKEN}@github.com" > $HOME/.git-credentials
 	cat $HOME/.git-credentials
 	cat $HOME/.gitconfig
 fi
