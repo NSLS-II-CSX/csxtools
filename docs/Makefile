@@ -194,7 +194,7 @@ pseudoxml:
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
-gh-pages: html
+gh-pages: 
 	git clone `git config --get remote.origin.url` $(GH_PAGES_DIR)
 	cd $(GH_PAGES_DIR) && (git checkout gh-pages || git checkout --orphan gh-pages)
 	cd $(GH_PAGES_DIR) && git rm -rf . 
