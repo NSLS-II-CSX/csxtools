@@ -120,13 +120,11 @@ int count(data_t *in, data_t *out, data_t *stddev,
               mean += pixel[n];
             }
             mean = mean / 9;
-            fprintf(stderr, "mean = %f\n", mean);
 
             data_t var = 0;
             for(n=0;n<9;n++){
               var += pow(pixel[n] - mean, 2);
             }
-            fprintf(stderr, "var = %f\n", var);
 
             *stddevp = pow(var / 9, 0.5);
           } else {
