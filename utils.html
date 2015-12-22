@@ -9,7 +9,7 @@
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootswatch-3.2.0/united/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootswatch-3.1.0/united/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.1.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="csxtools 0.0.1 documentation" href="index.html" />
     <link rel="next" title="IPython Notebook Routines" href="ipynb.html" />
@@ -71,6 +71,7 @@
 
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -100,7 +101,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Utilities</a><ul>
-<li><a class="reference internal" href="#module-csxtools.utils">API Reference</a></li>
+<li><a class="reference internal" href="#api-reference">API Reference</a></li>
 </ul>
 </li>
 </ul>
@@ -134,49 +135,8 @@
       
   <div class="section" id="utilities">
 <h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-csxtools.utils">
-<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.utils" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="csxtools.utils.get_fastccd_images">
-<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_images</code><span class="sig-paren">(</span><em>light_header</em>, <em>dark_headers=(None</em>, <em>None</em>, <em>None)</em>, <em>flat=None</em>, <em>gain=(1</em>, <em>4</em>, <em>8)</em>, <em>tag='fccd_image_lightfield'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/csxtools/utils.html#get_fastccd_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_images" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retreive and correct FastCCD Images from associated headers</p>
-<p>Retrieve FastCCD Images from databroker and correct for:</p>
-<ul class="simple">
-<li>Bad Pixels (converted to <code class="docutils literal"><span class="pre">np.nan</span></code>)</li>
-<li>Backgorund.</li>
-<li>Multigain bits.</li>
-<li>Flatfield correction.</li>
-<li>Rotation (returned images are rotated 90 deg cw)</li>
-</ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>light_header</strong> (<em>databorker header</em>) &#8211; This header defines the images to convert</li>
-<li><strong>dark_header</strong> (<em>tuple of 3 databroker headers</em>) &#8211; These headers are the dark images. The tuple should be formed
-from the dark image sets for the Gain 8, Gain 2 and Gain 1
-(most sensitive to least sensitive) settings. If a set is not
-avaliable then <code class="docutils literal"><span class="pre">None</span></code> can be entered .</li>
-<li><strong>flat</strong> (<em>array_like</em>) &#8211; Array to use for the flatfield correction. This should be a 2D
-array sized as the last two dimensions of the image stack.</li>
-<li><strong>gain</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Gain multipliers for the 3 gain settings (most sensitive to
-least sensitive)</li>
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Data tag used to retrieve images. Used in the call to
-<code class="docutils literal"><span class="pre">databroker.get_images()</span></code></li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Stack of corrected images</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
