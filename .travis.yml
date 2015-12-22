@@ -3,6 +3,10 @@ sudo: false
 python:
 - '3.5'
 before_install:
+- git config --global user.email "donotreply@travis.ci"
+- git config --global user.name "travisci"
+- git config --global credential.helper store --file=$HOME/.git-credentials
+- echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
 - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
 - chmod +x miniconda.sh
 - "./miniconda.sh -b -p /home/travis/mc"
@@ -30,11 +34,7 @@ script:
 after_success:
 - cd $TRAVIS_BUILD_DIR && coveralls
 - cd $TRAVIS_BUILD_DIR && codecov
-- git config --global user.email "donotreply@travis.ci"
-- git config --global user.name "travisci"
-- git config --global credential.helper store --file=$HOME/.git-credentials
-- echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
-- cd $TRAVIS_BUILD_DIR/docs && make gh-pages
+- if [ "$TRAVIS_PULL_REQUEST" == "false" ] && (cd $TRAVIS_BUILD_DIR/docs && make gh-pages)
 env:
   global:
    - GH_USER=stuwilkins
