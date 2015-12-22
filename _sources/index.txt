@@ -20,9 +20,6 @@ beamline at NSLS-II, (CSX, 23-ID)
 .. image:: https://img.shields.io/github/tag/NSLS-II-CSX/csxtools.svg
     :target: https://github.com/NSLS-II-CSX/csxtools
 
-.. image:: https://img.shields.io/github/watchers/NSLS-II-CSX/csxtools.svg?style=social&label=Watch
-    :target: https://github.com/NSLS-II-CSX/csxtools
-
 .. image:: https://img.shields.io/github/license/NSLS-II-CSX/csxtools.svg
     :target: https://github.com/NSLS-II-CSX/csxtools
 
@@ -31,6 +28,9 @@ To chat to the CSX team please use the ``#support`` channel on slack_.
 .. raw:: html
 
     <script async defer src="https://csxnsls-ii-slackbadge.herokuapp.com/slackin.js"> </script>
+
+.. image:: https://img.shields.io/github/watchers/NSLS-II-CSX/csxtools.svg?style=social&label=Watch
+    :target: https://github.com/NSLS-II-CSX/csxtools
 
 Contents
 --------
