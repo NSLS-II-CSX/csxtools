@@ -87,7 +87,7 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   
   count((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
         (data_t*)PyArray_DATA(stddev),
-        ndims, dims, thresh, sum_max);
+        ndims, dims, thresh, sum_max, nan);
 
   Py_XDECREF(input);
   return Py_BuildValue("(NN)", out, stddev);

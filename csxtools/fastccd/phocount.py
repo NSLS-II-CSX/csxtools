@@ -1,7 +1,7 @@
 from ..ext import phocount as ph
 
 
-def photon_count(data, thresh, nsum=3):
+def photon_count(data, thresh, nsum=3, nan=False):
     """Do single photon counting on CCD image
 
     This routine does single photon counting by cluster analysis. The image
@@ -19,6 +19,8 @@ def photon_count(data, thresh, nsum=3):
     nsum : int
         The number of pixels to use to calculate the energy deposited by the
         photon. This should be 0 < nsum <= 9.
+    nan : bool
+        If true, replace empty pixels with ``np.nan``
 
     Returns
     -------
@@ -28,4 +30,4 @@ def photon_count(data, thresh, nsum=3):
         photon hit. The second array is the standard deviation for the
         integrated intensity on each photon hit.
     """
-    return ph.count(data, thresh, nsum)
+    return ph.count(data, thresh, nsum, nan)

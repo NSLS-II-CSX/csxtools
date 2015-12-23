@@ -55,7 +55,7 @@ int count(data_t *in, data_t *out, data_t *stddev,
     // Pad no data with nan not zero
     nodata = NAN;
   } else {
-    nodata = 0.0
+    nodata = 0.0;
   }
 
   int x;
@@ -77,8 +77,8 @@ int count(data_t *in, data_t *out, data_t *stddev,
     
     index_t j,k;
     for(j=0;j<(M+1);j++){
-      *outp = 0.0;
-      *stddevp = 0.0;
+      *outp = nodata;
+      *stddevp = nodata;
       inp++;
       outp++;
       stddevp++;
@@ -137,12 +137,12 @@ int count(data_t *in, data_t *out, data_t *stddev,
 
             *stddevp = pow(var / 9, 0.5);
           } else {
-            *stddevp = 0.0;
-            *outp = 0.0;
+            *stddevp = nodata;
+            *outp = nodata;
           } // if(!flag)
         } else {
-          *stddevp = 0.0;
-          *outp = 0.0;
+          *stddevp = nodata;
+          *outp = nodata;
         } // if(thresh)
 
         inp++;
@@ -151,8 +151,8 @@ int count(data_t *in, data_t *out, data_t *stddev,
       } // for(k)
 
       for(k=0;k<2;k++){
-        *stddevp = 0.0;
-        *outp = 0.0;
+        *stddevp = nodata;
+        *outp = nodata;
         outp++;
         stddevp++;
         inp++;
@@ -160,8 +160,8 @@ int count(data_t *in, data_t *out, data_t *stddev,
     } // for(j)
 
     for(j=0;j<(M+1);j++){
-      *outp = 0.0;
-      *stddevp = 0.0;
+      *outp = nodata;
+      *stddevp = nodata;
       outp++;
       stddevp++;
     }
