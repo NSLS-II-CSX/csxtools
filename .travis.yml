@@ -31,6 +31,8 @@ install:
 - conda install databroker
 - conda config --add channels bokeh
 - conda install sphinx-bootstrap-theme
+- conda config --add channels bokeh
+- conda install pandoc
 - pip install coveralls
 - pip install codecov
 - python setup.py install
