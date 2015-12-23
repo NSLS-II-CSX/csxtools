@@ -43,11 +43,20 @@
 #include "phocount.h"
 
 int count(data_t *in, data_t *out, data_t *stddev, 
-          int ndims, index_t *dims, data_t *thresh, int sum_max){
+          int ndims, index_t *dims, 
+          data_t *thresh, int sum_max, int nan){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
   index_t imsize = N*M;
+
+  data_t nodata;
+  if(nan){
+    // Pad no data with nan not zero
+    nodata = NAN;
+  } else {
+    nodata = 0.0
+  }
 
   int x;
   for(x=1;x<(ndims-2);x++){

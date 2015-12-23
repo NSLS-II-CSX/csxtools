@@ -54,13 +54,14 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   int ndims;
   float thresh[2];
   int sum_max;
+  int nan;
 
-  if(!PyArg_ParseTuple(args, "O(ff)i", &_input, &thresh[0], &thresh[1],
-                                       &sum_max)){
+  if(!PyArg_ParseTuple(args, "O(ff)i|p", &_input, &thresh[0], &thresh[1],
+                                         &sum_max, &nan)){
     return NULL;
   }
 
-  if(sum_max < 0 || sum_max >= 9){
+  if(sum_max <= 0 || sum_max > 9){
     PyErr_SetString(PyExc_ValueError, "Maximum sum value must be between 0 and 9");
     goto error;
   }

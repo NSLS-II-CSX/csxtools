@@ -6,6 +6,9 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+#
+# For auto gh-pages
+GH_PAGES_DIR := $(shell mktemp -d)
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -196,7 +199,7 @@ gh-pages:
 	cd $(GH_PAGES_DIR) && (git checkout gh-pages || git checkout --orphan gh-pages)
 	cd $(GH_PAGES_DIR) && git rm -rf . 
 	cd $(GH_PAGES_DIR) && touch .nojekyll
-	cp -rv build/html/* $(GH_PAGES_DIR)
+	cp -rv _build/html/* $(GH_PAGES_DIR)
 	cd $(GH_PAGES_DIR) && git add -A  && \
 		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
 		git push origin gh-pages 
