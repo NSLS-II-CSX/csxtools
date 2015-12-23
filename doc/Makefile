@@ -6,9 +6,12 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
-#
+
 # For auto gh-pages
 GH_PAGES_DIR := $(shell mktemp -d)
+
+# For Notebooks
+NOTEBOOKS = $(wildcard notebooks/*.ipynb)
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -22,7 +25,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext notebooks gh-pages
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -204,3 +207,6 @@ gh-pages:
 		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
 		git push origin gh-pages 
 	rm -rf $(GH_PAGES_DIR)
+
+notebooks:
+	$(MAKE) -C notebooks
