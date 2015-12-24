@@ -28,13 +28,13 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    image
    fastccd
    utils
    ipynb
-   notebooks/index
+   examples/index
 
 .. _slack:  https://slack.com
 .. _support: https://csxnsls-ii.slack.com/messages/support
