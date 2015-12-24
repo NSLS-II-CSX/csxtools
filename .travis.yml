@@ -34,7 +34,7 @@ install:
 - conda config --add channels asmeurer
 - conda install pandoc
 # Fix the symbolic ibrary - Why is pandoc so good and so bad!
-- ln -s /home/travis/mc/env/testenv/lib/libgmp.so.10 /home/travis/mc/env/testenv/lib/libgmp.so.3
+- ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
 - pip install coveralls
 - pip install codecov
 - python setup.py install
