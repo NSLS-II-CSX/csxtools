@@ -1,4 +1,14 @@
-NOTEBOOKS = $(wildcard ../../notebooks/*.ipynb)
+NBDIR=../../notebooks
+NOTEBOOKS=$(wildcard $(NBDIR)/*.ipynb)
+RSTFILES=$(NOTEBOOKS:.ipynb=.rst)
+RST=$(notdir $(RSTFILES))
 
-all: $(NOTEBOOKS)
-	ipython nbconvert $^ --to rst
+.PHONY: all clean
+
+all: $(RST)
+
+%.rst: $(NBDIR)/%.ipynb
+	ipython nbconvert $< --to rst
+
+clean:
+	find . ! -name Makefile ! -name index.rst ! -name .gitignore -delete
