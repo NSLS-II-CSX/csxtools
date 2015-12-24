@@ -209,4 +209,4 @@ gh-pages:
 	rm -rf $(GH_PAGES_DIR)
 
 notebooks:
-	$(MAKE) -C notebooks
+	$(MAKE) -C examples
