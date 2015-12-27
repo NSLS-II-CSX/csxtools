@@ -67,9 +67,9 @@ int count(data_t *in, data_t *out, data_t *stddev,
 #pragma omp parallel for shared(in, out, stddev) private(i)
   for(i=0;i<nimages;i++){
     // Find the start pointers of the image
-    data_t *inp = in + (i*imsize);
-    data_t *outp = out + (i*imsize);
-    data_t *stddevp = stddev + (i*imsize);
+    data_t *inp = in + (i*imsize) - 1;
+    data_t *outp = out + (i*imsize) - 1;
+    data_t *stddevp = stddev + (i*imsize) - 1;
 
     data_t pixel[9];
 
@@ -77,98 +77,98 @@ int count(data_t *in, data_t *out, data_t *stddev,
     
     index_t j,k;
     for(j=0;j<(M+1);j++){
-      *outp = nodata;
-      *stddevp = nodata;
       inp++;
       outp++;
       stddevp++;
+      *outp = nodata;
+      *stddevp = nodata;
     }
 
     // Now start the search
     for(j=1;j<(N-1);j++){
       for(k=1;k<(M-1);k++){
-        if((*inp >= thresh[0]) && (*inp < thresh[1])){
-
-          // The pixel is above thresh
-          // Now get the surrounding 9 pixels. 
-          pixel[0] = *inp;
-          pixel[1] = *(inp - M - 1);
-          pixel[2] = *(inp - M);
-          pixel[3] = *(inp - M + 1);
-          pixel[4] = *(inp - 1);
-          pixel[5] = *(inp + 1);
-          pixel[6] = *(inp + M - 1);
-          pixel[7] = *(inp + M);
-          pixel[8] = *(inp + M + 1);
-
-          // Is this the brightest pixel?
-          
-          int n;
-          int flag = 0;
-          for(n=1;n<9;n++){
-            if(pixel[n] > pixel[0]){
-              flag = 1;
-              break;
-            }
-          }
-        
-          if(!flag){
-            // Sort the array
-            sort(pixel, 9);
-
-            data_t sum = 0;
-            for(n=0;n<sum_max;n++){
-              sum += pixel[n];
-            }
-            if((sum < mean_filter[0]) && (sum > mean_filter[1])){
-              *stddevp = nodata;
-              *outp = nodata;
-            } else {
-              *outp = sum;
-
-              // Now calculate the varience
-          
-              data_t mean = 0;
-              for(n=0;n<9;n++){
-                mean += pixel[n];
-              }
-              mean = mean / 9;
-
-              data_t var = 0;
-              for(n=0;n<9;n++){
-                var += pow(pixel[n] - mean, 2);
-              }
-
-              *stddevp = pow(var / 9, 0.5);
-            }
-          } else {
-            *stddevp = nodata;
-            *outp = nodata;
-          } // if(!flag)
-        } else {
-          *stddevp = nodata;
-          *outp = nodata;
-        } // if(thresh)
-
         inp++;
         outp++;
         stddevp++;
+
+        *outp = nodata;
+        *stddevp = nodata;
+
+        if((*inp < thresh[0]) || (*inp >= thresh[1])){
+          continue;
+        }
+
+        // The pixel is above thresh
+        // Now get the surrounding 9 pixels. 
+        pixel[0] = *inp;
+        pixel[1] = *(inp - M - 1);
+        pixel[2] = *(inp - M);
+        pixel[3] = *(inp - M + 1);
+        pixel[4] = *(inp - 1);
+        pixel[5] = *(inp + 1);
+        pixel[6] = *(inp + M - 1);
+        pixel[7] = *(inp + M);
+        pixel[8] = *(inp + M + 1);
+
+        // Is this the brightest pixel?
+        
+        int n;
+        int flag = 0;
+        for(n=1;n<9;n++){
+          if(pixel[n] > pixel[0]){
+            flag = 1;
+            break;
+          }
+        }
+
+        if(flag){
+          continue;
+        }
+      
+        // Sort the array
+        sort(pixel, 9);
+
+        data_t sum = 0;
+        for(n=0;n<sum_max;n++){
+          sum += pixel[n];
+        }
+
+        if((sum < mean_filter[0]) || (sum >= mean_filter[1])){
+          continue;
+        }
+
+        *outp = sum;
+
+        // Now calculate the varience
+    
+        data_t mean = 0;
+        for(n=0;n<9;n++){
+          mean += pixel[n];
+        }
+        mean = mean / 9;
+
+        data_t var = 0;
+        for(n=0;n<9;n++){
+          var += pow(pixel[n] - mean, 2);
+        }
+        *stddevp = pow(var / 9, 0.5);
+
       } // for(k)
 
       for(k=0;k<2;k++){
-        *stddevp = nodata;
-        *outp = nodata;
         outp++;
         stddevp++;
         inp++;
+        *stddevp = nodata;
+        *outp = nodata;
       }
     } // for(j)
 
     for(j=0;j<(M+1);j++){
-      *outp = nodata;
-      *stddevp = nodata;
       outp++;
       stddevp++;
+      *outp = nodata;
+      *stddevp = nodata;
     }
   } // for(nimages)
 
