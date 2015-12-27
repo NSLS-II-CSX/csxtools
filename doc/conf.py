@@ -130,7 +130,7 @@ html_theme = 'bootstrap'
 html_theme_options = {'source_link_position': "footer",
                       'navbar_sidebarrel': False,
                       'bootstrap_version': "3",
-                      'bootswatch_theme': "sandstone"}
+                      'bootswatch_theme': "united"}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
