@@ -19,8 +19,8 @@ def test_correct_images():
 
 def test_photon_count():
     x = np.array([[0,  0,  0,  0,  0,  0,  0,  0],
-                  [0,  0,  0,  0,  0,  0,  0,  0],
-                  [0,  0,  0, 10,  0,  0,  0,  0],
+                  [0,  0,  0,  0,  0,  4,  3,  0],
+                  [0,  0,  0, 10,  0,  4,  0,  0],
                   [0,  0,  4,  6,  2,  0,  0,  0],
                   [0,  0,  0,  0,  0,  0,  0,  0],
                   [0,  0,  0,  0,  0,  0,  0,  0]], dtype=np.float32)
@@ -31,7 +31,7 @@ def test_photon_count():
     z[2, 3] = np.std(np.array([10, 6, 4, 2, 0, 0, 0, 0, 0], dtype=np.float32))
 
     op = photon_count(np.array([x, x, x], dtype=np.float32),
-                      thresh=(5, 13), nsum=3)
+                      thresh=(5, 13), mean_filter=(10, 30), nsum=3)
 
     assert_array_equal(op[0], np.array([y, y, y]))
     assert_array_equal(op[1], np.array([z, z, z]))

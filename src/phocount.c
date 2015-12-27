@@ -44,7 +44,7 @@
 
 int count(data_t *in, data_t *out, data_t *stddev, 
           int ndims, index_t *dims, 
-          data_t *thresh, int sum_max, int nan){
+          data_t *thresh, data_t *mean_filter, int sum_max, int nan){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
@@ -120,22 +120,27 @@ int count(data_t *in, data_t *out, data_t *stddev,
             for(n=0;n<sum_max;n++){
               sum += pixel[n];
             }
-            *outp = sum;
+            if((sum < mean_filter[0]) && (sum > mean_filter[1])){
+              *stddevp = nodata;
+              *outp = nodata;
+            } else {
+              *outp = sum;
 
-            // Now calculate the varience
-        
-            data_t mean = 0;
-            for(n=0;n<9;n++){
-              mean += pixel[n];
+              // Now calculate the varience
+          
+              data_t mean = 0;
+              for(n=0;n<9;n++){
+                mean += pixel[n];
+              }
+              mean = mean / 9;
+
+              data_t var = 0;
+              for(n=0;n<9;n++){
+                var += pow(pixel[n] - mean, 2);
+              }
+
+              *stddevp = pow(var / 9, 0.5);
             }
-            mean = mean / 9;
-
-            data_t var = 0;
-            for(n=0;n<9;n++){
-              var += pow(pixel[n] - mean, 2);
-            }
-
-            *stddevp = pow(var / 9, 0.5);
           } else {
             *stddevp = nodata;
             *outp = nodata;

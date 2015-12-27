@@ -52,12 +52,13 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   PyArrayObject *out = NULL;
   npy_intp *dims;
   int ndims;
-  float thresh[2];
+  float thresh[2], mean_filter[2];
   int sum_max;
-  int nan;
+  int nan = 0;
 
-  if(!PyArg_ParseTuple(args, "O(ff)i|p", &_input, &thresh[0], &thresh[1],
-                                         &sum_max, &nan)){
+  if(!PyArg_ParseTuple(args, "O(ff)(ff)i|p", &_input, &thresh[0], &thresh[1],
+                                             &mean_filter[0], &mean_filter[1], 
+                                             &sum_max, &nan)){
     return NULL;
   }
 
@@ -87,7 +88,7 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   
   count((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
         (data_t*)PyArray_DATA(stddev),
-        ndims, dims, thresh, sum_max, nan);
+        ndims, dims, thresh, mean_filter, sum_max, nan);
 
   Py_XDECREF(input);
   return Py_BuildValue("(NN)", out, stddev);
