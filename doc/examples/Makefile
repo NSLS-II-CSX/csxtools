@@ -1,4 +1,4 @@
-NBDIR=../../notebooks
+NBDIR=../../examples
 NOTEBOOKS=$(wildcard $(NBDIR)/*.ipynb)
 RSTFILES=$(NOTEBOOKS:.ipynb=.rst)
 RST=$(notdir $(RSTFILES))

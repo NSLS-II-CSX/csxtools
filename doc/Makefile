@@ -60,6 +60,7 @@ help:
 
 clean:
 	rm -rf $(BUILDDIR)/*
+	$(MAKE) -C examples clean
 
 html: examples
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
