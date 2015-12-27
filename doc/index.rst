@@ -30,10 +30,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   image
-   fastccd
-   utils
-   ipynb
+   api/index
    examples/index
 
 .. _slack:  https://slack.com
