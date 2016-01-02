@@ -1,5 +1,9 @@
 import numpy as np
 from ..ext import fastccd
+import time as ttime
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
@@ -31,10 +35,20 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     """
 
+    logger.info("Correcting image stack of shape {}".format(images.shape))
+
     if dark is None:
         dark = np.zeros(images.shape[-2:], dtype=np.float32)
         dark = np.array((dark, dark, dark))
+        logger.info("Not correcting for darkfield. No input.")
     if flat is None:
         flat = np.ones(images.shape[-2:], dtype=np.float32)
+        logger.info("Not correcting for flatfield. No input.")
 
-    return fastccd.correct_images(images, dark, flat, gain)
+    t = ttime.time()
+    data = fastccd.correct_images(images, dark, flat, gain)
+    t = ttime.time() - t
+
+    logger.info("Corrected image stack in {:.3}s".format(t))
+
+    return data
