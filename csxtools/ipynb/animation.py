@@ -6,6 +6,53 @@ from tempfile import NamedTemporaryFile
 import base64
 
 
+def show_image(image, minmax, fontsize=18, cmap='CMRmap',
+               zlabel=r'Intensty [ADU]', figsize=(12, 10)):
+    """Show an Interactive Image Stack in an IPython Notebook
+
+    Parameters
+    ----------
+    image : array_like
+        Images of shape (y, x) to show.
+    minmax : tuple
+        Value for the minimum and maximum of the stack in the form
+        ``(min, max)``
+    fontsize : int
+        Fontsize for axis labels.
+    cmap : string
+        Colormap to use for image (from matplotlib)
+    zlabel : string
+        Axis label for the color bar (z-axis)
+    figsize : tuple
+        Figure size (from matplotlib)
+
+
+    """
+
+    def view_frame(vmin, vmax):
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(111)
+
+        im = ax.imshow(image, cmap=cmap, interpolation='none',
+                       vmin=vmin, vmax=vmax)
+
+        cbar = fig.colorbar(im)
+        cbar.ax.tick_params(labelsize=fontsize)
+        cbar.set_label(zlabel, size=fontsize, weight='bold')
+
+        ax.set_title('Min = {} Max = {}'.format(vmin, vmax),
+                     fontsize=fontsize, fontweight='bold')
+
+        for item in ([ax.xaxis.label, ax.yaxis.label] +
+                     ax.get_xticklabels() + ax.get_yticklabels()):
+            item.set_fontsize(fontsize)
+            item.set_fontweight('bold')
+
+        plt.show()
+
+    interact(view_frame, vmin=minmax, vmax=minmax)
+
+
 def show_image_stack(images, minmax, fontsize=18, cmap='CMRmap',
                      zlabel=r'Intensty [ADU]', figsize=(12, 10)):
     """Show an Interactive Image Stack in an IPython Notebook

@@ -1,6 +1,7 @@
 import numpy as np
 from ..ext import fastccd
 import time as ttime
+from ..image import rotate90
 
 import logging
 logger = logging.getLogger(__name__)
@@ -44,6 +45,8 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     if flat is None:
         flat = np.ones(images.shape[-2:], dtype=np.float32)
         logger.info("Not correcting for flatfield. No input.")
+    else:
+        flat = np.float32(np.rot90(flat, 1))
 
     t = ttime.time()
     data = fastccd.correct_images(images, dark, flat, gain)

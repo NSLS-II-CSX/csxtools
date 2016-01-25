@@ -5,6 +5,6 @@ del get_versions
 
 # Now import useful functions
 
-__all__ = ['image_stack_to_movie', 'show_image_stack']
+__all__ = ['image_stack_to_movie', 'show_image_stack', 'show_image']
 
-from .animation import image_stack_to_movie, show_image_stack
+from .animation import image_stack_to_movie, show_image_stack, show_image
