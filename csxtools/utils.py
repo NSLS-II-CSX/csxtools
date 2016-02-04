@@ -1,9 +1,6 @@
 import numpy as np
 import time as ttime
-try:
-    from databroker import get_images
-except ImportError:
-    from dataportal import get_images
+from databroker import get_images
 
 from .fastccd import correct_images
 from .image import rotate90
