@@ -129,29 +129,19 @@ int count(data_t *in, data_t *out, data_t *stddev,
         sort(pixel, 9);
 
         data_t sum = 0;
+        data_t scnd_moment = 0;
         for(n=0;n<sum_max;n++){
           sum += pixel[n];
+          scnd_moment += pixel[n] * pixel[n];
         }
 
         if((sum < mean_filter[0]) || (sum >= mean_filter[1])){
           continue;
         }
 
+        data_t var = (scnd_moment - (sum*sum) / sum_max) / sum_max;
+        *stddevp = pow(var, 0.5);
         *outp = sum;
-
-        // Now calculate the varience
-    
-        data_t mean = 0;
-        for(n=0;n<9;n++){
-          mean += pixel[n];
-        }
-        mean = mean / 9;
-
-        data_t var = 0;
-        for(n=0;n<9;n++){
-          var += pow(pixel[n] - mean, 2);
-        }
-        *stddevp = pow(var / 9, 0.5);
 
       } // for(k)
 

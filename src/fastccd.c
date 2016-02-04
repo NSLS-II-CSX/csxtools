@@ -32,12 +32,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE   
  * POSSIBILITY OF SUCH DAMAGE.                                          
  *
- *
- *
- * This is ctranc.c routine. process_to_q and process_grid
- * functions in the nsls2/recip.py call  ctranc.c routine for
- * fast data analysis.
- 
  */
 
 #include <omp.h>
@@ -67,6 +61,11 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
     // Reset the background pointer each time
     data_t *bgp = bg + (k % imsize);
     data_t *flatp = flat + (k % imsize);
+    //
+    // Note GAIN_1 is the least sensitive setting which means we need to multiply the
+    // measured values by 8. Conversly GAIN_8 is the most sensitive and therefore only
+    // does not need a multiplier
+    //
     if((in[k] & BAD_PIXEL) == BAD_PIXEL){
       out[k] = NAN;
     } else if((in[k] & GAIN_1) == GAIN_1){
