@@ -1,9 +1,10 @@
 # set version string using versioneer
-from ._version import get_versions
+from .._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
+__all__ = ['rotate90']
+
 # Now import useful functions
 
-from .utils import get_fastccd_images
-from .plotting import make_panel_plot
+from .transform import rotate90

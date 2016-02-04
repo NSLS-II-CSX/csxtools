@@ -2,6 +2,12 @@
 __pycache__/
 *.py[cod]
 
+# NFS crud
+.nfs*
+
+# Notebook checkpoints
+.ipynb_checkpoints
+
 # C extensions
 *.so
 
@@ -21,6 +27,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.eggs
 doc/_build
 
 # PyInstaller
