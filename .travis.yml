@@ -25,18 +25,12 @@ before_install:
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
   - conda config --set always_yes true
-  - conda update conda
-  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas
-    h5py coverage jsonschema jinja2 sphinx
-  - source activate testenv
-  - conda install -n testenv pyyaml ipywidgets
+  - conda config --set show_channel_urls true
   - conda config --add channels lightsource2
-  - conda install mongoengine tzlocal prettytable boltons pymongo=2.9 pims tifffile
-  - conda install databroker
   - conda config --add channels bokeh
-  - conda install sphinx-bootstrap-theme
   - conda config --add channels asmeurer
-  - conda install pandoc
+  - conda update conda
+  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc conda-build
   # Fix the symbolic ibrary - Why is pandoc so good and so bad!
   - ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
   - pip install coveralls
@@ -46,6 +40,7 @@ install:
 script:
   - coverage run --source=csxtools setup.py test
   - cd $TRAVIS_BUILD_DIR/doc && make html
+  - conda build $TRAVIS_BUILD_DIR/conda-recipe
 
 after_success:
   - cd $TRAVIS_BUILD_DIR && coveralls
