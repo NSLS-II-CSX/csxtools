@@ -67,8 +67,9 @@ def get_fastccd_images(light_header, dark_headers=None,
         dark = []
         for i, d in enumerate(dark_headers):
             if d is not None:
-                b = _get_images(d, tag)
+                b, nb = _get_images(d, tag)
                 b = np.nanmean(correct_images(b, gain=(1, 1, 1)), axis=0)
+                logger.info("{} Gain {} Dark Images".format(nb, gain[i]))
             else:
                 logger.warning("Missing dark image"
                                " for gain setting {}".format(i))
@@ -76,20 +77,28 @@ def get_fastccd_images(light_header, dark_headers=None,
 
         bgnd = np.array(dark)
 
-    data = _get_images(light_header, tag)
+    data, n_images = _get_images(light_header, tag)
     data = correct_images(data, bgnd, flat=flat, gain=gain)
     data = rotate90(data, 'cw')
-    return data
+    return data, n_images
 
 def _get_images(header, tag):
     t = ttime.time()
-    images = get_images(header, tag)[0]
+
+    all_event_images = get_images(header, tag)
+
+    images = []
+    n_images = []
+    for event_images in all_event_images:
+        images.append(np.asarray(event_images, np.uint16))
+        n_images.append(len(images[-1]))
+
     t = ttime.time() - t
     logger.info("Took {:.3}s to read data using get_images".format(t))
 
     # Convert to uint16
-
     images = np.asarray(images, np.uint16)
+    shape = images.shape
+    images = np.reshape(images, (shape[0]*shape[1], shape[2], shape[3]))
 
-    return images
-
+    return images, n_images
