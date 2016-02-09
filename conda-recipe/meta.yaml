@@ -14,7 +14,7 @@ requirements:
     - setuptools
     - python
     - numpy
-    - pytest-runner
+    - pytest
 
   run:
     - python
@@ -27,7 +27,7 @@ requirements:
 
 test:
   requires:
-    - pytest-runner
+    - pytest
   imports:
     - csxtools
     - csxtools.ext
