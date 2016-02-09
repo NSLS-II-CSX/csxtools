@@ -28,7 +28,8 @@ def test_photon_count():
     y = np.zeros_like(x)
     y[2, 3] = 20
     z = np.zeros_like(x)
-    z[2, 3] = np.std(np.array([10, 6, 4, 2, 0, 0, 0, 0, 0], dtype=np.float32))
+    z[2, 3] = np.std(np.array([10, 6, 4, 2, 0, 0, 0, 0, 0],
+                              dtype=np.float32)[:3])
 
     op = photon_count(np.array([x, x, x], dtype=np.float32),
                       thresh=(5, 13), mean_filter=(10, 30), nsum=3)
