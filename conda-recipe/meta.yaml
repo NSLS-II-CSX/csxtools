@@ -36,9 +36,5 @@ test:
     - csxtools.ext.phocount
 
 about:
-  home: https://github.com/NSLS-II/channelarchiver
-  license: MIT
-
-# See
-# http://docs.continuum.io/conda/build.html for
-# more information about meta.yaml
+  home: https://github.com/NSLS-II-CSX/csxtools
+  license: BSD 3-clause
