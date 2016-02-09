@@ -1,6 +1,7 @@
 import numpy as np
 from csxtools.fastccd import correct_images, photon_count
-from numpy.testing import assert_array_max_ulp, assert_array_equal
+from numpy.testing import (assert_array_max_ulp, assert_array_equal,
+                           assert_array_almost_equal)
 
 
 def test_correct_images():
@@ -35,4 +36,4 @@ def test_photon_count():
                       thresh=(5, 13), mean_filter=(10, 30), nsum=3)
 
     assert_array_equal(op[0], np.array([y, y, y]))
-    assert_array_equal(op[1], np.array([z, z, z]))
+    assert_array_almost_equal(op[1], np.array([z, z, z]), decimal=6)
