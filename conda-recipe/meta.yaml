@@ -23,7 +23,7 @@ requirements:
     - tzlocal
     - ipython
     - ipywidgets
-    - metadatastore
+    - databroker
 
 test:
   requires:
