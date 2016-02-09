@@ -30,7 +30,8 @@ install:
   - conda config --add channels bokeh
   - conda config --add channels asmeurer
   - conda update conda
-  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc conda-build
+  - conda install conda-build
+  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc
   # Fix the symbolic ibrary - Why is pandoc so good and so bad!
   - ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
   - pip install coveralls
