@@ -1,0 +1,40 @@
+package:
+  name: csxtools
+  version: {{ environ.get('GIT_DESCRIBE_TAG', 'GIT_STUB') }}.post{{ environ.get('GIT_DESCRIBE_NUMBER','') }}
+
+source:
+  git_url: ../
+
+build:
+  number: 0
+  string: {{ environ.get('GIT_BUILD_STR', '') }}_py{{ py }}
+
+requirements:
+  build:
+    - setuptools
+    - python
+    - numpy
+    - pytest-runner
+
+  run:
+    - python
+    - numpy
+    - matplotlib
+    - tzlocal
+    - ipython
+    - ipywidgets
+    - metadatastore
+
+test:
+  requires:
+    - pytest-runner
+  imports:
+    - csxtools
+    - csxtools.ext
+    - csxtools.ext.fastccd
+    - csxtools.ext.image
+    - csxtools.ext.phocount
+
+about:
+  home: https://github.com/NSLS-II-CSX/csxtools
+  license: BSD 3-clause
