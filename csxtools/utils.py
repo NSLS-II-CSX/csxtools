@@ -74,9 +74,10 @@ def get_fastccd_images(light_header, dark_headers=None,
         bgnd = np.array(dark)
 
     data = _get_images(light_header, tag)
-    data = correct_images(data, bgnd, gain=gain)
+    data = correct_images(data, bgnd, flat=flat, gain=gain)
     data = rotate90(data, 'cw')
     return data
+
 
 def _get_images(header, tag):
     t = ttime.time()
@@ -89,4 +90,3 @@ def _get_images(header, tag):
     images = np.asarray(images, np.uint16)
 
     return images
-
