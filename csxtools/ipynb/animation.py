@@ -8,12 +8,12 @@ import base64
 
 def show_image(image, minmax, fontsize=18, cmap='CMRmap',
                zlabel=r'Intensty [ADU]', figsize=(12, 10)):
-    """Show an Interactive Image Stack in an IPython Notebook
+    """Show an Interactive Image in an IPython Notebook
 
     Parameters
     ----------
     image : array_like
-        Images of shape (y, x) to show.
+        Image of shape (y, x) to show.
     minmax : tuple
         Value for the minimum and maximum of the stack in the form
         ``(min, max)``

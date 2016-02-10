@@ -1,7 +1,6 @@
 import numpy as np
 from ..ext import fastccd
 import time as ttime
-from ..image import rotate90
 
 import logging
 logger = logging.getLogger(__name__)
