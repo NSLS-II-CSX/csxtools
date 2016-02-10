@@ -38,7 +38,7 @@ install:
   - pip install coveralls
   - pip install codecov
   - pip install pytest-pep8
-  - python setup.py install
+  - python setup.py install build_ext -i
 
 script:
   - coverage run --source=csxtools run_tests.py
