@@ -31,12 +31,13 @@ install:
   - conda config --add channels asmeurer
   - conda update conda
   - conda install conda-build
-  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc pytest
+  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc
   - source activate testenv
   # Fix the symbolic ibrary - Why is pandoc so good and so bad!
   - ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
   - pip install python-coveralls
   - pip install codecov
+  - pip install pytest-cov
   - python setup.py install
 
 before_script:
