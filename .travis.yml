@@ -35,19 +35,13 @@ install:
   - source activate testenv
   # Fix the symbolic ibrary - Why is pandoc so good and so bad!
   - ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
-  - pip install python-coveralls
+  - pip install coveralls
   - pip install codecov
-  - pip install pytest-cov
   - pip install pytest-pep8
   - python setup.py install
 
-before_script:
-  - py.test tests/ --cov=csxtools
-
 script:
-  #- coverage run --source=csxtools setup.py test
-  #- py.test --cov=csxtools tests/
-  - py.test tests/ --doctest-modules --pep8 csxtools -v --cov csxtools --cov-report term-missing
+  - coverage run --source=csxtools run_tests.py
   - cd $TRAVIS_BUILD_DIR/doc && make html
   #- conda build $TRAVIS_BUILD_DIR/conda-recipe
 
