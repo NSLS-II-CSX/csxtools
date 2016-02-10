@@ -14,7 +14,7 @@ requirements:
     - setuptools
     - python
     - numpy
-    - pytest-runner
+    - pytest
 
   run:
     - python
@@ -23,11 +23,11 @@ requirements:
     - tzlocal
     - ipython
     - ipywidgets
-    - metadatastore
+    - databroker
 
 test:
   requires:
-    - pytest-runner
+    - pytest
   imports:
     - csxtools
     - csxtools.ext

@@ -32,7 +32,6 @@ setup(
     ext_modules=[fastccd, image, phocount],
     tests_require=['pytest'],
     install_requires=['numpy'],  # essential deps only
-    setup_requires=['pytest-runner'],
     url='http://github.com/NSLS-II_CSX/csxtools',
     keywords='Xray Analysis',
     license='BSD'
