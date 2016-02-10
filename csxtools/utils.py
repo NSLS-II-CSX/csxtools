@@ -44,10 +44,10 @@ def get_fastccd_images(light_header, dark_headers=None,
         Data tag used to retrieve images. Used in the call to
         ``databroker.get_images()``
 
-    Returns
-    -------
-    np.array
-        Stack of corrected images
+    Yields
+    ------
+    image : array_like
+        This is the corrected detector array
 
     """
 
@@ -74,19 +74,15 @@ def get_fastccd_images(light_header, dark_headers=None,
         bgnd = np.array(dark)
 
     data = _get_images(light_header, tag)
-    data = correct_images(data, bgnd, flat=flat, gain=gain)
-    data = rotate90(data, 'cw')
-    return data
+    for datum in data:
+        yield rotate90(correct_images(datum, bgnd, flat=flat, gain=gain), 'cw')
 
 
 def _get_images(header, tag):
     t = ttime.time()
-    images = get_images(header, tag)[0]
+    images = get_images(header, tag)
     t = ttime.time() - t
     logger.info("Took {:.3}s to read data using get_images".format(t))
 
-    # Convert to uint16
-
-    images = np.asarray(images, np.uint16)
-
-    return images
+    for im in images:
+        yield np.asarray(im, dtype=np.uint16)
