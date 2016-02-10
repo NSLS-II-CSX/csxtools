@@ -41,7 +41,7 @@ install:
 
 script:
   #- coverage run --source=csxtools setup.py test
-  py.test
+  - py.test
   - cd $TRAVIS_BUILD_DIR/doc && make html
   #- conda build $TRAVIS_BUILD_DIR/conda-recipe
 
