@@ -56,8 +56,8 @@ def get_fastccd_images(light_header, dark_headers=None,
         logger.warning("Processing without dark images")
     else:
         if dark_headers[0] is None:
-            raise NotImplemented("Use of header metadata to find dark images is"
-                                 "not implemented yet.")
+            raise NotImplemented("Use of header metadata to find dark images"
+                                 "is not implemented yet.")
 
         # Read the images for the dark headers
 

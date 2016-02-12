@@ -41,6 +41,7 @@ install:
   - python setup.py install build_ext -i
 
 script:
+  - py.test --pep8 -m pep8
   - coverage run --source=csxtools run_tests.py
   - cd $TRAVIS_BUILD_DIR/doc && make html
   #- conda build $TRAVIS_BUILD_DIR/conda-recipe
