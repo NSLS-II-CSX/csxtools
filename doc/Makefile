@@ -5,13 +5,13 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = build
+BUILDDIR      = _build
 
 # For auto gh-pages
-GH_PAGES_SOURCES = doc/Makefile doc/source 
 GH_PAGES_DIR := $(shell mktemp -d)
-GH_PAGES_URL = https://github.com/NSLS-II-CSX/csxtools.git
-TOP := $(dir $(lastword $(MAKEFILE_LIST)))
+
+# For Notebooks
+NOTEBOOKS = $(wildcard notebooks/*.ipynb)
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -21,11 +21,13 @@ endif
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
-I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext notebooks gh-pages examples all
+
+all: examples html gh-pages
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -53,11 +55,14 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  coverage   to run coverage check of the documentation (if enabled)"
+	@echo "  gh-pages   to upload doccumentationto github pages"
+	@echo "  examples   to make examples from ipynb notebooks"
 
 clean:
 	rm -rf $(BUILDDIR)/*
+	$(MAKE) -C examples clean
 
-html:
+html: examples
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -198,12 +203,15 @@ pseudoxml:
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
 gh-pages: html
-	git clone $(GH_PAGES_URL) $(GH_PAGES_DIR)
-	cd $(GH_PAGES_DIR) && git checkout gh-pages
+	git clone `git config --get remote.origin.url` $(GH_PAGES_DIR)
+	cd $(GH_PAGES_DIR) && (git checkout gh-pages || git checkout --orphan gh-pages)
 	cd $(GH_PAGES_DIR) && git rm -rf . 
 	cd $(GH_PAGES_DIR) && touch .nojekyll
-	cp -rv build/html/* $(GH_PAGES_DIR)
+	cp -rv _build/html/* $(GH_PAGES_DIR)
 	cd $(GH_PAGES_DIR) && git add -A  && \
 		git commit -m "Generated gh-pages `git log master -1 --pretty=short --abbrev-commit`" && \
 		git push origin gh-pages 
 	rm -rf $(GH_PAGES_DIR)
+
+examples:
+	$(MAKE) -C examples

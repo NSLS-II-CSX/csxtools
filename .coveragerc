@@ -1,0 +1,11 @@
+[run]
+source=csxtools
+
+[report]
+omit =
+    */python?.?/*
+    *test*
+    *__init__*
+    # ignore _version.py and versioneer.py
+    .*version.*
+    *_version.py
