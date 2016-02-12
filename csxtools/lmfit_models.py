@@ -3,13 +3,49 @@ from lmfit import Model
 from lmfit.models import index_of, fwhm_expr, _validate_1d, update_param_vals
 
 
-def fwhm_expr_2D(model, parameter='sigma'):
+def _fwhm_expr_2D(model, parameter='sigma'):
     "return constraint expression for fwhm"
     return "%.7f*%s%s" % (model.fwhm_factor, model.prefix, parameter)
 
 
-def guess_from_peak(model, y, x, negative, ampscale=1.0, sigscale=1.0, area=True):
-    "estimate amp, cen, sigma for a peak, create params"
+def guess_from_peak(model, y, x, negative, ampscale=1.0, sigscale=1.0, amp_area=True):
+    """Estimate starting paramters 2D Peak fits
+
+    The parameters are:
+    - Amplitude (can be area or peak, see paramter:amp_area
+    - Center
+    - Sigma
+
+    Parameters
+    ----------
+    model : instance of lmfit model class
+        Must be a model of a 2D function with has parameters specified above
+
+    y : 1D np.array
+        y-data to which the model is fitted
+
+    x : 1D np.array
+        x-data to which the model is fitted
+
+    negative: boolean
+        Specify if the peak is an inverted peak
+
+    ampscale: float
+        Scale the amplitude estimated by this factor
+
+    sigscale: float
+        Scale the widths estimated by this factor
+
+    amp_area: boolean
+        Specify if the multiplicative coefficient of the function is amplitude or area
+
+    Returns
+    -------
+
+    params object (see lmfit Model documentation for more details)
+
+    """
+
     if x is None:
         return 1.0, 0.0, 1.0
     maxy, miny = max(y), min(y)
@@ -30,7 +66,7 @@ def guess_from_peak(model, y, x, negative, ampscale=1.0, sigscale=1.0, area=True
         sig = (x[halfmax_vals[-1]] - x[halfmax_vals[0]])/2.0
         cen = x[halfmax_vals].mean()
     amp = amp*ampscale
-    if area:
+    if amp_area:
         amp *= sig*2.0
     sig = sig*sigscale
 
@@ -40,7 +76,45 @@ def guess_from_peak(model, y, x, negative, ampscale=1.0, sigscale=1.0, area=True
 
 
 def guess_from_peak_2D(model, y, x, negative, ampscale=1.0, sigscale=1.0, amp_area=True):
-    "estimate amp, cen_x, cen_y, sigma_x, sigma_y for a 2D peak, create params"
+    """Estimate starting paramters 2D Peak fits
+
+    The parameters are:
+    - Amplitude (can be area or peak, see paramter:amp_area
+    - X Center
+    - Y Center
+    - X Sigma
+    - Y Sigma
+
+
+    Parameters
+    ----------
+    model : instance of lmfit model class
+        Must be a model of a 2D function with has parameters specified above
+
+    y : y-data to which the model is fitted
+        Must be 1D flattened array
+
+    x : 2D np.array (or 2 element list of 1D np.array)
+        x-data - must be a 2D array, each of which has the same dimension as y
+
+    negative: boolean
+        Specify if the peak is an inverted peak
+
+    ampscale: np.float
+        Scale the amplitude estimated by this factor
+
+    sigscale: np.float
+        Scale the widths estimated by this factor
+
+    amp_area: boolean
+        Specify if the multiplicative coefficient of the 2D function is amplitude or area
+
+    Returns
+    -------
+
+    params object (see lmfit Model documentation for more details)
+
+    """
     if x is None:
         return 1.0, 0.0, 0.0, 1.0, 1.0
     x0 = x[0]
@@ -91,6 +165,27 @@ def lorentzian_squared(x, amplitude=1.0, center=0.0, sigma=1.0):
     The HWHM is related to the parameter :math:`\Gamma` by the relation:
       :math:`\kappa = \sqrt{\sqrt{2} - 1}\sigma`
 
+    Parameters
+    ----------
+    x : 1D np.array
+        input x data for which function value is calculated
+
+    amplitude : np.float
+        amplitude of the lorentzian-squared function
+
+    center: np.float
+        center of the lorentzian-squared function
+
+    sigma : np.float
+        sigma of the lorentzian-squared function
+
+    Returns
+    -------
+
+    y : 1D np.array
+        Returns the calculated value of the lorentzian-squared function
+        for the given parameters
+
     """
     return amplitude * (1 / (1 + ((x - center) / sigma)**2) )**2
 
@@ -99,6 +194,28 @@ def plane(x, intercept, slope_x, slope_y):
     """2D plane
     Function:
        :math:`f(x) = p_0 + p_1x + p_2y`
+
+    Parameters
+    ----------
+    x : 2D np.array (or 2 element list of 1D np.array)
+        x-data - must be a 2D array, each of which has the same dimension as y
+        for which function value is calculated
+
+    intercept : np.float
+        intercept of the plane
+
+    slope_x: np.float
+        slope of plane along 1st dimension
+
+    slope_y: np.float
+        slope of plane along 2nd dimension
+
+    Returns
+    -------
+
+    y : 2D np.array
+        Returns the calculated value of the 2D plane for the given parameters
+
     """
     return intercept + slope_x * x[0] + slope_y * x[1]
 
@@ -109,6 +226,35 @@ def lor2_2D(x, amplitude=1.0, center_x=0.0, center_y=0.0, sigma_x=1.0, sigma_y=1
 
     The HWHM is related to the parameter :math:`\Gamma` by the relation:
       :math:`\kappa = \sqrt{\sqrt{2} - 1}\Gamma`
+
+    Parameters
+    ----------
+    x : 2D np.array (or 2 element list of 1D np.array)
+        x-data - must be a 2D array, each of which has the same dimension as y
+        for which function value is calculated
+
+    amplitude : np.float
+        amplitude of the 2D lorentzian-squared function
+
+    center_x: np.float
+        center of the lorentzian-squared function along the 1st dimension
+
+    center_y: np.float
+        center of the lorentzian-squared function along the 2nd dimension
+
+    sigma_x : np.float
+        sigma of the lorentzian-squared function along the 1st dimension
+
+    sigma_y : np.float
+        sigma of the lorentzian-squared function along the 2nd dimension
+
+    Returns
+    -------
+
+    y : 2D np.array
+        Returns the calculated value of the 2D lorentzian squared function
+        for the given parameters
+
     """
     return amplitude * ( 1 / (1 + ((x[0] - center_x) / sigma_x)**2 +
                                   ((x[1] - center_y) / sigma_y)**2) )**2
@@ -118,6 +264,36 @@ def gauss_2D(x, amplitude=1.0, center_x=0.0, center_y=0.0, sigma_x=1.0, sigma_y=
     """2D Gaussian defined by amplitide
     out = amplitude * ( exp( -1.0 * (x[0] - center_x)**2 / (2 * sigma_x**2) +
                              -1.0 * (x[1] - center_y)**2 / (2 * sigma_y**2) ) )
+
+    Parameters
+    ----------
+    x : 2D np.array (or 2 element list of 1D np.array)
+        x-data - must be a 2D array, each of which has the same dimension as y
+        for which function value is calculated
+
+    amplitude : np.float
+        amplitude of the 2D gaussian function
+
+    center_x: np.float
+        center of the 2D gaussian function along the 1st dimension
+
+    center_y: np.float
+        center of the 2D gaussian function along the 2nd dimension
+
+    sigma_x : np.float
+        sigma of the 2D gaussian function along the 1st dimension
+
+    sigma_y : np.float
+        sigma of the 2D gaussian function along the 2nd dimension
+
+    Returns
+    -------
+
+    y : 2D np.array
+        Returns the calculated value of the 2D gaussian function
+        for the given parameters
+
+
     """
     out = amplitude * ( np.exp( -1.0 * (x[0] - center_x)**2 / (2 * sigma_x**2) +
                                 -1.0 * (x[1] - center_y)**2 / (2 * sigma_y**2) ) )
@@ -148,7 +324,7 @@ class LorentzianSquaredModel(Model):
         self.set_param_hint('fwhm', expr=fwhm_expr(self))
 
     def guess(self, data, x=None, negative=False, **kwargs):
-        pars = guess_from_peak(self, data, x, negative, ampscale=0.5)
+        pars = guess_from_peak(self, data, x, negative, ampscale=0.5, amp_area=False)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -175,10 +351,8 @@ class LorentzianSquared2DModel(Model):
         self.set_param_hint('sigma_x', min=0)
         self.set_param_hint('sigma_y', min=0)
 
-        self.set_param_hint('fwhm_x', expr=fwhm_expr_2D(self, parameter='sigma_x'))
-        self.set_param_hint('fwhm_y', expr=fwhm_expr_2D(self, parameter='sigma_y'))
-        #self.set_param_hint('fwhm_x', expr='self.fwhm_factor*sigma_x')
-        #self.set_param_hint('fwhm_y', expr='self.fwhm_factor*sigma_y')
+        self.set_param_hint('fwhm_x', expr=_fwhm_expr_2D(self, parameter='sigma_x'))
+        self.set_param_hint('fwhm_y', expr=_fwhm_expr_2D(self, parameter='sigma_y'))
 
     def guess(self, data, x=None, negative=False, **kwargs):
         pars = guess_from_peak_2D(self, data, x, negative, ampscale=1.25, amp_area=False)
@@ -192,8 +366,8 @@ class Gaussian2DModel(Model):
         super(Gaussian2DModel, self).__init__(gauss_2D, *args, **kwargs)
         self.set_param_hint('sigma_x', min=0)
         self.set_param_hint('sigma_y', min=0)
-        self.set_param_hint('fwhm_x', expr=fwhm_expr_2D(self, parameter='sigma_x'))
-        self.set_param_hint('fwhm_y', expr=fwhm_expr_2D(self, parameter='sigma_y'))
+        self.set_param_hint('fwhm_x', expr=_fwhm_expr_2D(self, parameter='sigma_x'))
+        self.set_param_hint('fwhm_y', expr=_fwhm_expr_2D(self, parameter='sigma_y'))
 
     def guess(self, data, x=None, negative=False, **kwargs):
         pars = guess_from_peak_2D(self, data, x, negative, ampscale=1., amp_area=False)
