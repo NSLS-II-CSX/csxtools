@@ -35,7 +35,7 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     """
 
-    logger.info("Correcting image stack of shape {}".format(images.shape))
+    logger.info("Correcting image stack of shape {}".format(images[0].shape))
 
     if dark is None:
         dark = np.zeros(images.shape[-2:], dtype=np.float32)
