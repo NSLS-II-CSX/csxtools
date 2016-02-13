@@ -48,7 +48,6 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
         flat = np.rot90(flat, 1).astype(np.float32)
 
     t = ttime.time()
-    print(images.shape, dark.shape, flat.shape)
     data = fastccd.correct_images(images, dark, flat, gain)
     t = ttime.time() - t
 
