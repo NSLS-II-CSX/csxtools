@@ -17,6 +17,10 @@ CSXTOOLS Doccumentation
 .. image:: https://img.shields.io/github/license/NSLS-II-CSX/csxtools.svg
     :target: https://github.com/NSLS-II-CSX/csxtools
 
+.. image:: https://landscape.io/github/NSLS-II-CSX/csxtools/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/NSLS-II-CSX/csxtools/master
+      :alt: Code Health
+
 Introduction
 ------------
 
