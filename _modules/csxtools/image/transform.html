@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>csxtools.image.transform &mdash; csxtools 0.0.1 documentation</title>
+    <title>csxtools.image.transform &mdash; csxtools 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.0.1',
+        VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="csxtools 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="csxtools 0.1.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -38,21 +38,6 @@
 
   </head>
   <body role="document">
-  
-  <a href="https://github.com/NSLS-II-CSX/csxtools"
-     class="visible-desktop hidden-xs"><img
-    id="gh-banner"
-    style="position: absolute; top: 50px; right: 0; border: 0;"
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-    alt="Fork me on GitHub"></a>
-  <script>
-    // Adjust banner height.
-    $(function () {
-      var navHeight = $(".navbar .container").css("height");
-      $("#gh-banner").css("top", navHeight);
-    });
-  </script>
-
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -65,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="../../../index.html">
           csxtools</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,10 +66,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../image.html">Image Processing Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../fastccd.html">FastCCD Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ipynb.html">IPython Notebook Routines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference for CSX Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Notebooks</a></li>
 </ul>
 </ul>
 </li>
@@ -129,7 +112,7 @@
 <span class="kn">from</span> <span class="nn">..ext</span> <span class="kn">import</span> <span class="n">image</span> <span class="k">as</span> <span class="n">extimage</span>
 
 
-<div class="viewcode-block" id="rotate90"><a class="viewcode-back" href="../../../image.html#csxtools.image.rotate90">[docs]</a><span class="k">def</span> <span class="nf">rotate90</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="s">&#39;ccw&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="rotate90"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.rotate90">[docs]</a><span class="k">def</span> <span class="nf">rotate90</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="s1">&#39;ccw&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Rotate a stack of images by 90 degrees</span>
 
 <span class="sd">    This routine rotates a stack of images by 90. The rotation is performed</span>
@@ -150,12 +133,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">sense</span> <span class="o">==</span> <span class="s">&#39;ccw&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;ccw&#39;</span><span class="p">:</span>
         <span class="n">sense</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">elif</span> <span class="n">sense</span> <span class="o">==</span> <span class="s">&#39;cw&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">sense</span> <span class="o">==</span> <span class="s1">&#39;cw&#39;</span><span class="p">:</span>
         <span class="n">sense</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;sense must be &#39;cw&#39; or &#39;ccw&#39;&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sense must be &#39;cw&#39; or &#39;ccw&#39;&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">extimage</span><span class="o">.</span><span class="n">rotate90</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sense</span><span class="p">)</span></div>
 </pre></div>
@@ -174,8 +157,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2015, Brookhaven Science Associates.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+        &copy; Copyright 2015, Brookhaven Science Associates, Brookhaven National Laboratory.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.<br/>
     </p>
   </div>
 </footer>

@@ -1,0 +1,100 @@
+
+Performance Tests
+=================
+
+.. code:: python
+
+    import numpy as np
+    import timeit
+    from csxtools.image import rotate90
+    from csxtools.fastccd import correct_images
+
+Rotations
+---------
+
+Start by testing the speed of the rotations of the arrays using the fast
+stack. Lets create some big arrays!
+
+.. code:: python
+
+    big_array = np.ones((10000,960,960), dtype=np.float32)
+
+.. code:: python
+
+    t = timeit.timeit('rotate90(big_array, "cw")', globals=globals(), number=10) / 10
+    print('Rotation of {} matrix takes {} seconds'.format(big_array.shape, t))
+
+
+.. parsed-literal::
+
+    Rotation of (10000, 960, 960) matrix takes 12.532802192610689 seconds
+
+
+FastCCD Image Corrections
+-------------------------
+
+Test a stack of fast CCD images
+
+.. code:: python
+
+    big_array = np.ones((10000,960,960), dtype=np.uint16)
+    bgnd = np.zeros((960,960), dtype=np.float32)
+    bgnd = np.array((bgnd,bgnd,bgnd), dtype=np.float32)
+    ff = np.ones((960,960), dtype=np.float32)
+
+.. code:: python
+
+    def adjust_gain_and_subtract_bg(raw_data, bg, ff):
+        G1 = int('0b1100000000000000',2)
+        G2 = int('0b1000000000000000',2)
+        G8 = int('0b0000000000000000',2)
+        M  = int('0b0001111111111111',2)
+     
+        images = ( ((raw_data & M) - bg[0]) * ((raw_data & G1) == G1) * 8 +
+                   ((raw_data & M) - bg[1]) * ((raw_data & G1) == G2) * 4 +
+                   ((raw_data & M) - bg[2]) * ((raw_data & G1) == G8) * 1 )
+        images = images * ff
+        return images
+
+.. code:: python
+
+    t = timeit.timeit('adjust_gain_and_subtract_bg(big_array,bgnd,ff)', globals=globals(), number=1)/1
+    print('Correction of {} matrix takes {} seconds using NUMPY'.format(big_array.shape, t))
+
+
+.. parsed-literal::
+
+    Correction of (10000, 960, 960) matrix takes 300.50499161100015 seconds using NUMPY
+
+
+.. code:: python
+
+    t = timeit.timeit('correct_images(big_array,bgnd,ff)', globals=globals(), number=10)/10
+    print('Correction of {} matrix takes {} seconds using CSXTOOLS'.format(big_array.shape, t))
+
+
+.. parsed-literal::
+
+    Correction of (10000, 960, 960) matrix takes 9.618055118992924 seconds using CSXTOOLS
+
+
+Mean of image stack
+-------------------
+
+Calculate the mean of a stack of images
+
+.. code:: python
+
+    big_array = np.ones((10000,960,960), dtype=np.float32)
+
+.. code:: python
+
+    t = timeit.timeit('np.mean(big_array, axis=0)', globals=globals(), number=10)
+    print('Numpy Mean of {} matrix takes {} seconds'.format(big_array.shape, t/10))
+
+
+.. parsed-literal::
+
+    Numpy Mean of (10000, 960, 960) matrix takes 5.237616855790838 seconds
+
+

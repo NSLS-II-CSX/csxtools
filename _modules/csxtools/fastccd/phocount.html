@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>csxtools.fastccd.phocount &mdash; csxtools 0.0.1 documentation</title>
+    <title>csxtools.fastccd.phocount &mdash; csxtools 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.0.1',
+        VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="csxtools 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="csxtools 0.1.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -38,21 +38,6 @@
 
   </head>
   <body role="document">
-  
-  <a href="https://github.com/NSLS-II-CSX/csxtools"
-     class="visible-desktop hidden-xs"><img
-    id="gh-banner"
-    style="position: absolute; top: 50px; right: 0; border: 0;"
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-    alt="Fork me on GitHub"></a>
-  <script>
-    // Adjust banner height.
-    $(function () {
-      var navHeight = $(".navbar .container").css("height");
-      $("#gh-banner").css("top", navHeight);
-    });
-  </script>
-
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -65,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="../../../index.html">
           csxtools</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,10 +66,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../image.html">Image Processing Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../fastccd.html">FastCCD Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../ipynb.html">IPython Notebook Routines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference for CSX Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Notebooks</a></li>
 </ul>
 </ul>
 </li>
@@ -129,13 +112,39 @@
 <span class="kn">from</span> <span class="nn">..ext</span> <span class="kn">import</span> <span class="n">phocount</span> <span class="k">as</span> <span class="n">ph</span>
 
 
-<div class="viewcode-block" id="phocount"><a class="viewcode-back" href="../../../fastccd.html#csxtools.fastccd.phocount">[docs]</a><span class="k">def</span> <span class="nf">phocount</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">nsum</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="photon_count"><a class="viewcode-back" href="../../../api/fastccd.html#csxtools.fastccd.photon_count">[docs]</a><span class="k">def</span> <span class="nf">photon_count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Do single photon counting on CCD image</span>
 
 <span class="sd">    This routine does single photon counting by cluster analysis. The image</span>
-<span class="sd">    is searched for bright pixels within a threshold</span>
+<span class="sd">    is searched for bright pixels within a threshold and then the energy</span>
+<span class="sd">    deposited by each photon is calculated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array_like</span>
+<span class="sd">        Stack of CCD images. This array should be of shape (N, y, x) where</span>
+<span class="sd">        N is the number of images</span>
+<span class="sd">    thresh : tuple</span>
+<span class="sd">        Threshold to use for identifying photons. This should be a tuple of</span>
+<span class="sd">        (min, max)</span>
+<span class="sd">    mean_filter : tuple</span>
+<span class="sd">        Filter only the values of the mean which are within the limits of</span>
+<span class="sd">        the tuple of the form (min, max)</span>
+<span class="sd">    nsum : int</span>
+<span class="sd">        The number of pixels to use to calculate the energy deposited by the</span>
+<span class="sd">        photon. This should be 0 &lt; nsum &lt;= 9.</span>
+<span class="sd">    nan : bool</span>
+<span class="sd">        If true, replace empty pixels with ``np.nan``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Two arrays are returned. The first is an array of size (N, y, x)</span>
+<span class="sd">        where the elements are the integrated energy calculated for each</span>
+<span class="sd">        photon hit. The second array is the standard deviation for the</span>
+<span class="sd">        integrated intensity on each photon hit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">nsum</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">ph</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="p">,</span> <span class="n">nan</span><span class="p">)</span></div>
 </pre></div>
 
     </div>
@@ -152,8 +161,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2015, Brookhaven Science Associates.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+        &copy; Copyright 2015, Brookhaven Science Associates, Brookhaven National Laboratory.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.<br/>
     </p>
   </div>
 </footer>

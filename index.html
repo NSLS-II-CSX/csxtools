@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CSXTOOLS Doccumentation &mdash; csxtools 0.0.1 documentation</title>
+    <title>CSXTOOLS Doccumentation &mdash; csxtools 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.1',
+        VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,8 @@
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="csxtools 0.0.1 documentation" href="#" />
-    <link rel="next" title="Image Processing Routines" href="image.html" />
+    <link rel="top" title="csxtools 0.1.0 documentation" href="#" />
+    <link rel="next" title="API Reference for CSX Tools" href="api/index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -38,21 +38,6 @@
 
   </head>
   <body role="document">
-  
-  <a href="https://github.com/NSLS-II-CSX/csxtools"
-     class="visible-desktop hidden-xs"><img
-    id="gh-banner"
-    style="position: absolute; top: 50px; right: 0; border: 0;"
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-    alt="Fork me on GitHub"></a>
-  <script>
-    // Adjust banner height.
-    $(function () {
-      var navHeight = $(".navbar .container").css("height");
-      $("#gh-banner").css("top", navHeight);
-    });
-  </script>
-
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -65,7 +50,7 @@
         </button>
         <a class="navbar-brand" href="#">
           csxtools</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,10 +66,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="image.html">Image Processing Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fastccd.html">FastCCD Routines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ipynb.html">IPython Notebook Routines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference for CSX Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Example Notebooks</a></li>
 </ul>
 </ul>
 </li>
@@ -134,36 +117,28 @@
       
   <div class="section" id="csxtools-doccumentation">
 <h1>CSXTOOLS Doccumentation<a class="headerlink" href="#csxtools-doccumentation" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://travis-ci.org/NSLS-II-CSX/csxtools"><img alt="https://img.shields.io/travis/NSLS-II-CSX/csxtools.svg?branch=master" src="https://img.shields.io/travis/NSLS-II-CSX/csxtools.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://coveralls.io/github/NSLS-II-CSX/csxtools?branch=master"><img src="https://img.shields.io/coveralls/NSLS-II-CSX/csxtools.svg" /></a>
+<a class="reference external image-reference" href="https://csxnsls-ii-slackbadge.herokuapp.com/"><img src="https://csxnsls-ii-slackbadge.herokuapp.com/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/NSLS-II-CSX/csxtools"><img src="https://img.shields.io/github/tag/NSLS-II-CSX/csxtools.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/NSLS-II-CSX/csxtools"><img src="https://img.shields.io/github/license/NSLS-II-CSX/csxtools.svg" /></a>
+<a class="reference external image-reference" href="https://landscape.io/github/NSLS-II-CSX/csxtools/master:alt:CodeHealth"><img alt="https://landscape.io/github/NSLS-II-CSX/csxtools/master/landscape.svg?style=flat" src="https://landscape.io/github/NSLS-II-CSX/csxtools/master/landscape.svg?style=flat" /></a>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Python library for tools to be used at the Coherent Soft X-ray scattering
-beamline at NSLS-II, (CSX, 23-ID)</p>
-<a class="reference external image-reference" href="https://travis-ci.org/NSLS-II-CSX/csxtools"><img alt="https://img.shields.io/travis/NSLS-II-CSX/csxtools.svg?branch=master" src="https://img.shields.io/travis/NSLS-II-CSX/csxtools.svg?branch=master" /></a>
-<a class="reference external image-reference" href="https://coveralls.io/github/NSLS-II-CSX/csxtools?branch=master"><img src="https://img.shields.io/coveralls/NSLS-II-CSX/csxtools.svg" /></a>
-<a class="reference external image-reference" href="https://csxnsls-ii.slack.com/messages/csxtools"><img src="https://csxnsls-ii-slackbadge.herokuapp.com/badge.svg" /></a>
-<a class="reference external image-reference" href="https://github.com/NSLS-II-CSX/csxtools"><img src="https://img.shields.io/github/tag/NSLS-II-CSX/csxtools.svg" /></a>
-<a class="reference external image-reference" href="https://github.com/NSLS-II-CSX/csxtools"><img src="https://img.shields.io/github/license/NSLS-II-CSX/csxtools.svg" /></a>
-<p>To chat to the CSX team please use the <code class="docutils literal"><span class="pre">#support</span></code> channel on <a class="reference external" href="https://slack.com">slack</a>.</p>
-<script async defer src="https://csxnsls-ii-slackbadge.herokuapp.com/slackin.js"> </script><a class="reference external image-reference" href="https://github.com/NSLS-II-CSX/csxtools"><img alt="https://img.shields.io/github/watchers/NSLS-II-CSX/csxtools.svg?style=social&amp;label=Watch" src="https://img.shields.io/github/watchers/NSLS-II-CSX/csxtools.svg?style=social&amp;label=Watch" /></a>
+beamline at NSLS-II, (CSX, 23-ID). For support please join the <a class="reference external" href="https://csxnsls-ii.slack.com/messages/support">support</a> channel on <a class="reference external" href="https://slack.com">slack</a>.
+To join slack, please click <a class="reference external" href="https://csxnsls-ii-slackbadge.herokuapp.com/">here</a>.</p>
 </div>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="image.html">Image Processing Routines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="image.html#module-csxtools.image">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference for CSX Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#contents">Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="fastccd.html">FastCCD Routines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="fastccd.html#module-csxtools.fastccd">API Reference</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#api-reference">API Reference</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ipynb.html">IPython Notebook Routines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ipynb.html#module-csxtools.ipynb">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Example Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html#contents">Contents</a></li>
 </ul>
 </li>
 </ul>
@@ -190,8 +165,8 @@ beamline at NSLS-II, (CSX, 23-ID)</p>
       
     </p>
     <p>
-        &copy; Copyright 2015, Brookhaven Science Associates.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+        &copy; Copyright 2015, Brookhaven Science Associates, Brookhaven National Laboratory.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.<br/>
     </p>
   </div>
 </footer>
