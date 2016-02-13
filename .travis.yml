@@ -1,63 +1,53 @@
 language: python
-
 sudo: false
-
 python:
-  - '3.5'
-
+- '3.5'
 before_install:
-  # Setup git config for using tokens
-  - git config --global user.email "donotreply@travis.ci"
-  - git config --global user.name "travisci"
-  - git config --global credential.helper store --file=$HOME/.git-credentials
-  - echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
-  # Install miniconda
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - chmod +x miniconda.sh
-  - "./miniconda.sh -b -p /home/travis/mc"
-  - export PATH=/home/travis/mc/bin:$PATH
-  # Set up config for MDS and FS.
-  - mkdir -p /home/travis/.config/metadatastore
-  - 'echo "port: 27017" > /home/travis/.config/metadatastore/connection.yml'
-  - mkdir -p /home/travis/.config/filestore
-  - 'echo "port: 27017" > /home/travis/.config/filestore/connection.yml'
-
+- git config --global user.email "donotreply@travis.ci"
+- git config --global user.name "travisci"
+- git config --global credential.helper store --file=$HOME/.git-credentials
+- echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
+- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+- chmod +x miniconda.sh
+- "./miniconda.sh -b -p /home/travis/mc"
+- export PATH=/home/travis/mc/bin:$PATH
+- mkdir -p /home/travis/.config/metadatastore
+- 'echo "port: 27017" > /home/travis/.config/metadatastore/connection.yml'
+- mkdir -p /home/travis/.config/filestore
+- 'echo "port: 27017" > /home/travis/.config/filestore/connection.yml'
 install:
-  - export GIT_FULL_HASH=`git rev-parse HEAD`
-  - conda config --set always_yes true
-  - conda config --set show_channel_urls true
-  - conda config --add channels lightsource2
-  - conda config --add channels bokeh
-  - conda config --add channels asmeurer
-  - conda update conda
-  - conda install conda-build
-  - conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc
-  - source activate testenv
-  # Fix the symbolic ibrary - Why is pandoc so good and so bad!
-  - ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
-  - pip install coveralls
-  - pip install codecov
-  - pip install pytest-pep8
-  - python setup.py install build_ext -i
-
+- export GIT_FULL_HASH=`git rev-parse HEAD`
+- conda config --set always_yes true
+- conda config --set show_channel_urls true
+- conda config --add channels lightsource2
+- conda config --add channels bokeh
+- conda config --add channels asmeurer
+- conda update conda
+- conda install conda-build
+- conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas
+  h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons
+  pymongo=2.9 pims tifffile databroker sphinx-bootstrap-theme pandoc
+- source activate testenv
+- ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
+- pip install coveralls
+- pip install codecov
+- pip install pytest-pep8
+- python setup.py install build_ext -i
 script:
-  - py.test --pep8 -m pep8
-  - coverage run --source=csxtools run_tests.py
-  - cd $TRAVIS_BUILD_DIR/doc && make html
-  #- conda build $TRAVIS_BUILD_DIR/conda-recipe
-
+- py.test --pep8 -m pep8
+- coverage run --source=csxtools run_tests.py
+- cd $TRAVIS_BUILD_DIR/doc && make html
 after_success:
-  - cd $TRAVIS_BUILD_DIR && coveralls
-  - cd $TRAVIS_BUILD_DIR && codecov
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
-      cd $TRAVIS_BUILD_DIR/doc && make gh-pages;
-    fi;
+- cd $TRAVIS_BUILD_DIR && coveralls
+- cd $TRAVIS_BUILD_DIR && codecov
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
+  cd $TRAVIS_BUILD_DIR/doc && make gh-pages; fi;
 env:
   global:
-   - GH_USER=stuwilkins
-   - MDS_HOST=localhost
-   - MDS_DATABASE=test
-   - MDS_TIMEZONE=US/Eastern
-   - FS_HOST=localhost
-   - FS_DATABASE=test
-   - secure: jdgtHDA4Xo1L/WDBoA55xOaRi9TRYa2xX+QNPiYnyTQDADkJOD2noF/UlAHGs3rpnMOKSzg+TIl4XHgZ7vUJhcpq0BA+jdVgCg/Lop9Yev/BQSdFSv1f3LP1oZ5VDxl3YerG9wSb2ITiRznNCFnCxZiyBbbxdlZSwktsh2dCr6wks3LFRUME61eJhyRBpNfYL9tStTQUwfaRB8n/vV6vH6SKEhfyBdZf7pSHd3+YMteaEUdSAqQul6lTfZlvkPTUSkmR8NF51iKfqGkHp0RSgWam0pk0OSYQphSXB5aKqn5fJ/aMyh3iBrdYn9/hmx1VzNqjRvDBYyv1juVfcQuPcwir79wPuJO6DYi0dMyIuY/ObwzkFzjHK0BcVguSVeeSwUqd8sgZPiQ4xzAaGLNIhaf28YRdvnqtEMejRZFHLjOblpPo9drnemaS60n3ziKHEuYthB9JDKvZQQSAHPyIZugiNlgdLxcfT/RiJsQUIFEEqGlKeT2vP4oCwKtm6FWGrrlWVaX1dRGYecLSQyj8OLal1bBOjlvdnOZLUZFJkKbD4g2nq4EMZjV0GTMNtuVcDhAOLd82Ex0GB/8iyCWjJdfsEYFIzMe/s3uMopI5qI/0GT5GTfSqs/9kGov4Va48doyeFEht7ZbAkGBka8rbBjcyCjU1gyuy7x+QM5Sck8Y=
+  - GH_USER=stuwilkins
+  - MDS_HOST=localhost
+  - MDS_DATABASE=test
+  - MDS_TIMEZONE=US/Eastern
+  - FS_HOST=localhost
+  - FS_DATABASE=test
+  - secure: ErHXRCWEZZ4wusZ9Bs3PUOrbjjZaCxyNJmU4XlUjBaiHUtn2qiwWCo38wZOsibD6u1FhHCbv3d/DzAa51dkxSZqRE2Xsei23TY/Fk0o+/QNe6zrYXQuOjh4643R5/2xx1aAPBYUbthMRNKZqIFcCHPqWI5kkt2ZlXXWyYbI8jFkfTQKI19UJsajdr2rKNORVlVN6UVSji416PpaJhQl17HuWX/vGnrUj9gsKGQE27PrtZRyEOFOtNaNUxwxqGI+pLW7M/tyWjnc9VB/gqsd/JxhBNpHkRdY78OX+x0wSAVooW29r5cT3Kmt+phDj8HU1r6VxfOaDSE1SWSS7SgwgRO6RH+eE7oncVe3IPZ/xYaho/7XgJghf3/DMX38a80H+g2k0Tc9PIv2DFsFDtmiiYHxUFvKtVorHGcLAMay0tsks5fehHDyjC7cMbSrTjagZBHTp6oXtcvWn9/XkW8fvUSrqfhkjgMOjsioZr78Lfd1Qo/QAYOuzcwcmJA+al7eV+ynUvYod0BcKlcXj/THvtBHfVbS/C2+DKibfTBghTrCoOf5DDIOeUuyDYg0dYAnDZlCTBJ6h9xnxUAZDVeCNSERguPKNxvQ+yA6I1qRuT9BYcGV0awGANDOa90G0dztABH6GhLWsM3JGuW0ruS0nayVI3r50twO7fEfzc4pG/64=
