@@ -56,8 +56,8 @@ def get_fastccd_images(light_header, dark_headers=None,
         logger.warning("Processing without dark images")
     else:
         if dark_headers[0] is None:
-            raise NotImplemented("Use of header metadata to find dark images"
-                                 "is not implemented yet.")
+            raise NotImplementedError("Use of header metadata to find dark"
+                                      " images is not implemented yet.")
 
         # Read the images for the dark headers
         t = ttime.time()
@@ -71,11 +71,11 @@ def get_fastccd_images(light_header, dark_headers=None,
                 b = np.nanmean(b, axis=0)
             else:
                 logger.warning("Missing dark image"
-                               " for gain setting {}".format(i))
+                               " for gain setting %d", i)
             dark.append(b)
 
         bgnd = np.array(dark)
-        logger.info("Computed dark images in {:.3}s".format(ttime.time() - t))
+        logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
     data = _get_images(light_header, tag)
     return rotate90(correct_images(data, bgnd, flat=flat, gain=gain), 'cw')
@@ -85,6 +85,6 @@ def _get_images(header, tag):
     t = ttime.time()
     images = get_images(header, tag)
     t = ttime.time() - t
-    logger.info("Took {:.3}s to read data using get_images".format(t))
+    logger.info("Took %.3f seconds to read data using get_images", t)
 
     return np.array([np.asarray(im, dtype=np.uint16) for im in images])
