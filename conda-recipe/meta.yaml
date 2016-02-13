@@ -7,18 +7,18 @@ source:
 
 build:
   number: 0
-  string: {{ environ.get('GIT_BUILD_STR', '') }}_py{{ py }}
+  string: {{ environ.get('GIT_BUILD_STR', '') }}_np{{ np }}py{{ py }}
 
 requirements:
   build:
     - setuptools
     - python
-    - numpy
+    - numpy x.x
     - pytest
 
   run:
     - python
-    - numpy
+    - numpy x.x
     - matplotlib
     - tzlocal
     - ipython
