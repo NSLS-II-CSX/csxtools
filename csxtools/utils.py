@@ -44,8 +44,8 @@ def get_fastccd_images(light_header, dark_headers=None,
         Data tag used to retrieve images. Used in the call to
         ``databroker.get_images()``
 
-    Yields
-    ------
+    Returns
+    -------
     image : array_like
         This is the corrected detector array
 
