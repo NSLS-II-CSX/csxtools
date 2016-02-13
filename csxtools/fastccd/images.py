@@ -35,7 +35,7 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     """
 
-    logger.info("Correcting image stack of shape {}".format(images[0].shape))
+    logger.info("Correcting image stack of shape %s", images.shape)
 
     if dark is None:
         dark = np.zeros(images.shape[-2:], dtype=np.float32)
@@ -51,6 +51,6 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     data = fastccd.correct_images(images, dark, flat, gain)
     t = ttime.time() - t
 
-    logger.info("Corrected image stack in {:.3}s".format(t))
+    logger.info("Corrected image stack in %.3f seconds", t)
 
     return data
