@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag='fccd_image_lightfield'):
+                       flat=None, gain=(1, 4, 8), tag='fccd_image'):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -60,22 +60,25 @@ def get_fastccd_images(light_header, dark_headers=None,
                                  "is not implemented yet.")
 
         # Read the images for the dark headers
+        t = ttime.time()
 
         dark = []
         for i, d in enumerate(dark_headers):
             if d is not None:
                 b = _get_images(d, tag)
-                b = np.nanmean(correct_images(b, gain=(1, 1, 1)), axis=0)
+                b = correct_images(b, gain=(1, 1, 1))
+                b = b.reshape((-1, b.shape[-2], b.shape[-1]))
+                b = np.nanmean(b, axis=0)
             else:
                 logger.warning("Missing dark image"
                                " for gain setting {}".format(i))
             dark.append(b)
 
         bgnd = np.array(dark)
+        logger.info("Computed dark images in {:.3}s".format(ttime.time() - t))
 
     data = _get_images(light_header, tag)
-    for datum in data:
-        yield rotate90(correct_images(datum, bgnd, flat=flat, gain=gain), 'cw')
+    return rotate90(correct_images(data, bgnd, flat=flat, gain=gain), 'cw')
 
 
 def _get_images(header, tag):
@@ -84,5 +87,4 @@ def _get_images(header, tag):
     t = ttime.time() - t
     logger.info("Took {:.3}s to read data using get_images".format(t))
 
-    for im in images:
-        yield np.asarray(im, dtype=np.uint16)
+    return np.array([np.asarray(im, dtype=np.uint16) for im in images])
