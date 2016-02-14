@@ -37,7 +37,7 @@ script:
 - py.test --pep8 -m pep8
 - coverage run --source=csxtools run_tests.py
 - cd $TRAVIS_BUILD_DIR/doc && make html
-- cd $TRAVIS_BUILD_DIR && conda build conda-recipe
+#- cd $TRAVIS_BUILD_DIR && conda build conda-recipe
 after_success:
 - cd $TRAVIS_BUILD_DIR && coveralls
 - cd $TRAVIS_BUILD_DIR && codecov
