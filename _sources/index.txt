@@ -24,9 +24,8 @@ CSXTOOLS Doccumentation
 Introduction
 ------------
 
-Python library for tools to be used at the Coherent Soft X-ray scattering 
+``csxtools`` is a Python library for tools to be used at the Coherent Soft X-ray scattering 
 beamline at NSLS-II, (CSX, 23-ID). For support please join the support_ channel on slack_.
-To join slack, please click here_.
 
 Contents
 --------
