@@ -37,6 +37,7 @@ script:
 - py.test --pep8 -m pep8
 - coverage run --source=csxtools run_tests.py
 - cd $TRAVIS_BUILD_DIR/doc && make html
+- conda build conda-recipe
 after_success:
 - cd $TRAVIS_BUILD_DIR && coveralls
 - cd $TRAVIS_BUILD_DIR && codecov
@@ -50,4 +51,3 @@ env:
   - MDS_TIMEZONE=US/Eastern
   - FS_HOST=localhost
   - FS_DATABASE=test
-  - secure: RnXoaYeEEu4oa5m+c/PYrR9KL71+tNHxoZLBq2iCIw5YJbYxpqS2qTIT0A8fTlZudgYYUMTWaBtPcyyafC2mqIdADzcOr5rU1S726uQfHWCkZG2CRbRvWriHDvck99MIQ36ePbSpZ3T7/HoiqHbpp80XrUDMii2cu8ovZ1icXWq8g8ZrThE4QiUmW/fNzY5n1bkshRYyed0n2qT1dtYSyI19VNI/CQ2G2KSjd1145TfOe04LSHqUHuCO0jkrBHVcvclhEF4FpJYGVq5adf8XuYOVkR+vEbIJyrhBJD9bfnPecq91gSyteLD5UR4XTZd45FkFfjz4Fe1cry4jF3tEZlXFhzQ2sQlSzvza8VtBqR+wqeh4tbFOiLOAdfUWa/GzjF7N11gYBeieSvwrXxT8anYYFJ31Q54yezEBaaGKJAUogRezoh9KyksZZ0ui3iUQ2LU+MPuWj4WsEhzWH9NhWsbQ8l17UAoa7DabkkHVFGGaaziRhnuo9NE/iX3CHOy3tOKvuaekLxI8JbArUPxQaFJ8nlofOKc33tULDwrCAP5kW1WQhcSqv+IdMvUixuS31EI2RFaOPqvd2sNLGk+WyhB3a3e8lJs+iUUpW5sOitD7hfQwsZVTMSsSHr2wOY87gPM+ag+9W8ZuOUbc/8Jf3pgHorchGYZJ4/BOLwQR5xQ=
