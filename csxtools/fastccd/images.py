@@ -35,6 +35,8 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     """
 
+    t = ttime.time()
+
     logger.info("Correcting image stack of shape %s", images.shape)
 
     if dark is None:
@@ -45,9 +47,8 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
         flat = np.ones(images.shape[-2:], dtype=np.float32)
         logger.info("Not correcting for flatfield. No input.")
     else:
-        flat = np.rot90(flat, 1).astype(np.float32)
+        flat = np.asarray(flat, dtype=np.float32)
 
-    t = ttime.time()
     data = fastccd.correct_images(images, dark, flat, gain)
     t = ttime.time() - t
 
