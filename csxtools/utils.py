@@ -47,8 +47,7 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     Returns
     -------
-    image : array_like
-        This is the corrected detector array
+    image : a corrected pims.pipeline of the data
 
     """
 
