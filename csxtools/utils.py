@@ -1,6 +1,7 @@
 import numpy as np
 import time as ttime
 from databroker import get_images
+from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90
@@ -65,20 +66,40 @@ def get_fastccd_images(light_header, dark_headers=None,
         dark = []
         for i, d in enumerate(dark_headers):
             if d is not None:
-                b = _get_images(d, tag)
+                # Get the images
+
+                bgnd_events = _get_images(d, tag)
+
+                # We assume that all images are for the background
+                # TODO : Perhaps we can loop over the generator
+                # If we want to do something lazy
+
+                b = get_images_to_4D(bgnd_events, dtype=np.uint16)
+
                 b = correct_images(b, gain=(1, 1, 1))
                 b = b.reshape((-1, b.shape[-2], b.shape[-1]))
                 b = np.nanmean(b, axis=0)
+
             else:
                 logger.warning("Missing dark image"
                                " for gain setting %d", i)
             dark.append(b)
 
         bgnd = np.array(dark)
+
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    data = _get_images(light_header, tag)
-    return rotate90(correct_images(data, bgnd, flat=flat, gain=gain), 'cw')
+    events = _get_images(light_header, tag)
+
+    # Ok, so lets now make a generator
+
+    return [_correct_fccd_images(event, bgnd, flat, gain)
+            for event in events]
+
+
+@pipeline
+def _correct_fccd_images(image, bgnd, flat, gain):
+    return rotate90(correct_images(image, bgnd, flat, gain), 'cw')
 
 
 def _get_images(header, tag):
@@ -87,4 +108,10 @@ def _get_images(header, tag):
     t = ttime.time() - t
     logger.info("Took %.3f seconds to read data using get_images", t)
 
-    return np.array([np.asarray(im, dtype=np.uint16) for im in images])
+    return images
+
+
+def get_images_to_4D(images, dtype=None):
+    im = np.array([np.asarray(im, dtype=dtype) for im in images],
+                  dtype=dtype)
+    return im
