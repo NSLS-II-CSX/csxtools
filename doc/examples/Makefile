@@ -1,14 +1,17 @@
 NBDIR=../../examples
 NOTEBOOKS=$(wildcard $(NBDIR)/*.ipynb)
-RSTFILES=$(NOTEBOOKS:.ipynb=.rst)
-RST=$(notdir $(RSTFILES))
+HTMLFILES=$(NOTEBOOKS:.ipynb=.html)
+HTML=$(notdir $(HTMLFILES))
 
 .PHONY: all clean
 
-all: $(RST)
+all: $(HTML)
 
-%.rst: $(NBDIR)/%.ipynb
-	ipython nbconvert $< --to rst
+%.html: $(NBDIR)/%.ipynb
+	ipython nbconvert $< --to html
 
 clean:
 	find . ! -name Makefile ! -name index.rst ! -name .gitignore -delete
+
+print-%:
+	@echo '$*=$($*)'
