@@ -6,8 +6,7 @@ golden_mean = (np.sqrt(5)-1.0)/2.0
 
 def make_panel_plot(n, fig=None,
                     xlmargin=0.15, ytmargin=0.10,
-                    xrmargin=0.05, ybmargin=0.10,
-                    ylabels=True):
+                    xrmargin=0.05, ybmargin=0.10):
     """Make a multi panel plot using matplotlib
 
     This function, makes a typical panel plot and returns a list
