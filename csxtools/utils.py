@@ -74,7 +74,10 @@ def get_fastccd_images(light_header, dark_headers=None,
                 # TODO : Perhaps we can loop over the generator
                 # If we want to do something lazy
 
+                tt = ttime.time()
                 b = get_images_to_4D(bgnd_events, dtype=np.uint16)
+                logger.info("Image conversion took %.3f seconds",
+                            ttime.time() - tt)
 
                 b = correct_images(b, gain=(1, 1, 1))
                 b = b.reshape((-1, b.shape[-2], b.shape[-1]))
