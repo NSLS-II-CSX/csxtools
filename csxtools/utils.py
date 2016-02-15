@@ -78,7 +78,11 @@ def get_fastccd_images(light_header, dark_headers=None,
 
                 b = correct_images(b, gain=(1, 1, 1))
                 b = b.reshape((-1, b.shape[-2], b.shape[-1]))
+
+                tt = ttime.time()
                 b = np.nanmean(b, axis=0)
+                logger.info("Mean of image stack took %.3f seconds",
+                            ttime.time() - tt)
 
             else:
                 logger.warning("Missing dark image"
@@ -91,10 +95,18 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     events = _get_images(light_header, tag)
 
-    # Ok, so lets now make a generator
+    # Ok, so lets return a pims pipeline which does the image conversion
 
-    return [_correct_fccd_images(event, bgnd, flat, gain)
-            for event in events]
+    return _correct_fccd_images(events, bgnd, flat, gain)
+
+
+def get_images_to_4D(images, dtype=None):
+    """Convert image stack to 4D numpy array
+
+    This function converts a generated image stack into a 4D """
+    im = np.array([np.asarray(im, dtype=dtype) for im in images],
+                  dtype=dtype)
+    return im
 
 
 @pipeline
@@ -109,9 +121,3 @@ def _get_images(header, tag):
     logger.info("Took %.3f seconds to read data using get_images", t)
 
     return images
-
-
-def get_images_to_4D(images, dtype=None):
-    im = np.array([np.asarray(im, dtype=dtype) for im in images],
-                  dtype=dtype)
-    return im
