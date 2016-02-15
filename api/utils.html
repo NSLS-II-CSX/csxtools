@@ -151,15 +151,41 @@ least sensitive)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>image</strong> &#8211;
-This is the corrected detector array</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>image</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array_like</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a corrected pims.pipeline of the data</p>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="csxtools.utils.get_images_to_4D">
+<code class="descclassname">csxtools.utils.</code><code class="descname">get_images_to_4D</code><span class="sig-paren">(</span><em>images</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_images_to_4D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_images_to_4D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert image stack to 4D numpy array</p>
+<p>This function converts an image stack from
+:func: get_images() into a 4D numpy ndarray of a given datatype.
+This is useful to just get a simple array from detector data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> (<em>the result of get_images()</em>) &#8211; </li>
+<li><strong>dtype</strong> (<em>the datatype to use for the conversion</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;my_detector&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_images_to_4D</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
