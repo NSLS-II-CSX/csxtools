@@ -103,7 +103,22 @@ def get_fastccd_images(light_header, dark_headers=None,
 def get_images_to_4D(images, dtype=None):
     """Convert image stack to 4D numpy array
 
-    This function converts a generated image stack into a 4D """
+    This function converts an image stack from
+    :func: get_images() into a 4D numpy ndarray of a given datatype.
+    This is useful to just get a simple array from detector data
+
+    Parameters
+    ----------
+    images : the result of get_images()
+    dtype : the datatype to use for the conversion
+
+    Example
+    -------
+    >>> header = DataBroker[-1]
+    >>> images = get_images(header, "my_detector')
+    >>> a = get_images_to_4D(images, dtype=np.float32)
+
+    """
     im = np.array([np.asarray(im, dtype=dtype) for im in images],
                   dtype=dtype)
     return im
