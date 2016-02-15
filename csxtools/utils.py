@@ -1,6 +1,7 @@
 import numpy as np
 import time as ttime
 from databroker import get_images
+from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90
@@ -46,8 +47,7 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     Returns
     -------
-    image : array_like
-        This is the corrected detector array
+    image : a corrected pims.pipeline of the data
 
     """
 
@@ -65,20 +65,70 @@ def get_fastccd_images(light_header, dark_headers=None,
         dark = []
         for i, d in enumerate(dark_headers):
             if d is not None:
-                b = _get_images(d, tag)
+                # Get the images
+
+                bgnd_events = _get_images(d, tag)
+
+                # We assume that all images are for the background
+                # TODO : Perhaps we can loop over the generator
+                # If we want to do something lazy
+
+                tt = ttime.time()
+                b = get_images_to_4D(bgnd_events, dtype=np.uint16)
+                logger.info("Image conversion took %.3f seconds",
+                            ttime.time() - tt)
+
                 b = correct_images(b, gain=(1, 1, 1))
                 b = b.reshape((-1, b.shape[-2], b.shape[-1]))
+
+                tt = ttime.time()
                 b = np.nanmean(b, axis=0)
+                logger.info("Mean of image stack took %.3f seconds",
+                            ttime.time() - tt)
+
             else:
                 logger.warning("Missing dark image"
                                " for gain setting %d", i)
             dark.append(b)
 
         bgnd = np.array(dark)
+
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    data = _get_images(light_header, tag)
-    return rotate90(correct_images(data, bgnd, flat=flat, gain=gain), 'cw')
+    events = _get_images(light_header, tag)
+
+    # Ok, so lets return a pims pipeline which does the image conversion
+
+    return _correct_fccd_images(events, bgnd, flat, gain)
+
+
+def get_images_to_4D(images, dtype=None):
+    """Convert image stack to 4D numpy array
+
+    This function converts an image stack from
+    :func: get_images() into a 4D numpy ndarray of a given datatype.
+    This is useful to just get a simple array from detector data
+
+    Parameters
+    ----------
+    images : the result of get_images()
+    dtype : the datatype to use for the conversion
+
+    Example
+    -------
+    >>> header = DataBroker[-1]
+    >>> images = get_images(header, "my_detector')
+    >>> a = get_images_to_4D(images, dtype=np.float32)
+
+    """
+    im = np.array([np.asarray(im, dtype=dtype) for im in images],
+                  dtype=dtype)
+    return im
+
+
+@pipeline
+def _correct_fccd_images(image, bgnd, flat, gain):
+    return rotate90(correct_images(image, bgnd, flat, gain), 'cw')
 
 
 def _get_images(header, tag):
@@ -87,4 +137,4 @@ def _get_images(header, tag):
     t = ttime.time() - t
     logger.info("Took %.3f seconds to read data using get_images", t)
 
-    return np.array([np.asarray(im, dtype=np.uint16) for im in images])
+    return images
