@@ -122,7 +122,7 @@
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="csxtools.utils.get_fastccd_images">
-<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_images</code><span class="sig-paren">(</span><em>light_header</em>, <em>dark_headers=None</em>, <em>flat=None</em>, <em>gain=(1</em>, <em>4</em>, <em>8)</em>, <em>tag='fccd_image'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_images" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_images</code><span class="sig-paren">(</span><em>light_header</em>, <em>dark_headers=None</em>, <em>flat=None</em>, <em>gain=(1</em>, <em>4</em>, <em>8)</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retreive and correct FastCCD Images from associated headers</p>
 <p>Retrieve FastCCD Images from databroker and correct for:</p>
 <ul class="simple">
@@ -147,7 +147,8 @@ array sized as the last two dimensions of the image stack.</li>
 <li><strong>gain</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Gain multipliers for the 3 gain settings (most sensitive to
 least sensitive)</li>
 <li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Data tag used to retrieve images. Used in the call to
-<code class="docutils literal"><span class="pre">databroker.get_images()</span></code></li>
+<code class="docutils literal"><span class="pre">databroker.get_images()</span></code>. If <cite>None</cite>, use the defualt from
+the settings.</li>
 </ul>
 </td>
 </tr>

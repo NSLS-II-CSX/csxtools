@@ -116,13 +116,14 @@
 
 <span class="kn">from</span> <span class="nn">.fastccd</span> <span class="kn">import</span> <span class="n">correct_images</span>
 <span class="kn">from</span> <span class="nn">.image</span> <span class="kn">import</span> <span class="n">rotate90</span>
+<span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">detectors</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_fastccd_images"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_images">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_images</span><span class="p">(</span><span class="n">light_header</span><span class="p">,</span> <span class="n">dark_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                       <span class="n">flat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;fccd_image&#39;</span><span class="p">):</span>
+                       <span class="n">flat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Retreive and correct FastCCD Images from associated headers</span>
 
 <span class="sd">    Retrieve FastCCD Images from databroker and correct for:</span>
@@ -154,13 +155,17 @@
 
 <span class="sd">    tag : string</span>
 <span class="sd">        Data tag used to retrieve images. Used in the call to</span>
-<span class="sd">        ``databroker.get_images()``</span>
+<span class="sd">        ``databroker.get_images()``. If `None`, use the defualt from</span>
+<span class="sd">        the settings.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    image : a corrected pims.pipeline of the data</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;fccd&#39;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">dark_headers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">bgnd</span> <span class="o">=</span> <span class="bp">None</span>
