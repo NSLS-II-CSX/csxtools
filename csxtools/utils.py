@@ -5,7 +5,7 @@ from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90
-from settings import detectors
+from .settings import detectors
 
 import logging
 logger = logging.getLogger(__name__)
