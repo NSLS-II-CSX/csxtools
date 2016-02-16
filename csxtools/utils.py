@@ -5,13 +5,14 @@ from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90
+from settings import detectors
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag='fccd_image'):
+                       flat=None, gain=(1, 4, 8), tag=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -43,13 +44,17 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     tag : string
         Data tag used to retrieve images. Used in the call to
-        ``databroker.get_images()``
+        ``databroker.get_images()``. If `None`, use the defualt from
+        the settings.
 
     Returns
     -------
     image : a corrected pims.pipeline of the data
 
     """
+
+    if tag is None:
+        tag = detectors['fccd']
 
     if dark_headers is None:
         bgnd = None
