@@ -121,8 +121,11 @@ static PyObject* image_stackmean(PyObject *self, PyObject *args){
     goto error;
   }
   
-  stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
-            ndims, dims);
+  if(stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
+               ndims, dims)){
+    PyErr_SetString(PyExc_MemoryError, "Could not allocate memory");
+    goto error;
+  }
 
   Py_XDECREF(input);
   return Py_BuildValue("N", out);
@@ -132,6 +135,7 @@ error:
   Py_XDECREF(out);
   return NULL;
 }
+
 static PyMethodDef imageMethods[] = {
   { "rotate90", image_rotate90, METH_VARARGS,
     "Rotate stack of images 90 degrees (with sense)"},

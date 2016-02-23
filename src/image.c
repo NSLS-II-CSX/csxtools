@@ -34,8 +34,6 @@
  *
  */
 
-#define _GNU_SOURCE
-
 #include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -96,6 +94,8 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
   index_t N = dims[ndims-2];
   index_t imsize = N*M;
 
+  int retval = 0;
+
   long int **nvalues;
   data_t **mean;
 
@@ -109,10 +109,15 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
   // Get the maximum threads 
 
   int max_threads = omp_get_max_threads(); 
-  nvalues = malloc(sizeof(long int *) * max_threads);
-  mean = malloc(sizeof(data_t *) * max_threads); 
+  if(!(nvalues = malloc(sizeof(long int *) * max_threads))){
+    return 1;
+  }
+  if(!(mean = malloc(sizeof(data_t *) * max_threads))){
+    free(nvalues);
+    return 1;
+  }
 
-#pragma omp parallel shared(nvalues, mean, num_threads, imsize, in)
+#pragma omp parallel shared(nvalues, mean, num_threads, imsize, in, retval)
   {
     // Allocate both a result array and an array for the number of values
 
@@ -126,17 +131,20 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
     mean[thread_num] = _mean;
     nvalues[thread_num] = _nvalues;
 
-    // Now do the actual mean calculation
+    // Test if we have the memory allocated
+    if((_mean != NULL) && (_nvalues != NULL)){
 
-    int i;
+      // Now do the actual mean calculation
+      int i;
 #pragma omp for private(i) 
-    for(i=0;i<nimages;i++){
-      int j;
-      for(j=0;j<imsize;j++){
-        data_t ival = in[(i * imsize + j)];
-        if(!isnan(ival)){
-          _mean[j] = _mean[j] + ival;
-          _nvalues[j]++;
+      for(i=0;i<nimages;i++){
+        int j;
+        for(j=0;j<imsize;j++){
+          data_t ival = in[(i * imsize + j)];
+          if(!isnan(ival)){
+            _mean[j] = _mean[j] + ival;
+            _nvalues[j]++;
+          }
         }
       }
     }
@@ -164,12 +172,20 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
   // free up all memory
   
   for(n=0;n<num_threads;n++){
-    free(mean[n]);
-    free(nvalues[n]);
+    if(mean[n]) {
+      free(mean[n]);
+    } else {
+      retval = 2; 
+    }
+    if(nvalues[n]) {
+      free(nvalues[n]);
+    } else {
+      retval = 2;
+    }
   }
 
   free(mean);
   free(nvalues);
 
-  return 0;
+  return retval;
 }
