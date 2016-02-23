@@ -1,4 +1,4 @@
-from csxtools.image import rotate90, stackmean
+from csxtools.image import rotate90, stackmean, stacksum
 import numpy as np
 from numpy.testing import assert_array_equal
 
@@ -31,3 +31,26 @@ def test_stackmean():
     x[40] = np.nan
     m = stackmean(x)
     assert_array_equal(m, np.ones((100, 100), dtype=np.float32) * 52.0)
+
+
+def test_stacksum():
+    x = np.ones((1, 100, 100), dtype=np.float32) * np.nan
+    m, n = stacksum(x)
+    assert_array_equal(m, np.zeros((100, 100), dtype=np.float32))
+    assert_array_equal(n, np.zeros((100, 100), dtype=np.float32))
+
+    x = np.ones((1000, 100, 100), dtype=np.float32) * 52.0
+    m, n = stacksum(x)
+    assert_array_equal(m, np.ones((100, 100), dtype=np.float32) * 52.0 * 1000)
+    assert_array_equal(n, np.ones((100, 100), dtype=np.float32) * 1000.0)
+
+    # Now test with nans
+
+    x = np.ones((1000, 100, 100), dtype=np.float32) * 2
+    x[10] = np.nan
+    x[23] = np.nan
+    x[40] = np.nan
+    m,n = stacksum(x)
+    assert_array_equal(m, np.ones((100, 100), dtype=np.float32) *
+                       2 * (1000 - 3))
+    assert_array_equal(n, np.ones((100, 100), dtype=np.float32) * (1000 - 3))

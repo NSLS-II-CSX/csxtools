@@ -88,7 +88,7 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
 }
 
 
-int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
+int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims, int norm){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
@@ -162,10 +162,16 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
   }
 
   for(i=0;i<imsize;i++){
-    if(nvalues[0][i]){
-      out[i] = mean[0][i] / nvalues[0][i];
+    nout[i] = nvalues[0][i];
+    if(norm){
+      if(nvalues[0][i]){
+        mout[i] = mean[0][i] / nvalues[0][i];
+      } else {
+        mout[i] = 0.0;
+        nout[i] = 0;
+      }
     } else {
-      out[i] = 0.0;
+      mout[i] = mean[0][i];
     }
   }
 
