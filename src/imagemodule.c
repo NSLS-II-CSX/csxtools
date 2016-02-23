@@ -92,9 +92,51 @@ error:
   return NULL;
 }
 
+static PyObject* image_stackmean(PyObject *self, PyObject *args){
+  PyObject *_input = NULL;
+  PyArrayObject *input = NULL;
+  PyArrayObject *out = NULL;
+  npy_intp *dims;
+  npy_intp newdims[2];
+  int ndims;
+
+  if(!PyArg_ParseTuple(args, "O", &_input)){
+    return NULL;
+  }
+
+  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_FLOAT, 3, 0,NPY_ARRAY_IN_ARRAY);
+  if(!input){
+    goto error;
+  }
+
+  ndims = PyArray_NDIM(input);
+  dims = PyArray_DIMS(input);
+
+  // Just make a new 2D array
+  newdims[0] = dims[ndims-2];
+  newdims[1] = dims[ndims-1];
+
+  out = (PyArrayObject*)PyArray_SimpleNew(2, newdims, NPY_FLOAT);
+  if(!out){
+    goto error;
+  }
+  
+  stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
+            ndims, dims);
+
+  Py_XDECREF(input);
+  return Py_BuildValue("N", out);
+
+error:
+  Py_XDECREF(input);
+  Py_XDECREF(out);
+  return NULL;
+}
 static PyMethodDef imageMethods[] = {
   { "rotate90", image_rotate90, METH_VARARGS,
     "Rotate stack of images 90 degrees (with sense)"},
+  { "stackmean", image_stackmean, METH_VARARGS,
+    "Calculate mean of an image stack"},
   {NULL, NULL, 0, NULL}
 };
 

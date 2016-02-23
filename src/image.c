@@ -87,3 +87,88 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
   free(map);
 }
 
+
+int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
+  index_t nimages = dims[0];
+  index_t M = dims[ndims-1];
+  index_t N = dims[ndims-2];
+  index_t imsize = N*M;
+
+  long int **nvalues;
+  data_t **mean;
+
+  int num_threads;
+
+  // Get the maximum threads 
+
+  int max_threads = omp_get_max_threads(); 
+  fprintf(stderr, "max_threads = %d\n", max_threads);
+  nvalues = malloc(sizeof(long int *) * max_threads);
+  mean = malloc(sizeof(data_t *) * max_threads); 
+
+  int x;
+  for(x=1;x<(ndims-2);x++){
+    nimages = nimages * dims[x];
+  }
+
+#pragma omp parallel shared(nvalues, mean, num_threads, imsize, in)
+  {
+    // Allocate both a result array and an array for the number of values
+
+#pragma omp single
+    num_threads = omp_get_num_threads();
+
+    int thread_num = omp_get_thread_num();
+
+    data_t *_mean = calloc(imsize, sizeof(data_t));
+    long int *_nvalues = calloc(imsize, sizeof(long int));
+    mean[thread_num] = _mean;
+    nvalues[thread_num] = _nvalues;
+
+    // Now do the actual mean calculation
+
+    int i;
+#pragma omp for private(i) 
+    for(i=0;i<nimages;i++){
+      int j;
+      for(j=0;j<imsize;j++){
+        data_t ival = in[(i * imsize + j)];
+        if(ival != NAN){
+          _mean[j] = _mean[j] + ival;
+          _nvalues[j]++;
+        }  
+      }
+    }
+
+  } // pragma omp paralell
+
+  // Now calculate the mean 
+
+  int n,i;
+  for(n=1;n<num_threads;n++){
+    for(i=0;i<imsize;i++){
+      mean[0][i] += mean[n][i];
+      nvalues[0][i] += nvalues[n][i];
+    }
+  }
+
+  for(i=0;i<imsize;i++){
+    if(nvalues[0][i]){
+      out[i] = mean[0][i] / nvalues[0][i];
+    } else {
+      out[i] = 0.0;
+    }
+  }
+
+  // free up all memory
+  
+  for(n=0;n<num_threads;n++){
+    free(mean[n]);
+    free(nvalues[n]);
+  }
+
+  free(mean);
+  free(nvalues);
+
+  return 0;
+}

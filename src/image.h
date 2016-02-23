@@ -43,5 +43,6 @@ typedef float data_t;
 
 // Function prototypes
 void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense);
+int stackmean(data_t *in, data_t *out, int ndims, index_t *dims);
 
 #endif
