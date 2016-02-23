@@ -34,6 +34,8 @@
  *
  */
 
+#define _GNU_SOURCE
+
 #include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -99,17 +101,16 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
 
   int num_threads;
 
-  // Get the maximum threads 
-
-  int max_threads = omp_get_max_threads(); 
-  fprintf(stderr, "max_threads = %d\n", max_threads);
-  nvalues = malloc(sizeof(long int *) * max_threads);
-  mean = malloc(sizeof(data_t *) * max_threads); 
-
   int x;
   for(x=1;x<(ndims-2);x++){
     nimages = nimages * dims[x];
   }
+
+  // Get the maximum threads 
+
+  int max_threads = omp_get_max_threads(); 
+  nvalues = malloc(sizeof(long int *) * max_threads);
+  mean = malloc(sizeof(data_t *) * max_threads); 
 
 #pragma omp parallel shared(nvalues, mean, num_threads, imsize, in)
   {
@@ -133,10 +134,10 @@ int stackmean(data_t *in, data_t *out, int ndims, index_t *dims){
       int j;
       for(j=0;j<imsize;j++){
         data_t ival = in[(i * imsize + j)];
-        if(ival != NAN){
+        if(!isnan(ival)){
           _mean[j] = _mean[j] + ival;
           _nvalues[j]++;
-        }  
+        }
       }
     }
 
