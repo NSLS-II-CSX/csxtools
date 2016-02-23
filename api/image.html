@@ -147,6 +147,50 @@ N rotations of the image of size (y, x) are performed.</p>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="csxtools.image.stackmean">
+<code class="descclassname">csxtools.image.</code><code class="descname">stackmean</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/image/stack.html#stackmean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.image.stackmean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cacluate the mean of a stack</p>
+<p>This function calculates the mean of a stack of images (or any array).
+It ignores values that are np.NAN and does not include them in the mean
+calculation. It assumes an array of shape (.. i, j, x, y) where x and y
+are the size of the returned array (x, y).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like</em>) &#8211; Input array of at least 3 dimensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2D Array of mean of stack.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/library/array.html#module-array" title="(in Python v2.7)">array</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="csxtools.image.stacksum">
+<code class="descclassname">csxtools.image.</code><code class="descname">stacksum</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/image/stack.html#stacksum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.image.stacksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cacluate the sum of a stack</p>
+<p>This function calculates the sum of a stack of images (or any array).
+It ignores values that are np.NAN and does not include them in the sum
+calculation. It assumes an array of shape (.. i, j, x, y) where x and y
+are the size of the returned array (x, y).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like</em>) &#8211; Input array of at least 3 dimensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">tuple of 2 arrays of the sum and number of points in the sum</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
