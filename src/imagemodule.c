@@ -92,9 +92,62 @@ error:
   return NULL;
 }
 
+static PyObject* image_stackmean(PyObject *self, PyObject *args){
+  PyObject *_input = NULL;
+  PyArrayObject *input = NULL;
+  PyArrayObject *nout = NULL;
+  PyArrayObject *mout = NULL;
+  npy_intp *dims;
+  npy_intp newdims[2];
+  int ndims;
+  int norm;
+
+  if(!PyArg_ParseTuple(args, "Oi", &_input, &norm)){
+    return NULL;
+  }
+
+  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_FLOAT, 3, 0,NPY_ARRAY_IN_ARRAY);
+  if(!input){
+    goto error;
+  }
+
+  ndims = PyArray_NDIM(input);
+  dims = PyArray_DIMS(input);
+
+  // Just make a new 2D array
+  newdims[0] = dims[ndims-2];
+  newdims[1] = dims[ndims-1];
+
+  mout = (PyArrayObject*)PyArray_SimpleNew(2, newdims, NPY_FLOAT);
+  if(!mout){
+    goto error;
+  }
+  nout = (PyArrayObject*)PyArray_SimpleNew(2, newdims, NPY_LONG);
+  if(!nout){
+    goto error;
+  }
+  
+  if(stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(mout),
+               (long int*)PyArray_DATA(nout), ndims, dims, norm)){
+    PyErr_SetString(PyExc_MemoryError, "Could not allocate memory");
+    goto error;
+  }
+
+  Py_XDECREF(input);
+  return Py_BuildValue("(NN)", mout, nout);
+
+error:
+  Py_XDECREF(input);
+  Py_XDECREF(nout);
+  Py_XDECREF(mout);
+  return NULL;
+}
+
 static PyMethodDef imageMethods[] = {
   { "rotate90", image_rotate90, METH_VARARGS,
     "Rotate stack of images 90 degrees (with sense)"},
+  { "stackmean", image_stackmean, METH_VARARGS,
+    "Calculate mean of an image stack"},
   {NULL, NULL, 0, NULL}
 };
 

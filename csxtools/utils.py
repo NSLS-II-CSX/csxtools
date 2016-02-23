@@ -4,7 +4,7 @@ from databroker import get_images
 from pims import pipeline
 
 from .fastccd import correct_images
-from .image import rotate90
+from .image import rotate90, stackmean
 from .settings import detectors
 
 import logging
@@ -84,10 +84,8 @@ def get_fastccd_images(light_header, dark_headers=None,
                             ttime.time() - tt)
 
                 b = correct_images(b, gain=(1, 1, 1))
-                b = b.reshape((-1, b.shape[-2], b.shape[-1]))
-
                 tt = ttime.time()
-                b = np.nanmean(b, axis=0)
+                b = stackmean(b)
                 logger.info("Mean of image stack took %.3f seconds",
                             ttime.time() - tt)
 
