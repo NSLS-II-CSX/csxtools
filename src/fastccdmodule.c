@@ -103,11 +103,16 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
     goto error;
   }
    
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
+
   correct_fccd_images((uint16_t*)PyArray_DATA(input), 
                       (data_t*)PyArray_DATA(out),
                       (data_t*)PyArray_DATA(bgnd),
                       (data_t*)PyArray_DATA(flat),
                       ndims, (index_t*)dims, (data_t*)gain);
+
+  Py_END_ALLOW_THREADS
 
   Py_XDECREF(input);
   Py_XDECREF(bgnd);

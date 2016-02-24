@@ -80,8 +80,13 @@ static PyObject* image_rotate90(PyObject *self, PyObject *args){
   dims[ndims-2] = dims[ndims-1];
   dims[ndims-1] = temp;
 
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
+
   rotate90((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
            ndims, dims, sense);
+
+  Py_END_ALLOW_THREADS
 
   Py_XDECREF(input);
   return Py_BuildValue("N", out);
@@ -127,8 +132,15 @@ static PyObject* image_stackmean(PyObject *self, PyObject *args){
     goto error;
   }
   
-  if(stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(mout),
-               (long int*)PyArray_DATA(nout), ndims, dims, norm)){
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
+  
+  int retval = stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(mout),
+                         (long int*)PyArray_DATA(nout), ndims, dims, norm);
+
+  Py_END_ALLOW_THREADS
+
+  if(retval){
     PyErr_SetString(PyExc_MemoryError, "Could not allocate memory");
     goto error;
   }

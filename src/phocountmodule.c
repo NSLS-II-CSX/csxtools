@@ -85,10 +85,14 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
     goto error;
   }
   
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
   
   count((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
         (data_t*)PyArray_DATA(stddev),
         ndims, dims, thresh, mean_filter, sum_max, nan);
+
+  Py_END_ALLOW_THREADS
 
   Py_XDECREF(input);
   return Py_BuildValue("(NN)", out, stddev);
