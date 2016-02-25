@@ -88,20 +88,21 @@ void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
 }
 
 
-int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims, int norm){
-  index_t nimages = dims[0];
+int stackprocess(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims, int mode){
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
   index_t imsize = N*M;
 
-  int retval = 0;
+  int error=0;
 
   long int **nvalues;
   data_t **mean;
+  data_t **scnd_moment;
 
   int num_threads;
 
   int x;
+  index_t nimages = dims[0];
   for(x=1;x<(ndims-2);x++){
     nimages = nimages * dims[x];
   }
@@ -116,8 +117,13 @@ int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims
     free(nvalues);
     return 1;
   }
+  if(!(scnd_moment = malloc(sizeof(data_t *) * max_threads))){
+    free(nvalues);
+    free(mean);
+    return 1;
+  }
 
-#pragma omp parallel shared(nvalues, mean, num_threads, imsize, in, retval)
+#pragma omp parallel shared(nvalues, mean, num_threads, imsize, in, error)
   {
     // Allocate both a result array and an array for the number of values
 
@@ -126,13 +132,30 @@ int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims
 
     int thread_num = omp_get_thread_num();
 
-    data_t *_mean = calloc(imsize, sizeof(data_t));
-    long int *_nvalues = calloc(imsize, sizeof(long int));
+    data_t *_mean = NULL;
+    if(!(_mean = calloc(imsize, sizeof(data_t)))){
+      error = 1;
+    }
+
+    long int *_nvalues = NULL;
+    if(!(_nvalues = calloc(imsize, sizeof(long int)))){
+      error = 1;
+    }
+
+    data_t *_scnd_moment = NULL;
+    if(mode > 1){
+      // We are doing the varience 
+      if(!(_scnd_moment = calloc(imsize, sizeof(data_t)))){
+        error = 1;
+      }
+    }
+
     mean[thread_num] = _mean;
     nvalues[thread_num] = _nvalues;
+    scnd_moment[thread_num] = _scnd_moment;
 
     // Test if we have the memory allocated
-    if((_mean != NULL) && (_nvalues != NULL)){
+    if(!error){
 
       // Now do the actual mean calculation
       int i;
@@ -142,8 +165,11 @@ int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims
         for(j=0;j<imsize;j++){
           data_t ival = in[(i * imsize + j)];
           if(!isnan(ival)){
-            _mean[j] = _mean[j] + ival;
+            _mean[j] += ival;
             _nvalues[j]++;
+            if(mode > 1){
+              _scnd_moment[j] += (ival * ival);
+            }
           }
         }
       }
@@ -153,45 +179,59 @@ int stackmean(data_t *in, data_t *mout, long int *nout, int ndims, index_t *dims
 
   // Now calculate the mean 
 
-  int n,i;
-  for(n=1;n<num_threads;n++){
-    for(i=0;i<imsize;i++){
-      mean[0][i] += mean[n][i];
-      nvalues[0][i] += nvalues[n][i];
-    }
-  }
-
-  for(i=0;i<imsize;i++){
-    nout[i] = nvalues[0][i];
-    if(norm){
-      if(nvalues[0][i]){
-        mout[i] = mean[0][i] / nvalues[0][i];
-      } else {
-        mout[i] = 0.0;
-        nout[i] = 0;
+  if(!error){
+    int n,i;
+    for(n=1;n<num_threads;n++){
+      for(i=0;i<imsize;i++){
+        mean[0][i] += mean[n][i];
+        nvalues[0][i] += nvalues[n][i];
+        if(mode > 1){
+          scnd_moment[0][i] += scnd_moment[n][i];
+        }
       }
-    } else {
-      mout[i] = mean[0][i];
+    }
+
+    for(i=0;i<imsize;i++){
+      nout[i] = nvalues[0][i];
+      if (mode == 0){
+        mout[i] = mean[0][i];
+      } else if(mode == 1) {
+        if(nvalues[0][i]){
+          mout[i] = mean[0][i] / nvalues[0][i];
+        } else {
+          mout[i] = 0.0;
+          nout[i] = 0;
+        }
+      } 
+      if(mode > 1){
+        mout[i] = (scnd_moment[0][i] - (mean[0][i] * mean[0][i]) / nvalues[0][i]) / nvalues[0][i];
+      } 
+      if(mode == 2){
+        mout[i] = pow(mout[i], 0.5);
+      }
+      if(mode == 3){
+        mout[i] = pow(mout[i], 0.5) / nvalues[0][i];
+      }
     }
   }
 
   // free up all memory
-  
+ 
+  int n;
   for(n=0;n<num_threads;n++){
     if(mean[n]) {
       free(mean[n]);
-    } else {
-      retval = 2; 
-    }
-    if(nvalues[n]) {
+    } 
+    if(nvalues[n]){
       free(nvalues[n]);
-    } else {
-      retval = 2;
+    }
+    if(scnd_moment[n]){
+      free(scnd_moment[n]);
     }
   }
 
   free(mean);
   free(nvalues);
 
-  return retval;
+  return error;
 }
