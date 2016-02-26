@@ -75,8 +75,7 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   ndims = PyArray_NDIM(input);
   dims = PyArray_DIMS(input);
 
-  out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT);
-  if(!out){
+  out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT); if(!out){
     goto error;
   }
 
@@ -85,12 +84,14 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
     goto error;
   }
   
+  data_t *input_p = (data_t*)PyArray_DATA(input); 
+  data_t *out_p = (data_t*)PyArray_DATA(out);
+  data_t *stddev_p = (data_t*)PyArray_DATA(stddev);
+
   // Ok now we don't touch Python Object ... Release the GIL
   Py_BEGIN_ALLOW_THREADS
   
-  count((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
-        (data_t*)PyArray_DATA(stddev),
-        ndims, dims, thresh, mean_filter, sum_max, nan);
+  count(input_p, out_p, stddev_p, ndims, dims, thresh, mean_filter, sum_max, nan);
 
   Py_END_ALLOW_THREADS
 
