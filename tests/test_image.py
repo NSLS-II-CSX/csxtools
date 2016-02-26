@@ -1,6 +1,7 @@
-from csxtools.image import rotate90, stackmean, stacksum
+from csxtools.image import (rotate90, stackmean, stacksum, stackstd,
+                            stackvar, stackstderr)
 import numpy as np
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_equal, assert_array_almost_equal
 
 
 def test_rotate90():
@@ -54,3 +55,27 @@ def test_stacksum():
     assert_array_equal(m, np.ones((100, 100), dtype=np.float32) *
                        2 * (1000 - 3))
     assert_array_equal(n, np.ones((100, 100), dtype=np.float32) * (1000 - 3))
+
+
+def test_stackstd():
+    x = np.repeat(np.arange(1000, dtype=np.float32), 400).reshape(
+        (1000, 20, 20))
+    m, n = stackstd(x)
+    assert_array_almost_equal(m, np.std(x, axis=0), 2)
+    assert_array_equal(n, np.ones((20, 20), dtype=np.float32) * 1000.0)
+
+
+def test_stackvar():
+    x = np.repeat(np.arange(1000, dtype=np.float32), 400).reshape(
+        (1000, 20, 20))
+    m, n = stackvar(x)
+    assert_array_almost_equal(m, np.var(x, axis=0), 0)
+    assert_array_equal(n, np.ones((20, 20), dtype=np.float32) * 1000.0)
+
+
+def test_stackstderr():
+    x = np.repeat(np.arange(1000, dtype=np.float32), 400).reshape(
+        (1000, 20, 20))
+    m, n = stackstderr(x)
+    assert_array_almost_equal(m, np.std(x, axis=0) / np.sqrt(n), 3)
+    assert_array_equal(n, np.ones((20, 20), dtype=np.float32) * 1000.0)

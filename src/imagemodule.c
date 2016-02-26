@@ -80,8 +80,13 @@ static PyObject* image_rotate90(PyObject *self, PyObject *args){
   dims[ndims-2] = dims[ndims-1];
   dims[ndims-1] = temp;
 
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
+
   rotate90((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(out),
            ndims, dims, sense);
+
+  Py_END_ALLOW_THREADS
 
   Py_XDECREF(input);
   return Py_BuildValue("N", out);
@@ -92,7 +97,7 @@ error:
   return NULL;
 }
 
-static PyObject* image_stackmean(PyObject *self, PyObject *args){
+static PyObject* image_stackprocess(PyObject *self, PyObject *args){
   PyObject *_input = NULL;
   PyArrayObject *input = NULL;
   PyArrayObject *nout = NULL;
@@ -101,6 +106,7 @@ static PyObject* image_stackmean(PyObject *self, PyObject *args){
   npy_intp newdims[2];
   int ndims;
   int norm;
+  int retval;
 
   if(!PyArg_ParseTuple(args, "Oi", &_input, &norm)){
     return NULL;
@@ -127,8 +133,18 @@ static PyObject* image_stackmean(PyObject *self, PyObject *args){
     goto error;
   }
   
-  if(stackmean((data_t*)PyArray_DATA(input), (data_t*)PyArray_DATA(mout),
-               (long int*)PyArray_DATA(nout), ndims, dims, norm)){
+  data_t *input_p = (data_t*)PyArray_DATA(input);
+  data_t *mout_p = (data_t*)PyArray_DATA(mout);
+  long int *nout_p = (long int*)PyArray_DATA(nout);
+
+  // Ok now we don't touch Python Object ... Release the GIL
+  Py_BEGIN_ALLOW_THREADS
+  
+  retval = stackprocess(input_p, mout_p, nout_p, ndims, dims, norm);
+
+  Py_END_ALLOW_THREADS
+
+  if(retval){
     PyErr_SetString(PyExc_MemoryError, "Could not allocate memory");
     goto error;
   }
@@ -146,7 +162,7 @@ error:
 static PyMethodDef imageMethods[] = {
   { "rotate90", image_rotate90, METH_VARARGS,
     "Rotate stack of images 90 degrees (with sense)"},
-  { "stackmean", image_stackmean, METH_VARARGS,
+  { "stackprocess", image_stackprocess, METH_VARARGS,
     "Calculate mean of an image stack"},
   {NULL, NULL, 0, NULL}
 };
