@@ -130,7 +130,7 @@
 <span class="sd">    array</span>
 <span class="sd">        2D Array of mean of stack.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackprocess</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span></div>
 
 
@@ -152,7 +152,76 @@
 <span class="sd">    tuple</span>
 <span class="sd">        tuple of 2 arrays of the sum and number of points in the sum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackmean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackprocess</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
+
+
+<div class="viewcode-block" id="stackstd"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.stackstd">[docs]</a><span class="k">def</span> <span class="nf">stackstd</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cacluate the standard deviation of a stack</span>
+
+<span class="sd">    This function calculates the standard deviation of a stack of images</span>
+<span class="sd">    It ignores values that are np.NAN and does not include them in the sum</span>
+<span class="sd">    calculation. It assumes an array of shape (.. i, j, x, y) where x and y</span>
+<span class="sd">    are the size of the returned array (x, y).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like</span>
+<span class="sd">        Input array of at least 3 dimensions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        tuple of 2 arrays of the standard deviation and number of points</span>
+<span class="sd">        in the calculation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackprocess</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
+
+
+<div class="viewcode-block" id="stackvar"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.stackvar">[docs]</a><span class="k">def</span> <span class="nf">stackvar</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cacluate the varience of a stack</span>
+
+<span class="sd">    This function calculates the variance of a stack of images (or any array).</span>
+<span class="sd">    It ignores values that are np.NAN and does not include them in the</span>
+<span class="sd">    calculation. It assumes an array of shape (.. i, j, x, y) where x and y</span>
+<span class="sd">    are the size of the returned array (x, y).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like</span>
+<span class="sd">        Input array of at least 3 dimensions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        tuple of 2 arrays of the varience and number of points in the</span>
+<span class="sd">        calculation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackprocess</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
+
+
+<div class="viewcode-block" id="stackstderr"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.stackstderr">[docs]</a><span class="k">def</span> <span class="nf">stackstderr</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cacluate the standard error of a stack</span>
+
+<span class="sd">    This function calculates the standard error of a stack of images</span>
+<span class="sd">    (or any array).  It ignores values that are np.NAN and does not include</span>
+<span class="sd">    them in the calculation. It assumes an array of shape (.. i, j, x, y)</span>
+<span class="sd">    where x and y are the size of the returned array (x, y).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like</span>
+<span class="sd">        Input array of at least 3 dimensions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        tuple of 2 arrays of the standard error and number of points in the</span>
+<span class="sd">        calculation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">extimage</span><span class="o">.</span><span class="n">stackprocess</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
 </pre></div>
 
