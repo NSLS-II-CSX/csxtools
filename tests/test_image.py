@@ -69,7 +69,7 @@ def test_stackvar():
     x = np.repeat(np.arange(1000, dtype=np.float32), 400).reshape(
         (1000, 20, 20))
     m, n = stackvar(x)
-    assert_array_almost_equal(m, np.var(x, axis=0))
+    assert_array_almost_equal(m, np.var(x, axis=0), 0)
     assert_array_equal(n, np.ones((20, 20), dtype=np.float32) * 1000.0)
 
 
