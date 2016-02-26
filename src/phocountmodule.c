@@ -75,7 +75,8 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   ndims = PyArray_NDIM(input);
   dims = PyArray_DIMS(input);
 
-  out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT); if(!out){
+  out = (PyArrayObject*)PyArray_SimpleNew(ndims, dims, NPY_FLOAT); 
+  if(!out){
     goto error;
   }
 
