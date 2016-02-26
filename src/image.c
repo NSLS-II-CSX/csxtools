@@ -206,11 +206,11 @@ int stackprocess(data_t *in, data_t *mout, long int *nout, int ndims, index_t *d
       if(mode > 1){
         mout[i] = (scnd_moment[0][i] - (mean[0][i] * mean[0][i]) / nvalues[0][i]) / nvalues[0][i];
       } 
-      if(mode == 2){
+      if(mode == 3){
         mout[i] = pow(mout[i], 0.5);
       }
-      if(mode == 3){
-        mout[i] = pow(mout[i], 0.5) / nvalues[0][i];
+      if(mode == 4){
+        mout[i] = pow(mout[i], 0.5) / pow(nvalues[0][i], 0.5);
       }
     }
   }

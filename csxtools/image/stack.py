@@ -19,7 +19,7 @@ def stackmean(array):
     array
         2D Array of mean of stack.
     """
-    X, Y = extimage.stackmean(array, 1)
+    X, Y = extimage.stackprocess(array, 1)
     return X
 
 
@@ -41,5 +41,74 @@ def stacksum(array):
     tuple
         tuple of 2 arrays of the sum and number of points in the sum
     """
-    X, Y = extimage.stackmean(array, 0)
+    X, Y = extimage.stackprocess(array, 0)
+    return X, Y
+
+
+def stackstd(array):
+    """Cacluate the standard deviation of a stack
+
+    This function calculates the standard deviation of a stack of images
+    It ignores values that are np.NAN and does not include them in the sum
+    calculation. It assumes an array of shape (.. i, j, x, y) where x and y
+    are the size of the returned array (x, y).
+
+    Parameters
+    ----------
+    array : array_like
+        Input array of at least 3 dimensions.
+
+    Returns
+    -------
+    tuple
+        tuple of 2 arrays of the standard deviation and number of points
+        in the calculation
+    """
+    X, Y = extimage.stackprocess(array, 3)
+    return X, Y
+
+
+def stackvar(array):
+    """Cacluate the varience of a stack
+
+    This function calculates the variance of a stack of images (or any array).
+    It ignores values that are np.NAN and does not include them in the
+    calculation. It assumes an array of shape (.. i, j, x, y) where x and y
+    are the size of the returned array (x, y).
+
+    Parameters
+    ----------
+    array : array_like
+        Input array of at least 3 dimensions.
+
+    Returns
+    -------
+    tuple
+        tuple of 2 arrays of the varience and number of points in the
+        calculation
+    """
+    X, Y = extimage.stackprocess(array, 2)
+    return X, Y
+
+
+def stackstderr(array):
+    """Cacluate the standard error of a stack
+
+    This function calculates the standard error of a stack of images
+    (or any array).  It ignores values that are np.NAN and does not include
+    them in the calculation. It assumes an array of shape (.. i, j, x, y)
+    where x and y are the size of the returned array (x, y).
+
+    Parameters
+    ----------
+    array : array_like
+        Input array of at least 3 dimensions.
+
+    Returns
+    -------
+    tuple
+        tuple of 2 arrays of the standard error and number of points in the
+        calculation
+    """
+    X, Y = extimage.stackprocess(array, 4)
     return X, Y
