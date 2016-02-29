@@ -138,7 +138,7 @@ def get_images_to_4D(images, dtype=None):
     return im
 
 
-def get_images_to_3d(images):
+def get_images_to_3D(images):
     """Return a 3D array from the "slicerator" object
 
     Parameters
