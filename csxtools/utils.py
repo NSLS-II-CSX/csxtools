@@ -178,7 +178,7 @@ def _get_images(header, tag, roi=None):
 def crop(image, roi=None):
     # Assuming ROI is specified in the "rotated" (correct) orientation
     roi = [960-roi[3], roi[0], 960-roi[1], roi[2]]
-    return image[:,roi[0]:roi[2], roi[1]:roi[3]]
+    return image[:, roi[0]:roi[2], roi[1]:roi[3]]
 
 
 def crop_flat(image, roi=None):
