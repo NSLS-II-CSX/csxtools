@@ -1,3 +1,4 @@
+import numpy as np
 from ..ext import image as extimage
 
 
@@ -112,3 +113,39 @@ def stackstderr(array):
     """
     X, Y = extimage.stackprocess(array, 4)
     return X, Y
+
+
+def ccdmean(images):
+    """Cacluate the mean ccd counts per event
+
+    This function calculates the mean of ccd counts for each event. The
+    input is a "slicerator" object returned by get_fastccd_images.
+
+    Parameters
+    ----------
+    slicerator object : generator returning pims images
+        This is the output of get_fastccd_images
+
+    Returns
+    -------
+    array: 1D numpy array
+    """
+    return np.array([np.nanmean(stackmean(image)) for image in images])
+
+
+def ccdsum(images):
+    """Cacluate the total ccd counts per event
+
+    This function calculates the sum of ccd counts for each event. The
+    input is a "slicerator" object returned by get_fastccd_images.
+
+    Parameters
+    ----------
+    slicerator object : generator returning pims images
+        This is the output of get_fastccd_images
+
+    Returns
+    -------
+    array: 1D numpy array
+    """
+    return np.array([np.nansum(stackmean(image)) for image in images])
