@@ -1,6 +1,7 @@
 import numpy as np
 import time as ttime
-from databroker import get_images
+# from databroker import get_images
+from dataportal import get_images
 from pims import pipeline
 
 from .fastccd import correct_images
@@ -12,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag=None):
+                       flat=None, gain=(1, 4, 8), tag=None,
+                       roi=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -47,6 +49,10 @@ def get_fastccd_images(light_header, dark_headers=None,
         ``databroker.get_images()``. If `None`, use the defualt from
         the settings.
 
+    roi : tuple
+        tuple with 4 integers to crop images
+        (row_start, column_start, row_end, column_end)
+
     Returns
     -------
     image : a corrected pims.pipeline of the data
@@ -72,7 +78,7 @@ def get_fastccd_images(light_header, dark_headers=None,
             if d is not None:
                 # Get the images
 
-                bgnd_events = _get_images(d, tag)
+                bgnd_events = _get_images(d, tag, roi)
 
                 # We assume that all images are for the background
                 # TODO : Perhaps we can loop over the generator
@@ -98,9 +104,13 @@ def get_fastccd_images(light_header, dark_headers=None,
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag)
+    events = _get_images(light_header, tag, roi)
 
     # Ok, so lets return a pims pipeline which does the image conversion
+
+    # Crop Flat image
+    if flat is not None and roi is not None:
+        flat = crop_flat(flat, roi)
 
     return _correct_fccd_images(events, bgnd, flat, gain)
 
@@ -134,10 +144,24 @@ def _correct_fccd_images(image, bgnd, flat, gain):
     return rotate90(correct_images(image, bgnd, flat, gain), 'cw')
 
 
-def _get_images(header, tag):
+def _get_images(header, tag, roi=None):
     t = ttime.time()
     images = get_images(header, tag)
     t = ttime.time() - t
     logger.info("Took %.3f seconds to read data using get_images", t)
 
+    if roi is not None:
+        return crop(images, roi)#, rotated=True)
     return images
+
+
+@pipeline
+def crop(image, roi=None):#, rotated=False):
+    # if rotated:
+    roi = [960-roi[3], roi[0], 960-roi[1], roi[2]]
+    return image[:,roi[0]:roi[2], roi[1]:roi[3]]
+
+
+def crop_flat(image, roi=None):
+    roi = [960-roi[3], roi[0], 960-roi[1], roi[2]]
+    return image[roi[0]:roi[2], roi[1]:roi[3]]
