@@ -1,7 +1,6 @@
 import numpy as np
 import time as ttime
-# from databroker import get_images
-from dataportal import get_images
+from databroker import get_images
 from pims import pipeline
 
 from .fastccd import correct_images
