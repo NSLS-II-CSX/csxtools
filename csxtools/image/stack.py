@@ -149,3 +149,24 @@ def ccdsum(images):
     array: 1D numpy array
     """
     return np.array([np.nansum(stackmean(image)) for image in images])
+
+
+def convert_to_3d(images):
+    """Return a 3D array from the "slicerator" object
+
+    Parameters
+    ----------
+    slicerator object : generator returning pims images
+        This is the output of get_fastccd_images
+
+    Returns
+    -------
+    array: 3D numpy array
+    """
+
+    # images = [np.asarray(im) for im in images]
+    ims = images[0]
+    for im in images[1:]:
+        ims = np.vstack((ims, im))
+
+    return ims
