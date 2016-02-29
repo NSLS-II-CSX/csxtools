@@ -150,7 +150,7 @@ def _get_images(header, tag, roi=None):
     logger.info("Took %.3f seconds to read data using get_images", t)
 
     if roi is not None:
-        return crop(images, roi)#, rotated=True)
+        return crop(images, roi)
     return images
 
 
