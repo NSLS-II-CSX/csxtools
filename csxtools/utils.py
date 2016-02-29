@@ -138,6 +138,26 @@ def get_images_to_4D(images, dtype=None):
     return im
 
 
+def get_images_to_3d(images):
+    """Return a 3D array from the "slicerator" object
+
+    Parameters
+    ----------
+    slicerator object : generator returning pims images
+        This is the output of get_fastccd_images
+
+    Returns
+    -------
+    array: 3D numpy array
+    """
+
+    ims = images[0]
+    for im in images[1:]:
+        ims = np.vstack((ims, im))
+
+    return ims
+
+
 @pipeline
 def _correct_fccd_images(image, bgnd, flat, gain):
     return rotate90(correct_images(image, bgnd, flat, gain), 'cw')

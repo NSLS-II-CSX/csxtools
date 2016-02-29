@@ -115,7 +115,7 @@ def stackstderr(array):
     return X, Y
 
 
-def ccdmean(images):
+def images_mean(images):
     """Cacluate the mean ccd counts per event
 
     This function calculates the mean of ccd counts for each event. The
@@ -133,7 +133,7 @@ def ccdmean(images):
     return np.array([np.nanmean(stackmean(image)) for image in images])
 
 
-def ccdsum(images):
+def images_sum(images):
     """Cacluate the total ccd counts per event
 
     This function calculates the sum of ccd counts for each event. The
@@ -149,24 +149,3 @@ def ccdsum(images):
     array: 1D numpy array
     """
     return np.array([np.nansum(stackmean(image)) for image in images])
-
-
-def convert_to_3d(images):
-    """Return a 3D array from the "slicerator" object
-
-    Parameters
-    ----------
-    slicerator object : generator returning pims images
-        This is the output of get_fastccd_images
-
-    Returns
-    -------
-    array: 3D numpy array
-    """
-
-    # images = [np.asarray(im) for im in images]
-    ims = images[0]
-    for im in images[1:]:
-        ims = np.vstack((ims, im))
-
-    return ims
