@@ -123,7 +123,8 @@
 
 
 <div class="viewcode-block" id="get_fastccd_images"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_images">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_images</span><span class="p">(</span><span class="n">light_header</span><span class="p">,</span> <span class="n">dark_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                       <span class="n">flat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                       <span class="n">flat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">roi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Retreive and correct FastCCD Images from associated headers</span>
 
 <span class="sd">    Retrieve FastCCD Images from databroker and correct for:</span>
@@ -158,6 +159,10 @@
 <span class="sd">        ``databroker.get_images()``. If `None`, use the defualt from</span>
 <span class="sd">        the settings.</span>
 
+<span class="sd">    roi : tuple</span>
+<span class="sd">        tuple with 4 integers to crop images</span>
+<span class="sd">        (row_start, column_start, row_end, column_end)</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    image : a corrected pims.pipeline of the data</span>
@@ -183,7 +188,7 @@
             <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="c1"># Get the images</span>
 
-                <span class="n">bgnd_events</span> <span class="o">=</span> <span class="n">_get_images</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+                <span class="n">bgnd_events</span> <span class="o">=</span> <span class="n">_get_images</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">roi</span><span class="p">)</span>
 
                 <span class="c1"># We assume that all images are for the background</span>
                 <span class="c1"># TODO : Perhaps we can loop over the generator</span>
@@ -209,9 +214,13 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computed dark images in </span><span class="si">%.3f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
 
-    <span class="n">events</span> <span class="o">=</span> <span class="n">_get_images</span><span class="p">(</span><span class="n">light_header</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">_get_images</span><span class="p">(</span><span class="n">light_header</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">roi</span><span class="p">)</span>
 
     <span class="c1"># Ok, so lets return a pims pipeline which does the image conversion</span>
+
+    <span class="c1"># Crop Flat image</span>
+    <span class="k">if</span> <span class="n">flat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">roi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">flat</span> <span class="o">=</span> <span class="n">crop_flat</span><span class="p">(</span><span class="n">flat</span><span class="p">,</span> <span class="n">roi</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_correct_fccd_images</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">bgnd</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">gain</span><span class="p">)</span></div>
 
@@ -240,18 +249,52 @@
     <span class="k">return</span> <span class="n">im</span></div>
 
 
+<div class="viewcode-block" id="get_images_to_3D"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_images_to_3D">[docs]</a><span class="k">def</span> <span class="nf">get_images_to_3D</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a 3D array from the &quot;slicerator&quot; object</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    slicerator object : generator returning pims images</span>
+<span class="sd">        This is the output of get_fastccd_images</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array: 3D numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ims</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">images</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">ims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ims</span><span class="p">,</span> <span class="n">im</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ims</span></div>
+
+
 <span class="nd">@pipeline</span>
 <span class="k">def</span> <span class="nf">_correct_fccd_images</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">bgnd</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">gain</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">rotate90</span><span class="p">(</span><span class="n">correct_images</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">bgnd</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">gain</span><span class="p">),</span> <span class="s1">&#39;cw&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">images</span> <span class="o">=</span> <span class="n">get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Took </span><span class="si">%.3f</span><span class="s2"> seconds to read data using get_images&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">roi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">crop</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">roi</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">images</span>
+
+
+<span class="nd">@pipeline</span>
+<div class="viewcode-block" id="crop"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.crop">[docs]</a><span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c1"># Assuming ROI is specified in the &quot;rotated&quot; (correct) orientation</span>
+    <span class="n">roi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">960</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">960</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">image</span><span class="p">[:,</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span></div>
+
+
+<span class="k">def</span> <span class="nf">crop_flat</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">roi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">960</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">960</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">image</span><span class="p">[</span><span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
 </pre></div>
 
     </div>
