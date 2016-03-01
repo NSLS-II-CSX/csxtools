@@ -1,5 +1,5 @@
 from csxtools.image import (rotate90, stackmean, stacksum, stackstd,
-                            stackvar, stackstderr)
+                            stackvar, stackstderr, images_mean, images_sum)
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
