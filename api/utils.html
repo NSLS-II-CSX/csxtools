@@ -121,15 +121,6 @@
 <div class="section" id="module-csxtools.utils">
 <span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-csxtools.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="csxtools.utils.crop">
-<code class="descclassname">csxtools.utils.</code><code class="descname">crop</code><span class="sig-paren">(</span><em>image</em>, <em>roi=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.crop" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function has been made lazy. When passed
-a Slicerator, it will return a
-new Slicerator of the results. When passed
-any other objects, its behavior is unchanged.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="csxtools.utils.get_fastccd_images">
 <code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_images</code><span class="sig-paren">(</span><em>light_header</em>, <em>dark_headers=None</em>, <em>flat=None</em>, <em>gain=(1</em>, <em>4</em>, <em>8)</em>, <em>tag=None</em>, <em>roi=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retreive and correct FastCCD Images from associated headers</p>
@@ -158,8 +149,8 @@ least sensitive)</li>
 <li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Data tag used to retrieve images. Used in the call to
 <code class="docutils literal"><span class="pre">databroker.get_images()</span></code>. If <cite>None</cite>, use the defualt from
 the settings.</li>
-<li><strong>roi</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; tuple with 4 integers to crop images
-(row_start, column_start, row_end, column_end)</li>
+<li><strong>roi</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; coordinates of the upper-left corner and width and height of
+the ROI: e.g., (x, y, w, h)</li>
 </ul>
 </td>
 </tr>
@@ -168,24 +159,6 @@ the settings.</li>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a corrected pims.pipeline of the data</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="csxtools.utils.get_images_to_3D">
-<code class="descclassname">csxtools.utils.</code><code class="descname">get_images_to_3D</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_images_to_3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_images_to_3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a 3D array from the &#8220;slicerator&#8221; object</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>object</strong> (<em>slicerator</em>) &#8211; This is the output of get_fastccd_images</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>array</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">3D numpy array</td>
 </tr>
 </tbody>
 </table>
