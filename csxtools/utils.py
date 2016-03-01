@@ -49,7 +49,7 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     roi : tuple
         coordinates of the upper-left corner and width and height of
-        the ROI: e.g., (x, y, w, h) or (col, row, col_len, row_len)
+        the ROI: e.g., (x, y, w, h)
 
     Returns
     -------
@@ -62,9 +62,10 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     # Now lets sort out the ROI
     if roi is not None:
+        roi = list(roi)
         # Convert ROI to start:stop from start:size
-        roi[1] = roi[0] + roi[1] + 1
-        roi[3] = roi[2] + roi[3] + 1
+        roi[2] = roi[0] + roi[2]
+        roi[3] = roi[1] + roi[3]
 
     if dark_headers is None:
         bgnd = None
