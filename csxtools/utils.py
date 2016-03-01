@@ -66,6 +66,7 @@ def get_fastccd_images(light_header, dark_headers=None,
         # Convert ROI to start:stop from start:size
         roi[2] = roi[0] + roi[2]
         roi[3] = roi[1] + roi[3]
+        logger.info("Computing with ROI of %s", str(roi))
 
     if dark_headers is None:
         bgnd = None
