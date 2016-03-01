@@ -154,11 +154,31 @@ the ROI: e.g., (x, y, w, h)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>image</strong></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">a corrected pims.pipeline of the data</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A corrected pims.pipeline of the data</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="csxtools.utils.get_fastccd_timestamps">
+<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_timestamps</code><span class="sig-paren">(</span><em>header</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_timestamps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_timestamps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the FastCCD timestamps from the Areadetector Data File</p>
+<p>Return a list of numpy arrays of the timestamps for the images as
+recorded in the datafile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>header</strong> (<em>databorker header</em>) &#8211; This header defines the run</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of arrays of the timestamps</td>
 </tr>
 </tbody>
 </table>

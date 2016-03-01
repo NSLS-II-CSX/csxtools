@@ -111,12 +111,13 @@
   <h1>Source code for csxtools.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">time</span> <span class="kn">as</span> <span class="nn">ttime</span>
-<span class="kn">from</span> <span class="nn">databroker</span> <span class="kn">import</span> <span class="n">get_images</span>
+<span class="kn">from</span> <span class="nn">databroker</span> <span class="kn">import</span> <span class="n">get_images</span><span class="p">,</span> <span class="n">get_events</span>
 <span class="kn">from</span> <span class="nn">pims</span> <span class="kn">import</span> <span class="n">pipeline</span>
 
 <span class="kn">from</span> <span class="nn">.fastccd</span> <span class="kn">import</span> <span class="n">correct_images</span>
 <span class="kn">from</span> <span class="nn">.image</span> <span class="kn">import</span> <span class="n">rotate90</span><span class="p">,</span> <span class="n">stackmean</span>
 <span class="kn">from</span> <span class="nn">.settings</span> <span class="kn">import</span> <span class="n">detectors</span>
+<span class="kn">from</span> <span class="nn">.handlers</span> <span class="kn">import</span> <span class="n">AreaDetectorHDF5TimestampHandler</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -164,7 +165,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    image : a corrected pims.pipeline of the data</span>
+<span class="sd">        A corrected pims.pipeline of the data</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -285,6 +286,29 @@
     <span class="c1"># Assuming ROI is specified in the &quot;rotated&quot; (correct) orientation</span>
     <span class="n">roi</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span>
+
+
+<div class="viewcode-block" id="get_fastccd_timestamps"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_timestamps">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_timestamps</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the FastCCD timestamps from the Areadetector Data File</span>
+
+<span class="sd">    Return a list of numpy arrays of the timestamps for the images as</span>
+<span class="sd">    recorded in the datafile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    header : databorker header</span>
+<span class="sd">        This header defines the run</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        list of arrays of the timestamps</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hover</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">:</span> <span class="n">AreaDetectorHDF5TimestampHandler</span><span class="p">}</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_events</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">],</span>
+                                 <span class="n">handler_overrides</span><span class="o">=</span><span class="n">hover</span><span class="p">)]</span>
+    <span class="n">timestamps</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">timestamps</span></div>
 </pre></div>
 
     </div>
