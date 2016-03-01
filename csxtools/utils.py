@@ -1,11 +1,12 @@
 import numpy as np
 import time as ttime
-from databroker import get_images
+from databroker import get_images, get_events
 from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90, stackmean
 from .settings import detectors
+from .handlers import AreaDetectorHDF5TimestampHandler
 
 import logging
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     Returns
     -------
-    image : a corrected pims.pipeline of the data
+        A corrected pims.pipeline of the data
 
     """
 
@@ -174,3 +175,26 @@ def _crop(image, roi):
     # Assuming ROI is specified in the "rotated" (correct) orientation
     roi = [image_shape[-2]-roi[3], roi[0], image_shape[-1]-roi[1], roi[2]]
     return image.T[roi[1]:roi[3], roi[0]:roi[2]].T
+
+
+def get_fastccd_timestamps(header):
+    """Return the FastCCD timestamps from the Areadetector Data File
+
+    Return a list of numpy arrays of the timestamps for the images as
+    recorded in the datafile.
+
+    Parameters
+    ----------
+    header : databorker header
+        This header defines the run
+
+    Returns
+    -------
+        list of arrays of the timestamps
+
+    """
+    hover = {'fccd_image_lightfield': AreaDetectorHDF5TimestampHandler}
+    img = [i for i in get_events(header, ['fccd_image_lightfield'],
+                                 handler_overrides=hover)]
+    timestamps = img[0]['data']['fccd_image_lightfield']
+    return timestamps
