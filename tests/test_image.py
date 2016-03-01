@@ -1,5 +1,5 @@
 from csxtools.image import (rotate90, stackmean, stacksum, stackstd,
-                            stackvar, stackstderr)
+                            stackvar, stackstderr, images_mean, images_sum)
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
@@ -79,3 +79,18 @@ def test_stackstderr():
     m, n = stackstderr(x)
     assert_array_almost_equal(m, np.std(x, axis=0) / np.sqrt(n), 3)
     assert_array_equal(n, np.ones((20, 20), dtype=np.float32) * 1000.0)
+
+
+def test_images_mean():
+    x = np.array([np.repeat(ii*np.ones(ii*100, dtype=np.float32), 400).reshape(
+                 (ii*100, 20, 20)) for ii in range(1, 11)])
+    m = images_mean(x)
+    assert_array_almost_equal(m, np.array([np.mean(x1) for x1 in x]), 3)
+
+
+def test_images_sum():
+    x = np.array([np.repeat(ii*np.ones(ii*100, dtype=np.float32), 400).reshape(
+                 (ii*100, 20, 20)) for ii in range(1, 11)])
+    m = images_sum(x)
+    assert_array_almost_equal(m, np.array([np.sum(np.mean(x1, axis=0))
+                              for x1 in x]), 3)
