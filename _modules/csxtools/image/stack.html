@@ -226,7 +226,7 @@
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span></div>
 
 
-<span class="k">def</span> <span class="nf">images_mean</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+<div class="viewcode-block" id="images_mean"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.images_mean">[docs]</a><span class="k">def</span> <span class="nf">images_mean</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Cacluate the mean ccd counts per event</span>
 
 <span class="sd">    This function calculates the mean of ccd counts for each event. The</span>
@@ -241,10 +241,10 @@
 <span class="sd">    -------</span>
 <span class="sd">    array: 1D numpy array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">stackmean</span><span class="p">(</span><span class="n">image</span><span class="p">))</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">stackmean</span><span class="p">(</span><span class="n">image</span><span class="p">))</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span></div>
 
 
-<span class="k">def</span> <span class="nf">images_sum</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+<div class="viewcode-block" id="images_sum"><a class="viewcode-back" href="../../../api/image.html#csxtools.image.images_sum">[docs]</a><span class="k">def</span> <span class="nf">images_sum</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Cacluate the total ccd counts per event</span>
 
 <span class="sd">    This function calculates the sum of ccd counts for each event. The</span>
@@ -259,7 +259,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    array: 1D numpy array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">stackmean</span><span class="p">(</span><span class="n">image</span><span class="p">))</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">stackmean</span><span class="p">(</span><span class="n">image</span><span class="p">))</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span></div>
 </pre></div>
 
     </div>
