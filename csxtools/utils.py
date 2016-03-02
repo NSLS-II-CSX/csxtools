@@ -103,8 +103,16 @@ def get_fastccd_images(light_header, dark_headers=None,
                             ttime.time() - tt)
 
             else:
-                logger.warning("Missing dark image"
-                               " for gain setting %d", i)
+                if (i == 0):
+                    logger.warning("Missing dark image"
+                                   " for gain setting 8")
+                elif (i == 1):
+                    logger.warning("Missing dark image"
+                                   " for gain setting 2")
+                elif (i == 2):
+                    logger.warning("Missing dark image"
+                                   " for gain setting 1")
+
             dark.append(b)
 
         bgnd = np.array(dark)
