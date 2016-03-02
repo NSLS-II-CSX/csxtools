@@ -185,6 +185,33 @@ recorded in the datafile.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="csxtools.utils.get_images_to_3D">
+<code class="descclassname">csxtools.utils.</code><code class="descname">get_images_to_3D</code><span class="sig-paren">(</span><em>images</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_images_to_3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_images_to_3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert image stack to 3D numpy array</p>
+<p>This function converts an image stack from
+:func: get_images() into a 3D numpy ndarray of a given datatype.
+This is useful to just get a simple array from detector data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> (<em>the result of get_images()</em>) &#8211; </li>
+<li><strong>dtype</strong> (<em>the datatype to use for the conversion</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;my_detector&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_images_to_3D</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="csxtools.utils.get_images_to_4D">
 <code class="descclassname">csxtools.utils.</code><code class="descname">get_images_to_4D</code><span class="sig-paren">(</span><em>images</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_images_to_4D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_images_to_4D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert image stack to 4D numpy array</p>

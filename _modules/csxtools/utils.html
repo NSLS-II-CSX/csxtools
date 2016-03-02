@@ -203,7 +203,7 @@
                 <span class="c1"># If we want to do something lazy</span>
 
                 <span class="n">tt</span> <span class="o">=</span> <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                <span class="n">b</span> <span class="o">=</span> <span class="n">get_images_to_4D</span><span class="p">(</span><span class="n">bgnd_events</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">get_images_to_3D</span><span class="p">(</span><span class="n">bgnd_events</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image conversion took </span><span class="si">%.3f</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
                             <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tt</span><span class="p">)</span>
 
@@ -254,6 +254,29 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">images</span><span class="p">],</span>
                   <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">im</span></div>
+
+
+<div class="viewcode-block" id="get_images_to_3D"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_images_to_3D">[docs]</a><span class="k">def</span> <span class="nf">get_images_to_3D</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert image stack to 3D numpy array</span>
+
+<span class="sd">    This function converts an image stack from</span>
+<span class="sd">    :func: get_images() into a 3D numpy ndarray of a given datatype.</span>
+<span class="sd">    This is useful to just get a simple array from detector data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : the result of get_images()</span>
+<span class="sd">    dtype : the datatype to use for the conversion</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; header = DataBroker[-1]</span>
+<span class="sd">    &gt;&gt;&gt; images = get_images(header, &quot;my_detector&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; a = get_images_to_3D(images, dtype=np.float32)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">im</span></div>
 
 
