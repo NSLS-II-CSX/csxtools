@@ -92,7 +92,7 @@ def get_fastccd_images(light_header, dark_headers=None,
                 # If we want to do something lazy
 
                 tt = ttime.time()
-                b = get_images_to_4D(bgnd_events, dtype=np.uint16)
+                b = get_images_to_3D(bgnd_events, dtype=np.uint16)
                 logger.info("Image conversion took %.3f seconds",
                             ttime.time() - tt)
 
@@ -143,6 +143,30 @@ def get_images_to_4D(images, dtype=None):
     """
     im = np.array([np.asarray(im, dtype=dtype) for im in images],
                   dtype=dtype)
+    return im
+
+
+def get_images_to_3D(images, dtype=None):
+    """Convert image stack to 3D numpy array
+
+    This function converts an image stack from
+    :func: get_images() into a 3D numpy ndarray of a given datatype.
+    This is useful to just get a simple array from detector data
+
+    Parameters
+    ----------
+    images : the result of get_images()
+    dtype : the datatype to use for the conversion
+
+    Example
+    -------
+    >>> header = DataBroker[-1]
+    >>> images = get_images(header, "my_detector')
+    >>> a = get_images_to_3D(images, dtype=np.float32)
+
+    """
+    im = np.vstack([np.asarray(im, dtype=dtype) for im in images],
+                   dtype=dtype)
     return im
 
 
