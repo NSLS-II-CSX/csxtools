@@ -165,8 +165,7 @@ def get_images_to_3D(images, dtype=None):
     >>> a = get_images_to_3D(images, dtype=np.float32)
 
     """
-    im = np.vstack([np.asarray(im, dtype=dtype) for im in images],
-                   dtype=dtype)
+    im = np.vstack([np.asarray(im, dtype=dtype) for im in images])
     return im
 
 
