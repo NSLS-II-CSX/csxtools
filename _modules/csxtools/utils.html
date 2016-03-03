@@ -214,8 +214,16 @@
                             <span class="n">ttime</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tt</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Missing dark image&quot;</span>
-                               <span class="s2">&quot; for gain setting </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Missing dark image&quot;</span>
+                                   <span class="s2">&quot; for gain setting 8&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Missing dark image&quot;</span>
+                                   <span class="s2">&quot; for gain setting 2&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Missing dark image&quot;</span>
+                                   <span class="s2">&quot; for gain setting 1&quot;</span><span class="p">)</span>
+
             <span class="n">dark</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
         <span class="n">bgnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dark</span><span class="p">)</span>
