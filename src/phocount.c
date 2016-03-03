@@ -44,7 +44,8 @@
 
 int count(data_t *in, data_t *out, data_t *stddev, 
           int ndims, index_t *dims, 
-          data_t *thresh, data_t *mean_filter, int sum_max, int nan){
+          data_t *thresh, data_t *sum_filter, data_t *std_filter,
+          int sum_max, int nan){
   index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
@@ -135,12 +136,17 @@ int count(data_t *in, data_t *out, data_t *stddev,
           scnd_moment += pixel[n] * pixel[n];
         }
 
-        if((sum < mean_filter[0]) || (sum >= mean_filter[1])){
+        if((sum < sum_filter[0]) || (sum >= sum_filter[1])){
           continue;
         }
 
-        data_t var = (scnd_moment - (sum*sum) / sum_max) / sum_max;
-        *stddevp = pow(var, 0.5);
+        data_t std = pow((scnd_moment - (sum*sum) / sum_max) / sum_max, 0.5);
+
+        if((std < std_filter[0]) || (std >= std_filter[1])){
+          continue;
+        }
+
+        *stddevp = std;
         *outp = sum;
 
       } // for(k)
