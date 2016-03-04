@@ -52,12 +52,13 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   PyArrayObject *out = NULL;
   npy_intp *dims;
   int ndims;
-  float thresh[2], mean_filter[2];
+  float thresh[2], sum_filter[2], std_filter[2];
   int sum_max;
   int nan = 0;
 
-  if(!PyArg_ParseTuple(args, "O(ff)(ff)i|p", &_input, &thresh[0], &thresh[1],
-                                             &mean_filter[0], &mean_filter[1], 
+  if(!PyArg_ParseTuple(args, "O(ff)(ff)(ff)i|p", &_input, &thresh[0], &thresh[1],
+                                             &sum_filter[0], &sum_filter[1], 
+                                             &std_filter[0], &std_filter[1], 
                                              &sum_max, &nan)){
     return NULL;
   }
@@ -92,7 +93,8 @@ static PyObject* phocount_count(PyObject *self, PyObject *args){
   // Ok now we don't touch Python Object ... Release the GIL
   Py_BEGIN_ALLOW_THREADS
   
-  count(input_p, out_p, stddev_p, ndims, dims, thresh, mean_filter, sum_max, nan);
+  count(input_p, out_p, stddev_p, ndims, dims, thresh, 
+        sum_filter, std_filter, sum_max, nan);
 
   Py_END_ALLOW_THREADS
 

@@ -35,7 +35,8 @@ def test_photon_count():
                               dtype=np.float32)[:nsum])
 
     op = photon_count(np.array([x, x, x], dtype=np.float32),
-                      thresh=(5, 13), mean_filter=(10, 30), nsum=nsum)
+                      thresh=(5, 13), mean_filter=(10, 30),
+                      std_filter=(0, 100), nsum=nsum)
 
     assert_array_equal(op[0], np.array([y, y, y]))
     assert_array_almost_equal(op[1], np.array([z, z, z]), decimal=6)
