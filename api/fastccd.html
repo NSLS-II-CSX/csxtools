@@ -155,7 +155,7 @@ gain settings</li>
 
 <dl class="function">
 <dt id="csxtools.fastccd.photon_count">
-<code class="descclassname">csxtools.fastccd.</code><code class="descname">photon_count</code><span class="sig-paren">(</span><em>data</em>, <em>thresh</em>, <em>mean_filter</em>, <em>nsum=3</em>, <em>nan=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/fastccd/phocount.html#photon_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.fastccd.photon_count" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">csxtools.fastccd.</code><code class="descname">photon_count</code><span class="sig-paren">(</span><em>data</em>, <em>thresh</em>, <em>mean_filter</em>, <em>std_filter</em>, <em>nsum=3</em>, <em>nan=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/fastccd/phocount.html#photon_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.fastccd.photon_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do single photon counting on CCD image</p>
 <p>This routine does single photon counting by cluster analysis. The image
 is searched for bright pixels within a threshold and then the energy
@@ -171,6 +171,8 @@ N is the number of images</li>
 (min, max)</li>
 <li><strong>mean_filter</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Filter only the values of the mean which are within the limits of
 the tuple of the form (min, max)</li>
+<li><strong>std_filter</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Filter only the values of the standard deviation  which are within
+the limits of the tuple of the form (min, max)</li>
 <li><strong>nsum</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of pixels to use to calculate the energy deposited by the
 photon. This should be 0 &lt; nsum &lt;= 9.</li>
 <li><strong>nan</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If true, replace empty pixels with <code class="docutils literal"><span class="pre">np.nan</span></code></li>

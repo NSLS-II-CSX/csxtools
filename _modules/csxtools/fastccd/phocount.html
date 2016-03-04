@@ -112,7 +112,7 @@
 <span></span><span class="kn">from</span> <span class="nn">..ext</span> <span class="kn">import</span> <span class="n">phocount</span> <span class="k">as</span> <span class="n">ph</span>
 
 
-<div class="viewcode-block" id="photon_count"><a class="viewcode-back" href="../../../api/fastccd.html#csxtools.fastccd.photon_count">[docs]</a><span class="k">def</span> <span class="nf">photon_count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="photon_count"><a class="viewcode-back" href="../../../api/fastccd.html#csxtools.fastccd.photon_count">[docs]</a><span class="k">def</span> <span class="nf">photon_count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">std_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Do single photon counting on CCD image</span>
 
 <span class="sd">    This routine does single photon counting by cluster analysis. The image</span>
@@ -130,6 +130,9 @@
 <span class="sd">    mean_filter : tuple</span>
 <span class="sd">        Filter only the values of the mean which are within the limits of</span>
 <span class="sd">        the tuple of the form (min, max)</span>
+<span class="sd">    std_filter : tuple</span>
+<span class="sd">        Filter only the values of the standard deviation  which are within</span>
+<span class="sd">        the limits of the tuple of the form (min, max)</span>
 <span class="sd">    nsum : int</span>
 <span class="sd">        The number of pixels to use to calculate the energy deposited by the</span>
 <span class="sd">        photon. This should be 0 &lt; nsum &lt;= 9.</span>
@@ -144,7 +147,7 @@
 <span class="sd">        photon hit. The second array is the standard deviation for the</span>
 <span class="sd">        integrated intensity on each photon hit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ph</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="p">,</span> <span class="n">nan</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">ph</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mean_filter</span><span class="p">,</span> <span class="n">std_filter</span><span class="p">,</span> <span class="n">nsum</span><span class="p">,</span> <span class="n">nan</span><span class="p">)</span></div>
 </pre></div>
 
     </div>
