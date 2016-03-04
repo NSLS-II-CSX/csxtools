@@ -115,25 +115,25 @@ int count(data_t *in, data_t *out, data_t *stddev,
 
           // Is this the brightest pixel?
           
-          //int n;
-          //int flag = 0;
-          //for(n=1;n<9;n++){
-          //  if(pixel[n] > pixel[0]){
-          //    flag = 1;
-          //    break;
-          //  }
-          //}
+          int n;
+          int flag = 0;
+          for(n=1;n<9;n++){
+            if(pixel[n] > pixel[0]){
+              flag = 1;
+              break;
+            }
+          }
 
-          //if(flag){
-          //  continue;
-          //}
+          if(flag){
+            continue;
+          }
         
           // Sort the array
           sort(pixel, 9);
 
           data_t sum = 0;
           data_t scnd_moment = 0;
-          int n;
+          
           for(n=0;n<sum_max;n++){
             sum += pixel[n];
             scnd_moment += pixel[n] * pixel[n];
