@@ -65,108 +65,112 @@ int count(data_t *in, data_t *out, data_t *stddev,
   }   
 
   index_t i;
-#pragma omp parallel for shared(in, out, stddev) private(i)
-  for(i=0;i<nimages;i++){
-    // Find the start pointers of the image
-    data_t *inp = in + (i*imsize) - 1;
-    data_t *outp = out + (i*imsize) - 1;
-    data_t *stddevp = stddev + (i*imsize) - 1;
+#pragma omp parallel shared(in, out, stddev) 
+  {
+#pragma omp for
+    for(i=0;i<nimages;i++){
+      // Find the start pointers of the image
+      data_t *inp = in + (i*imsize) - 1;
+      data_t *outp = out + (i*imsize) - 1;
+      data_t *stddevp = stddev + (i*imsize) - 1;
+      data_t pixel[9];
 
-    data_t pixel[9];
-
-    // Clear out the parts of the output array we don't use
-    
-    index_t j,k;
-    for(j=0;j<(M+1);j++){
-      inp++;
-      outp++;
-      stddevp++;
-      *outp = nodata;
-      *stddevp = nodata;
-    }
-
-    // Now start the search
-    for(j=1;j<(N-1);j++){
-      for(k=1;k<(M-1);k++){
+      // Clear out the parts of the output array we don't use
+     
+      index_t j, k;
+      for(j=0;j<(M+1);j++){
         inp++;
         outp++;
         stddevp++;
-
         *outp = nodata;
         *stddevp = nodata;
-
-        if((*inp < thresh[0]) || (*inp >= thresh[1])){
-          continue;
-        }
-
-        // The pixel is above thresh
-        // Now get the surrounding 9 pixels. 
-        pixel[0] = *inp;
-        pixel[1] = *(inp - M - 1);
-        pixel[2] = *(inp - M);
-        pixel[3] = *(inp - M + 1);
-        pixel[4] = *(inp - 1);
-        pixel[5] = *(inp + 1);
-        pixel[6] = *(inp + M - 1);
-        pixel[7] = *(inp + M);
-        pixel[8] = *(inp + M + 1);
-
-        // Is this the brightest pixel?
-        
-        int n;
-        int flag = 0;
-        for(n=1;n<9;n++){
-          if(pixel[n] > pixel[0]){
-            flag = 1;
-            break;
-          }
-        }
-
-        if(flag){
-          continue;
-        }
-      
-        // Sort the array
-        sort(pixel, 9);
-
-        data_t sum = 0;
-        data_t scnd_moment = 0;
-        for(n=0;n<sum_max;n++){
-          sum += pixel[n];
-          scnd_moment += pixel[n] * pixel[n];
-        }
-
-        if((sum < sum_filter[0]) || (sum >= sum_filter[1])){
-          continue;
-        }
-
-        data_t std = pow((scnd_moment - (sum*sum) / sum_max) / sum_max, 0.5);
-
-        if((std < std_filter[0]) || (std >= std_filter[1])){
-          continue;
-        }
-
-        *stddevp = std;
-        *outp = sum;
-
-      } // for(k)
-
-      for(k=0;k<2;k++){
-        outp++;
-        stddevp++;
-        inp++;
-        *stddevp = nodata;
-        *outp = nodata;
       }
-    } // for(j)
 
-    for(j=0;j<(M+1);j++){
-      outp++;
-      stddevp++;
-      *outp = nodata;
-      *stddevp = nodata;
-    }
-  } // for(nimages)
+      // Now start the search
+      for(j=1;j<(N-1);j++){
+        for(k=1;k<(M-1);k++){
+          inp++;
+          outp++;
+          stddevp++;
+
+          *outp = nodata;
+          *stddevp = nodata;
+
+          if((*inp < thresh[0]) || (*inp >= thresh[1])){
+            continue;
+          }
+
+          // The pixel is above thresh
+          // Now get the surrounding 9 pixels. 
+          
+          pixel[0] = *inp;
+          pixel[1] = *(inp - M - 1);
+          pixel[2] = *(inp - M);
+          pixel[3] = *(inp - M + 1);
+          pixel[4] = *(inp - 1);
+          pixel[5] = *(inp + 1);
+          pixel[6] = *(inp + M - 1);
+          pixel[7] = *(inp + M);
+          pixel[8] = *(inp + M + 1);
+
+          // Is this the brightest pixel?
+          
+          //int n;
+          //int flag = 0;
+          //for(n=1;n<9;n++){
+          //  if(pixel[n] > pixel[0]){
+          //    flag = 1;
+          //    break;
+          //  }
+          //}
+
+          //if(flag){
+          //  continue;
+          //}
+        
+          // Sort the array
+          sort(pixel, 9);
+
+          data_t sum = 0;
+          data_t scnd_moment = 0;
+          int n;
+          for(n=0;n<sum_max;n++){
+            sum += pixel[n];
+            scnd_moment += pixel[n] * pixel[n];
+          }
+
+          if((sum < sum_filter[0]) || (sum >= sum_filter[1])){
+            continue;
+          }
+
+          data_t std = pow((scnd_moment - (sum*sum) / sum_max) / sum_max, 0.5);
+
+          if((std < std_filter[0]) || (std >= std_filter[1])){
+            continue;
+          }
+
+          *stddevp = std;
+          *outp = sum;
+
+        } // for(k)
+
+        for(k=0;k<2;k++){
+          outp++;
+          stddevp++;
+          inp++;
+          *stddevp = nodata;
+          *outp = nodata;
+        }
+      } // for(j)
+
+      for(j=0;j<(M+1);j++){
+        outp++;
+        stddevp++;
+        *outp = nodata;
+        *stddevp = nodata;
+      }
+    } // for(nimages)
+  } // pragma omp 
 
   return 0;
 }
