@@ -294,3 +294,18 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4)):
         logger.warning("Flatfield correction removed %d pixels (%.2f %%)" %
                        (removed, removed * 100 / flat.size))
     return flat
+
+
+def fccd_mask():
+    """Return the initial flatfield mask for the FastCCD
+
+    Returns
+    -------
+    np.array of flatfield
+
+    """
+    flat = np.ones((960, 960))
+    flat[120:250, 0:480] = np.nan
+    flat = np.rot90(flat)
+
+    return flat
