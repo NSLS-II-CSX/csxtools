@@ -229,3 +229,83 @@ def get_fastccd_timestamps(header):
                                  handler_overrides=hover)]
     timestamps = img[0]['data']['fccd_image_lightfield']
     return timestamps
+
+
+def calculate_flatfield(image, limits=(0.6, 1.4)):
+    """Calculate a flatfield from fluo data
+
+    This routine calculates the flatfield correction from fluorescence data
+    The image is thresholded by limits from the median value of the image.
+    The flatfield is then constructed from the mean of the image divided by
+    the masked (by NaN) image resulting in a true flatfield correction
+
+    Parameters
+    ----------
+    image : array_like
+        This is the 2D image to convert to a flatfield correction.
+    limits : tuple
+        Pixels outwith the median value multiplied by these limits will be
+        excluded by setting to NaN.
+
+    Returns
+    -------
+        Array of flatfield correction.
+
+    """
+
+    flat = image
+    limits = np.array(limits)
+    limits = np.nanmedian(image) * limits
+
+    flat[flat < limits[0]] = np.nan
+    flat[flat > limits[1]] = np.nan
+    flat = np.nanmean(flat) / flat
+    flat = np.rot90(flat)
+
+    return flat
+
+
+def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4)):
+    """Calculate a flatfield from two headers
+
+    This routine calculates the flatfield using the
+    :func:calculate_flatfield() function after obtaining the images from
+    the headers.
+
+    Parameters
+    ----------
+    light : databroker header
+        The header containing the light images
+    dark : databroker header
+        The header from the run containin the dark images
+    flat : flatfield image (optional)
+        The array to be used for the initial flatfield
+
+    Returns
+    -------
+    array_like
+        Flatfield correction
+    """
+    images = get_images_to_3D(get_fastccd_images(light, dark, flat))
+    images = stackmean(images)
+    flat = calculate_flatfield(images, limits)
+    removed = np.sum(np.isnan(flat))
+    if removed != 0:
+        logger.warning("Flatfield correction removed %d pixels (%.2f %%)" %
+                       (removed, removed * 100 / flat.size))
+    return flat
+
+
+def fccd_mask():
+    """Return the initial flatfield mask for the FastCCD
+
+    Returns
+    -------
+    np.array of flatfield
+
+    """
+    flat = np.ones((960, 960))
+    flat[120:250, 0:480] = np.nan
+    flat = np.rot90(flat)
+
+    return flat
