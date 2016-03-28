@@ -27,7 +27,7 @@ def stackmean(array):
     return X
 
 
-def stacksum(array):
+def stacksum(array, norm=False):
     """Cacluate the sum of a stack
 
     This function calculates the sum of a stack of images (or any array).
@@ -35,10 +35,17 @@ def stacksum(array):
     calculation. It assumes an array of shape (.. i, j, x, y) where x and y
     are the size of the returned array (x, y).
 
+    If norm is True then the output sum is corrected for elements where NaNs
+    are encountered and renormalized to the value expected based on the stack
+    size.
+
     Parameters
     ----------
     array : array_like
         Input array of at least 3 dimensions.
+
+    norm : bool
+        If true then normalize output to account for NaNs.
 
     Returns
     -------
@@ -53,6 +60,10 @@ def stacksum(array):
         logger.warning("stacksum encountered NaN values and excluded these "
                        "values from the sum. Consider using the number of "
                        "points, to renormalize the image.")
+
+    if norm:
+        X = X * (total_elements / Y)
+
     return X, Y
 
 
