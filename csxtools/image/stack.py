@@ -1,6 +1,9 @@
 import numpy as np
 from ..ext import image as extimage
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def stackmean(array):
     """Cacluate the mean of a stack
@@ -43,6 +46,13 @@ def stacksum(array):
         tuple of 2 arrays of the sum and number of points in the sum
     """
     X, Y = extimage.stackprocess(array, 0)
+
+    total_elements = array.size / (array.shape[-1] * array.shape[-2])
+
+    if np.sum(Y != total_elements):
+        logger.warning("stacksum encountered NaN values and excluded these "
+                       "values from the sum. Consider using the number of "
+                       "points, to renormalize the image.")
     return X, Y
 
 
