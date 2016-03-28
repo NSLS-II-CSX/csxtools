@@ -340,6 +340,86 @@
                                  <span class="n">handler_overrides</span><span class="o">=</span><span class="n">hover</span><span class="p">)]</span>
     <span class="n">timestamps</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">timestamps</span></div>
+
+
+<div class="viewcode-block" id="calculate_flatfield"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.calculate_flatfield">[docs]</a><span class="k">def</span> <span class="nf">calculate_flatfield</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate a flatfield from fluo data</span>
+
+<span class="sd">    This routine calculates the flatfield correction from fluorescence data</span>
+<span class="sd">    The image is thresholded by limits from the median value of the image.</span>
+<span class="sd">    The flatfield is then constructed from the mean of the image divided by</span>
+<span class="sd">    the masked (by NaN) image resulting in a true flatfield correction</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array_like</span>
+<span class="sd">        This is the 2D image to convert to a flatfield correction.</span>
+<span class="sd">    limits : tuple</span>
+<span class="sd">        Pixels outwith the median value multiplied by these limits will be</span>
+<span class="sd">        excluded by setting to NaN.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Array of flatfield correction.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">limits</span><span class="p">)</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">*</span> <span class="n">limits</span>
+
+    <span class="n">flat</span><span class="p">[</span><span class="n">flat</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">flat</span><span class="p">[</span><span class="n">flat</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span> <span class="o">/</span> <span class="n">flat</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">flat</span></div>
+
+
+<div class="viewcode-block" id="get_fastccd_flatfield"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_flatfield">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_flatfield</span><span class="p">(</span><span class="n">light</span><span class="p">,</span> <span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate a flatfield from two headers</span>
+
+<span class="sd">    This routine calculates the flatfield using the</span>
+<span class="sd">    :func:calculate_flatfield() function after obtaining the images from</span>
+<span class="sd">    the headers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    light : databroker header</span>
+<span class="sd">        The header containing the light images</span>
+<span class="sd">    dark : databroker header</span>
+<span class="sd">        The header from the run containin the dark images</span>
+<span class="sd">    flat : flatfield image (optional)</span>
+<span class="sd">        The array to be used for the initial flatfield</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array_like</span>
+<span class="sd">        Flatfield correction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">get_images_to_3D</span><span class="p">(</span><span class="n">get_fastccd_images</span><span class="p">(</span><span class="n">light</span><span class="p">,</span> <span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">))</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">stackmean</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">calculate_flatfield</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">limits</span><span class="p">)</span>
+    <span class="n">removed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">flat</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">removed</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Flatfield correction removed </span><span class="si">%d</span><span class="s2"> pixels (</span><span class="si">%.2f</span><span class="s2"> </span><span class="si">%%</span><span class="s2">)&quot;</span> <span class="o">%</span>
+                       <span class="p">(</span><span class="n">removed</span><span class="p">,</span> <span class="n">removed</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">flat</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">flat</span></div>
+
+
+<div class="viewcode-block" id="fccd_mask"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.fccd_mask">[docs]</a><span class="k">def</span> <span class="nf">fccd_mask</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return the initial flatfield mask for the FastCCD</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array of flatfield</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">960</span><span class="p">,</span> <span class="mi">960</span><span class="p">))</span>
+    <span class="n">flat</span><span class="p">[</span><span class="mi">120</span><span class="p">:</span><span class="mi">250</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">flat</span></div>
 </pre></div>
 
     </div>
