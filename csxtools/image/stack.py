@@ -56,10 +56,11 @@ def stacksum(array, norm=False):
 
     total_elements = array.size / (array.shape[-1] * array.shape[-2])
 
-    if np.sum(Y != total_elements):
+    if not norm and np.sum(Y != total_elements):
         logger.warning("stacksum encountered NaN values and excluded these "
                        "values from the sum. Consider using the number of "
-                       "points, to renormalize the image.")
+                       "points, to renormalize the image. Hint: use "
+                       "norm=True")
 
     if norm:
         X = X * (total_elements / Y)
