@@ -1,7 +1,7 @@
 from IPython.display import display, Javascript
 
 
-def notebook_to_gist():
+def notebook_to_nbviewer():
     js = """
 
 function callback(out){
