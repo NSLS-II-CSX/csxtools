@@ -306,6 +306,7 @@ def fccd_mask():
     """
     flat = np.ones((960, 960))
     flat[120:250, 0:480] = np.nan
+    flat[:, 476:484] = np.nan
     flat = np.rot90(flat)
 
     return flat
