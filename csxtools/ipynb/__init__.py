@@ -5,6 +5,8 @@ del get_versions
 
 # Now import useful functions
 
-__all__ = ['image_stack_to_movie', 'show_image_stack']
+__all__ = ['image_stack_to_movie', 'show_image_stack',
+           'notebook_to_nbviewer']
 
 from .animation import image_stack_to_movie, show_image_stack
+from .nbviewer import notebook_to_nbviewer
