@@ -208,7 +208,7 @@ def _crop(image, roi):
     return image.T[roi[1]:roi[3], roi[0]:roi[2]].T
 
 
-def get_fastccd_timestamps(header):
+def get_fastccd_timestamps(header, tag='fccd_image'):
     """Return the FastCCD timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -224,10 +224,10 @@ def get_fastccd_timestamps(header):
         list of arrays of the timestamps
 
     """
-    hover = {'fccd_image_lightfield': AreaDetectorHDF5TimestampHandler}
-    img = [i for i in get_events(header, ['fccd_image_lightfield'],
+    hover = {tag: AreaDetectorHDF5TimestampHandler}
+    img = [i for i in get_events(header, [tag],
                                  handler_overrides=hover)]
-    timestamps = img[0]['data']['fccd_image_lightfield']
+    timestamps = [i['data'][tag] for i in img if tag in i['data'].keys()]
     return timestamps
 
 
