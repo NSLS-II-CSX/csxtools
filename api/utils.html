@@ -239,7 +239,7 @@ the ROI: e.g., (x, y, w, h)</li>
 
 <dl class="function">
 <dt id="csxtools.utils.get_fastccd_timestamps">
-<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_timestamps</code><span class="sig-paren">(</span><em>header</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_timestamps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_timestamps" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">csxtools.utils.</code><code class="descname">get_fastccd_timestamps</code><span class="sig-paren">(</span><em>header</em>, <em>tag='fccd_image'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/csxtools/utils.html#get_fastccd_timestamps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#csxtools.utils.get_fastccd_timestamps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the FastCCD timestamps from the Areadetector Data File</p>
 <p>Return a list of numpy arrays of the timestamps for the images as
 recorded in the datafile.</p>
@@ -247,11 +247,17 @@ recorded in the datafile.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>header</strong> (<em>databorker header</em>) &#8211; This header defines the run</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>header</strong> (<em>databorker header</em>) &#8211; This header defines the run</li>
+<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; This is the tag or name of the fastccd.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of arrays of the timestamps</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of arrays of the timestamps</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -277,7 +283,7 @@ This is useful to just get a simple array from detector data</p>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;my_detector&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_images_to_3D</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 </pre></div>
@@ -304,7 +310,7 @@ This is useful to just get a simple array from detector data</p>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">DataBroker</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">get_images</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;my_detector&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_images_to_4D</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 </pre></div>
@@ -334,7 +340,7 @@ This is useful to just get a simple array from detector data</p>
     </p>
     <p>
         &copy; Copyright 2015, Brookhaven Science Associates, Brookhaven National Laboratory.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
     </p>
   </div>
 </footer>

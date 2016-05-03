@@ -319,7 +319,7 @@
     <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">roi</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span>
 
 
-<div class="viewcode-block" id="get_fastccd_timestamps"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_timestamps">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_timestamps</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+<div class="viewcode-block" id="get_fastccd_timestamps"><a class="viewcode-back" href="../../api/utils.html#csxtools.utils.get_fastccd_timestamps">[docs]</a><span class="k">def</span> <span class="nf">get_fastccd_timestamps</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;fccd_image&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the FastCCD timestamps from the Areadetector Data File</span>
 
 <span class="sd">    Return a list of numpy arrays of the timestamps for the images as</span>
@@ -329,16 +329,20 @@
 <span class="sd">    ----------</span>
 <span class="sd">    header : databorker header</span>
 <span class="sd">        This header defines the run</span>
+<span class="sd">    tag : string</span>
+<span class="sd">        This is the tag or name of the fastccd.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">        list of arrays of the timestamps</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">hover</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">:</span> <span class="n">AreaDetectorHDF5TimestampHandler</span><span class="p">}</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_events</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">],</span>
+    <span class="n">hover</span> <span class="o">=</span> <span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">AreaDetectorHDF5TimestampHandler</span><span class="p">}</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">get_events</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="p">[</span><span class="n">tag</span><span class="p">],</span>
                                  <span class="n">handler_overrides</span><span class="o">=</span><span class="n">hover</span><span class="p">)]</span>
-    <span class="n">timestamps</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;fccd_image_lightfield&#39;</span><span class="p">]</span>
+
+    <span class="n">timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">tag</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">img</span> <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
     <span class="k">return</span> <span class="n">timestamps</span></div>
 
 
@@ -438,7 +442,7 @@
     </p>
     <p>
         &copy; Copyright 2015, Brookhaven Science Associates, Brookhaven National Laboratory.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
     </p>
   </div>
 </footer>
