@@ -6,7 +6,7 @@ from pims import pipeline
 from .fastccd import correct_images
 from .image import rotate90, stackmean
 from .settings import detectors
-from .handlers import AreaDetectorHDF5TimestampHandler
+from filestore.handlers import AreaDetectorHDF5TimestampHandler
 
 import logging
 logger = logging.getLogger(__name__)
