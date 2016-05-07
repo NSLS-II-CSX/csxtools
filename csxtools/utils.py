@@ -6,14 +6,15 @@ from pims import pipeline
 from .fastccd import correct_images
 from .image import rotate90, stackmean
 from .settings import detectors
-from .handlers import AreaDetectorHDF5TimestampHandler
+from filestore.handlers import AreaDetectorHDF5TimestampHandler
 
 import logging
 logger = logging.getLogger(__name__)
 
 
 def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag=None, roi=None):
+                       flat=None, gain=(1, 4, 8), tag=None, roi=None,
+                       handler_override=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -52,6 +53,10 @@ def get_fastccd_images(light_header, dark_headers=None,
         coordinates of the upper-left corner and width and height of
         the ROI: e.g., (x, y, w, h)
 
+    handler_override : class
+        A filestore handler to override the default class used by
+        filestore to get the images
+
     Returns
     -------
         A corrected pims.pipeline of the data
@@ -85,7 +90,8 @@ def get_fastccd_images(light_header, dark_headers=None,
             if d is not None:
                 # Get the images
 
-                bgnd_events = _get_images(d, tag, roi)
+                bgnd_events = _get_images(d, tag, roi,
+                                          handler_override=handler_override)
 
                 # We assume that all images are for the background
                 # TODO : Perhaps we can loop over the generator
@@ -119,7 +125,8 @@ def get_fastccd_images(light_header, dark_headers=None,
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag, roi)
+    events = _get_images(light_header, tag, roi,
+                         handler_override=handler_override)
 
     # Ok, so lets return a pims pipeline which does the image conversion
 
@@ -177,9 +184,9 @@ def get_images_to_3D(images, dtype=None):
     return im
 
 
-def _get_images(header, tag, roi=None):
+def _get_images(header, tag, roi=None, handler_override=None):
     t = ttime.time()
-    images = get_images(header, tag)
+    images = get_images(header, tag, handler_override=handler_override)
     t = ttime.time() - t
     logger.info("Took %.3f seconds to read data using get_images", t)
 
