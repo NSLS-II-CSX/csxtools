@@ -1,6 +1,9 @@
 import numpy as np
 from ..ext import image as extimage
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def stackmean(array):
     """Cacluate the mean of a stack
@@ -24,13 +27,22 @@ def stackmean(array):
     return X
 
 
-def stacksum(array):
+def stacksum(array, norm=True):
     """Cacluate the sum of a stack
 
     This function calculates the sum of a stack of images (or any array).
     It ignores values that are np.NAN and does not include them in the sum
     calculation. It assumes an array of shape (.. i, j, x, y) where x and y
     are the size of the returned array (x, y).
+
+    The output sum is corrected for elements where NaNs are encountered if
+    norm is set to True.  The values are renormalized to a sum which would
+    have occured if all elements had been polulated. If no values are present
+    in a stack, then NaN is returned.
+
+    If norm is false, the actual sum is returned.
+
+    size.
 
     Parameters
     ----------
@@ -43,6 +55,16 @@ def stacksum(array):
         tuple of 2 arrays of the sum and number of points in the sum
     """
     X, Y = extimage.stackprocess(array, 0)
+
+    if norm:
+        # Set zero values to NaN
+        _Y = Y.astype(np.float32)
+        _Y[Y == 0] = np.nan
+
+        total_elements = array.size / (array.shape[-1] * array.shape[-2])
+
+        X = X * (total_elements / _Y)
+
     return X, Y
 
 

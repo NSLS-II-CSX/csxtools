@@ -37,7 +37,7 @@ def test_stackmean():
 def test_stacksum():
     x = np.ones((1, 100, 100), dtype=np.float32) * np.nan
     m, n = stacksum(x)
-    assert_array_equal(m, np.zeros((100, 100), dtype=np.float32))
+    assert_array_equal(m, np.nan * np.zeros((100, 100), dtype=np.float32))
     assert_array_equal(n, np.zeros((100, 100), dtype=np.float32))
 
     x = np.ones((1000, 100, 100), dtype=np.float32) * 52.0
@@ -52,8 +52,8 @@ def test_stacksum():
     x[23] = np.nan
     x[40] = np.nan
     m, n = stacksum(x)
-    assert_array_equal(m, np.ones((100, 100), dtype=np.float32) *
-                       2 * (1000 - 3))
+    assert_array_almost_equal(m, np.ones((100, 100), dtype=np.float32) * 2000,
+                              decimal=3)
     assert_array_equal(n, np.ones((100, 100), dtype=np.float32) * (1000 - 3))
 
 
