@@ -27,7 +27,7 @@ def stackmean(array):
     return X
 
 
-def stacksum(array, norm=False):
+def stacksum(array, norm=True):
     """Cacluate the sum of a stack
 
     This function calculates the sum of a stack of images (or any array).
@@ -35,17 +35,19 @@ def stacksum(array, norm=False):
     calculation. It assumes an array of shape (.. i, j, x, y) where x and y
     are the size of the returned array (x, y).
 
-    If norm is True then the output sum is corrected for elements where NaNs
-    are encountered and renormalized to the value expected based on the stack
+    The output sum is corrected for elements where NaNs are encountered if
+    norm is set to True.  The values are renormalized to a sum which would
+    have occured if all elements had been polulated. If no values are present
+    in a stack, then NaN is returned.
+
+    If norm is false, the actual sum is returned.
+
     size.
 
     Parameters
     ----------
     array : array_like
         Input array of at least 3 dimensions.
-
-    norm : bool
-        If true then normalize output to account for NaNs.
 
     Returns
     -------
@@ -54,16 +56,14 @@ def stacksum(array, norm=False):
     """
     X, Y = extimage.stackprocess(array, 0)
 
-    total_elements = array.size / (array.shape[-1] * array.shape[-2])
-
-    if not norm and np.sum(Y != total_elements):
-        logger.warning("stacksum encountered NaN values and excluded these "
-                       "values from the sum. Consider using the number of "
-                       "points, to renormalize the image. Hint: use "
-                       "norm=True")
-
     if norm:
-        X = X * (total_elements / Y)
+        # Set zero values to NaN
+        _Y = Y.astype(np.float32)
+        _Y[Y == 0] = np.nan
+
+        total_elements = array.size / (array.shape[-1] * array.shape[-2])
+
+        X = X * (total_elements / _Y)
 
     return X, Y
 
