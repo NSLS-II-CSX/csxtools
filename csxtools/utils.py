@@ -5,7 +5,7 @@ from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90, stackmean
-from .settings import detectors
+from .settings import detectors as _detectors
 from filestore.handlers import AreaDetectorHDF5SWMRTimestampHandler
 
 import logging
@@ -64,7 +64,7 @@ def get_fastccd_images(light_header, dark_headers=None,
     """
 
     if tag is None:
-        tag = detectors['fccd']
+        tag = _detectors['fccd']['tag']
 
     # Now lets sort out the ROI
     if roi is not None:
