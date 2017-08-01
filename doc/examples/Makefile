@@ -9,7 +9,7 @@ IPYNB=$(notdir $(NOTEBOOKS))
 all: $(HTML)
 
 %.html: $(NBDIR)/%.ipynb
-	ipython nbconvert $< --to html
+	jupyter nbconvert $< --to html
 	cp $< .
 
 clean:
