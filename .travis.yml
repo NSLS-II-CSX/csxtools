@@ -1,53 +1,59 @@
 language: python
 sudo: false
-python:
-- '3.5'
-before_install:
-- git config --global user.email "donotreply@travis.ci"
-- git config --global user.name "travisci"
-- git config --global credential.helper store --file=$HOME/.git-credentials
-- echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
-- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-- chmod +x miniconda.sh
-- "./miniconda.sh -b -p /home/travis/mc"
-- export PATH=/home/travis/mc/bin:$PATH
-- mkdir -p /home/travis/.config/metadatastore
-- 'echo "port: 27017" > /home/travis/.config/metadatastore/connection.yml'
-- mkdir -p /home/travis/.config/filestore
-- 'echo "port: 27017" > /home/travis/.config/filestore/connection.yml'
-install:
-- export GIT_FULL_HASH=`git rev-parse HEAD`
-- conda config --set always_yes true
-- conda config --set show_channel_urls true
-- conda config --add channels lightsource2
-- conda config --add channels bokeh
-- conda config --add channels asmeurer
-- conda update conda
-- conda install conda-build
-- conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas
-  h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons
-  pymongo=2.9 pims=0.3.3 tifffile databroker sphinx-bootstrap-theme pandoc
-- source activate testenv
-#- ln -s /home/travis/mc/envs/testenv/lib/libgmp.so.10 /home/travis/mc/envs/testenv/lib/libgmp.so.3
-- pip install coveralls
-- pip install codecov
-- pip install pytest-pep8
-- python setup.py install build_ext -i
-script:
-- py.test --pep8 -m pep8
-- coverage run --source=csxtools run_tests.py
-- cd $TRAVIS_BUILD_DIR/doc && make html
-#- cd $TRAVIS_BUILD_DIR && conda build conda-recipe
-after_success:
-- cd $TRAVIS_BUILD_DIR && coveralls
-- cd $TRAVIS_BUILD_DIR && codecov
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
-  cd $TRAVIS_BUILD_DIR/doc && make gh-pages; fi;
+
+matrix:
+    include:
+        - python: 3.6
+      
+services:
+    - mongodb
+
+addons:
+  apt:
+    sources:
+        - mongodb-3.2-precise
+    packages:
+        - mongodb-org-server
+        - mongodb-org
+
 env:
-  global:
-  - GH_USER=stuwilkins
-  - MDS_HOST=localhost
-  - MDS_DATABASE=test
-  - MDS_TIMEZONE=US/Eastern
-  - FS_HOST=localhost
-  - FS_DATABASE=test
+    global:
+        - GH_USER=stuwilkins
+        - MDS_HOST=localhost
+        - MDS_DATABASE=test
+        - MDS_TIMEZONE=US/Eastern
+        - FS_HOST=localhost
+        - FS_DATABASE=test
+
+before_install:
+    - git config --global user.email "donotreply@travis.ci"
+    - git config --global user.name "travisci"
+    - git config --global credential.helper store --file=$HOME/.git-credentials
+    - echo "https://${GH_USER}:${GH_TOKEN}@github.com" > $HOME/.git-credentials
+    - git clone https://github.com/nsls-ii/nsls2-ci ~/ci_scripts
+    - . ~/ci_scripts/install-miniconda.sh
+    - . ~/ci_scripts/init-filestore.sh
+    - . ~/ci_scripts/init-metadatastore.sh
+
+install:
+    - export GIT_FULL_HASH=`git rev-parse HEAD`
+    - conda config --show
+    - conda create -n testenv pytest cytoolz pandas ujson six jsonschema doct h5py tornado pymongo pytz numpy tifffile jinja2 coverage pyyaml tzlocal nose python=$TRAVIS_PYTHON_VERSION pims prettytable pip boltons requests databroker sphinx sphinx-bootstrap-theme pandoc ipython nbconvert jupyter  -c lightsource2-tag -c conda-forge
+    - source activate testenv
+    - pip install pytest-pep8
+    - pip install coveralls
+    - pip install codecov
+    - python setup.py install build_ext -i
+
+script:
+    - py.test --pep8 -m pep8
+    - coverage run --source=csxtools run_tests.py
+    - cd $TRAVIS_BUILD_DIR/doc && make html
+    #- cd $TRAVIS_BUILD_DIR && conda build conda-recipe
+    
+after_success:
+    - cd $TRAVIS_BUILD_DIR && coveralls
+    - cd $TRAVIS_BUILD_DIR && codecov
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
+      cd $TRAVIS_BUILD_DIR/doc && make gh-pages; fi;
+

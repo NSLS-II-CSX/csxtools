@@ -6,7 +6,7 @@ from pims import pipeline
 from .fastccd import correct_images
 from .image import rotate90, stackmean
 from .settings import detectors
-from filestore.handlers import AreaDetectorHDF5SWMRTimestampHandler
+from filestore.handlers import AreaDetectorHDF5TimestampHandler
 
 import logging
 logger = logging.getLogger(__name__)
@@ -233,9 +233,10 @@ def get_fastccd_timestamps(header, tag='fccd_image'):
         list of arrays of the timestamps
 
     """
-    hover = {tag: AreaDetectorHDF5SWMRTimestampHandler}
+    hover = {tag: AreaDetectorHDF5TimestampHandler}
     img = [i for i in get_events(header, [tag],
-                                 handler_overrides=hover)]
+                                 handler_overrides=hover,
+                                 fill=True)]
 
     timestamps = [i['data'][tag] for i in img if tag in i['data'].keys()]
 
