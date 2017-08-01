@@ -134,7 +134,9 @@ def get_fastccd_images(light_header, dark_headers=None,
     if flat is not None and roi is not None:
         flat = _crop(flat, roi)
 
-    return _correct_fccd_images(events, bgnd, flat, gain)
+    # Now loop through events and make a list
+    rtn = [_correct_fccd_images(e, bgnd, flat, gain) for e in events]
+    return rtn
 
 
 def get_images_to_4D(images, dtype=None):
