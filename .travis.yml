@@ -37,7 +37,7 @@ before_install:
 install:
     - export GIT_FULL_HASH=`git rev-parse HEAD`
     - conda config --show
-    - conda create -n testenv pytest cytoolz pandas ujson six jsonschema doct h5py tornado pymongo pytz numpy tifffile jinja2 coverage pyyaml tzlocal nose python=$TRAVIS_PYTHON_VERSION pims prettytable pip boltons requests databroker -c lightsource2-tag -c conda-forge
+    - conda create -n testenv pytest cytoolz pandas ujson six jsonschema doct h5py tornado pymongo pytz numpy tifffile jinja2 coverage pyyaml tzlocal nose python=$TRAVIS_PYTHON_VERSION pims prettytable pip boltons requests databroker sphinx sphinx-bootstrap-theme pandoc -c lightsource2-tag -c conda-forge
       #- conda install conda-build
       #- conda create -n testenv pip python=$TRAVIS_PYTHON_VERSION six "numpy<1.10" pandas
       #h5py coverage jsonschema jinja2 sphinx pyyaml ipywidgets tzlocal prettytable boltons
