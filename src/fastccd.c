@@ -49,10 +49,15 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
   index_t nimages,k;
   int n;
 
-  nimages = dims[0];
-  for(n=1;n<(ndims-2);n++){
-    nimages = nimages * dims[n];
-  }   
+  if(ndims == 2)
+  {
+    nimages = 1;
+  } else {
+    nimages = dims[0];
+    for(n=1;n<(ndims-2);n++){
+      nimages = nimages * dims[n];
+    }   
+  }
 
   index_t imsize = dims[ndims-1] * dims[ndims-2];
 
