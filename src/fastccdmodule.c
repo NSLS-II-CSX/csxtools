@@ -65,7 +65,7 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
     return NULL;
   }
 
-  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_UINT16, 3, 0,NPY_ARRAY_IN_ARRAY);
+  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_UINT16, 2, 0,NPY_ARRAY_IN_ARRAY);
   if(!input){
     goto error;
   }
