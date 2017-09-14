@@ -1,7 +1,7 @@
 import numpy as np
 import time as ttime
 from databroker import get_images, get_events
-from pims import pipeline
+from pims import pipeline, Frame
 
 from .fastccd import correct_images
 from .image import rotate90, stackmean
@@ -202,7 +202,7 @@ def _get_images(header, tag, roi=None, handler_override=None):
 def _correct_fccd_images(image, bgnd, flat, gain):
     image = correct_images(image, bgnd, flat, gain)
     image = rotate90(image, 'cw')
-    return image
+    return Frame(image)
 
 
 @pipeline
