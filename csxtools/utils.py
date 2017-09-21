@@ -10,10 +10,17 @@ from .settings import detectors
 import logging
 logger = logging.getLogger(__name__)
 
+def get_fastccd_images(*args, **kwargs):
+    """Convinience function to get fastccd images
 
-def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), config_name='csx',
-                       device_tag='fccd', overscan=None):
+    see :func `get_fastccd_data()`
+
+    """
+    return get_fastccd_data(*args, **kwargs)['images']
+
+def get_fastccd_data(light_header, dark_headers=None,
+                     flat=None, gain=(1, 4, 8), config_name='csx',
+                     device_tag='fccd', overscan=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -64,6 +71,8 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     image_tag = "{}_image".format(device_tag)
 
+    out = dict()
+
     if overscan is None:
         cfg = header.config_data(device_tag)[device_stream][0]
         if "{}_cam_overscan".format(device_tag) in cfg:
@@ -103,20 +112,25 @@ def get_fastccd_images(light_header, dark_headers=None,
             dark.append(bgnd_stack)
 
         dark = da.stack(dark).compute()
+        out['mean_dark'] = dark
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
     light = _get_images(light_header, image_tag)
+    out['raw_images'] = light
+
     light = _correct_images(light, dark, gain)
 
     # Now remove overscan and return
 
     if overscan > 0:
+        out['corrected_images'] = light
         light, overscan_data = _extract_overscan(light, overscan)
-    else:
-        overscan_data = None
+        out['overscan'] = overscan_data
 
-    return light, overscan_data
+    out['images'] = light
+
+    return out
 
 
 def _get_images(header, tag):
