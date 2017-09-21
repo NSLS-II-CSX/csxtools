@@ -78,10 +78,9 @@ def get_fastccd_images(light_header, dark_headers=None,
     else:
         if dark_headers is None:
             dark_headers = _get_dark_stack(config_tag, device_tag, stream_tag)
-            for d,g in zip(('8x', '2x', '1x'), dark_headers):
+            for d, g in zip(('8x', '2x', '1x'), dark_headers):
                 logger.info("Using dark images from "
                             "{} for gain {}".format(g, d))
-
 
         # Read the images for the dark headers
         t = ttime.time()
@@ -131,18 +130,17 @@ def _extract_overscan(stack, overscan):
     cols = stack.shape[-2] / 2
 
     data_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) < 10)]
-    data_rows_2 = [x for x in range(rows) if ((x % (10 + overscan)) >= overscan)]
+    data_rows_2 = [x for x in range(rows) if ((x % (10 + overscan))
+                                              >= overscan)]
 
     os_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) >= 10)]
     os_rows_2 = [x for x in range(rows) if ((x % (10 + overscan)) < overscan)]
 
-    data_stack = da.concatenate([stack[:,:,:cols,data_rows_1],
-                                 stack[:,:,cols:,data_rows_2]],
-                                 axis=2)
+    data_stack = da.concatenate([stack[:, :, :cols, data_rows_1],
+                                 stack[:, :, cols:, data_rows_2]], axis=2)
 
-    os_stack= da.concatenate([stack[:,:,:cols,os_rows_1],
-                              stack[:,:,cols:,os_rows_2]],
-                              axis=2)
+    os_stack= da.concatenate([stack[:, :, :cols, os_rows_1],
+                              stack[:, :, cols:, os_rows_2]], axis=2)
 
     return data_stack, os_stack
 
@@ -237,4 +235,3 @@ def _correct_images(light, dark, gain=(1, 4, 8)):
 
     images = (light - bgnd) * gain
     return images
-
