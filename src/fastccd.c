@@ -61,7 +61,7 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
 
   index_t imsize = dims[ndims-1] * dims[ndims-2];
 
-#pragma omp parallel for private(k) shared(in, out, bg, imsize, gain, flat) schedule(static,imsize)
+//#pragma omp parallel for private(k) shared(in, out, bg, imsize, gain, flat) schedule(static,imsize)
   for(k=0;k<nimages*imsize;k++){
     // Reset the background pointer each time
     data_t *bgp = bg + (k % imsize);
