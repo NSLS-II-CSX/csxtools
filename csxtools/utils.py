@@ -1,20 +1,28 @@
 import numpy as np
+import dask.array as da
 import time as ttime
-from databroker import get_images, get_events
-from pims import pipeline
 
-from .fastccd import correct_images
+from databroker import Broker
+
 from .image import rotate90, stackmean
 from .settings import detectors
-from filestore.handlers import AreaDetectorHDF5TimestampHandler
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag=None, roi=None,
-                       handler_override=None):
+def get_fastccd_images(*args, **kwargs):
+    """Convinience function to get fastccd images
+
+    see :func `get_fastccd_data()`
+
+    """
+    return get_fastccd_data(*args, **kwargs)['images']
+
+
+def get_fastccd_data(light_header, dark_headers=None,
+                     flat=None, gain=(1, 4, 8), config_name='csx',
+                     device_tag='fccd', overscan=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -44,237 +52,145 @@ def get_fastccd_images(light_header, dark_headers=None,
         Gain multipliers for the 3 gain settings (most sensitive to
         least sensitive)
 
-    tag : string
-        Data tag used to retrieve images. Used in the call to
-        ``databroker.get_images()``. If `None`, use the defualt from
-        the settings.
+    config_name : string
+        Databroker config string (for example 'csx')
 
-    roi : tuple
-        coordinates of the upper-left corner and width and height of
-        the ROI: e.g., (x, y, w, h)
+    device_tag : string
+        Device tag used to get information on the fccd device
 
-    handler_override : class
-        A filestore handler to override the default class used by
-        filestore to get the images
+    device_stream : string
+        Stream to use for fccd device
+
+    overscan : integer
+        Number of overscan rows in the data. If None, read from the
+        configuration attrs of the header for that information.
 
     Returns
     -------
-        A corrected pims.pipeline of the data
+        An uncomputed dask array of the corrected data.
 
     """
 
-    if tag is None:
-        tag = detectors['fccd']
+    image_tag = "{}_image".format(device_tag)
 
-    # Now lets sort out the ROI
-    if roi is not None:
-        roi = list(roi)
-        # Convert ROI to start:stop from start:size
-        roi[2] = roi[0] + roi[2]
-        roi[3] = roi[1] + roi[3]
-        logger.info("Computing with ROI of %s", str(roi))
+    out = dict()
 
-    if dark_headers is None:
+    if overscan is None:
+        cfg = header.config_data(device_tag)[device_stream][0]
+        if "{}_cam_overscan".format(device_tag) in cfg:
+            overscan = cfg["{}_cam_overscan".format(device_tag)]
+        else:
+            raise RuntimeError("Could not find overscan information in"
+                               " header config. Please specify")
+
+    if dark_headers == (None, None, None):
         bgnd = None
         logger.warning("Processing without dark images")
     else:
-        if dark_headers[0] is None:
-            raise NotImplementedError("Use of header metadata to find dark"
-                                      " images is not implemented yet.")
+        if dark_headers is None:
+            dark_headers = _get_dark_stack(config_tag, device_tag, stream_tag)
+            for d, g in zip(('8x', '2x', '1x'), dark_headers):
+                logger.info("Using dark images from "
+                            "{} for gain {}".format(g, d))
 
         # Read the images for the dark headers
         t = ttime.time()
 
         dark = []
-        for i, d in enumerate(dark_headers):
+        for g, d in zip(('8x', '2x', '1x'), dark_headers):
             if d is not None:
                 # Get the images
 
-                bgnd_events = _get_images(d, tag, roi,
-                                          handler_override=handler_override)
+                bgnd_stack = _get_images(d, image_tag)
+                _s = bgnd_stack.shape
 
-                # We assume that all images are for the background
-                # TODO : Perhaps we can loop over the generator
-                # If we want to do something lazy
-
-                tt = ttime.time()
-                b = get_images_to_3D(bgnd_events, dtype=np.uint16)
-                logger.info("Image conversion took %.3f seconds",
-                            ttime.time() - tt)
-
-                b = correct_images(b, gain=(1, 1, 1))
-                tt = ttime.time()
-                b = stackmean(b)
-                logger.info("Mean of image stack took %.3f seconds",
-                            ttime.time() - tt)
+                bgnd_stack = bgnd_stack.reshape((-1, _s[-2], _s[-1]))
+                bgnd_stack = da.nanmean(bgnd_stack, axis=0)
 
             else:
-                if (i == 0):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 8")
-                elif (i == 1):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 2")
-                elif (i == 2):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 1")
+                logger.warning("Missing dark image for gain"
+                               " setting {}".format(g))
 
-            dark.append(b)
+            dark.append(bgnd_stack)
 
-        bgnd = np.array(dark)
+        dark = da.stack(dark).compute()
+        out['mean_dark'] = dark
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag, roi,
-                         handler_override=handler_override)
+    light = _get_images(light_header, image_tag)
+    out['raw_images'] = light
 
-    # Ok, so lets return a pims pipeline which does the image conversion
+    light = _correct_images(light, dark, gain)
 
-    # Crop Flatfield image
-    if flat is not None and roi is not None:
-        flat = _crop(flat, roi)
+    # Now remove overscan and return
 
-    return _correct_fccd_images(events, bgnd, flat, gain)
+    if overscan > 0:
+        out['corrected_images'] = light
+        light, overscan_data = _extract_overscan(light, overscan)
+        out['overscan'] = overscan_data
 
+    out['images'] = light
 
-def get_images_to_4D(images, dtype=None):
-    """Convert image stack to 4D numpy array
-
-    This function converts an image stack from
-    :func: get_images() into a 4D numpy ndarray of a given datatype.
-    This is useful to just get a simple array from detector data
-
-    Parameters
-    ----------
-    images : the result of get_images()
-    dtype : the datatype to use for the conversion
-
-    Example
-    -------
-    >>> header = DataBroker[-1]
-    >>> images = get_images(header, "my_detector')
-    >>> a = get_images_to_4D(images, dtype=np.float32)
-
-    """
-    im = np.array([np.asarray(im, dtype=dtype) for im in images],
-                  dtype=dtype)
-    return im
+    return out
 
 
-def get_images_to_3D(images, dtype=None):
-    """Convert image stack to 3D numpy array
-
-    This function converts an image stack from
-    :func: get_images() into a 3D numpy ndarray of a given datatype.
-    This is useful to just get a simple array from detector data
-
-    Parameters
-    ----------
-    images : the result of get_images()
-    dtype : the datatype to use for the conversion
-
-    Example
-    -------
-    >>> header = DataBroker[-1]
-    >>> images = get_images(header, "my_detector')
-    >>> a = get_images_to_3D(images, dtype=np.float32)
-
-    """
-    im = np.vstack([np.asarray(im, dtype=dtype) for im in images])
-    return im
-
-
-def _get_images(header, tag, roi=None, handler_override=None):
-    t = ttime.time()
-    images = get_images(header, tag, handler_override=handler_override)
-    t = ttime.time() - t
-    logger.info("Took %.3f seconds to read data using get_images", t)
-
-    if roi is not None:
-        images = _crop_images(images, roi)
-
+def _get_images(header, tag):
+    images = header.data(tag)
+    images = da.stack(list(images), axis=0)
     return images
 
 
-@pipeline
-def _correct_fccd_images(image, bgnd, flat, gain):
-    image = correct_images(image, bgnd, flat, gain)
-    image = rotate90(image, 'cw')
-    return image
+def _extract_overscan(stack, overscan):
+    rows = stack.shape[-1]
+    cols = stack.shape[-2] / 2
+
+    data_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) < 10)]
+    data_rows_2 = [x for x in range(rows)
+                   if ((x % (10 + overscan)) >= overscan)]
+
+    os_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) >= 10)]
+    os_rows_2 = [x for x in range(rows) if ((x % (10 + overscan)) < overscan)]
+
+    data_stack = da.concatenate([stack[:, :, :cols, data_rows_1],
+                                 stack[:, :, cols:, data_rows_2]], axis=2)
+
+    os_stack = da.concatenate([stack[:, :, :cols, os_rows_1],
+                               stack[:, :, cols:, os_rows_2]], axis=2)
+
+    return data_stack, os_stack
 
 
-@pipeline
-def _crop_images(image, roi):
-    return _crop(image, roi)
+def _get_dark_stack(header, name, device, stream):
 
+    exposure = header.config_data(device)[stream]
+    exposure = exposure[0]["{}_cam_acquire_time".format(device)]
 
-def _crop(image, roi):
-    image_shape = image.shape
-    # Assuming ROI is specified in the "rotated" (correct) orientation
-    roi = [image_shape[-2]-roi[3], roi[0], image_shape[-1]-roi[1], roi[2]]
-    return image.T[roi[1]:roi[3], roi[0]:roi[2]].T
+    db = Broker.named(name, auto_register=False)
 
+    dark_headers = list()
 
-def get_fastccd_timestamps(header, tag='fccd_image'):
-    """Return the FastCCD timestamps from the Areadetector Data File
+    for gain in ('auto', '2x', '1x'):
 
-    Return a list of numpy arrays of the timestamps for the images as
-    recorded in the datafile.
+        query = {'$and': [{"{}.gain".format(device): gain},
+                          {"{}.image".format(device): 'dark'},
+                          {"{}.exposure".format(device): exposure}]}
 
-    Parameters
-    ----------
-    header : databorker header
-        This header defines the run
-    tag : string
-        This is the tag or name of the fastccd.
+        results = db(stop_time=header['start']['time'], **query)
 
-    Returns
-    -------
-        list of arrays of the timestamps
+        try:
+            h = next(iter(results))
+        except StopIteration:
+            if gain == 'auto':
+                raise RuntimeError("Could not locate dark image data "
+                                   "for auto (8x) gain by searching"
+                                   " metadata.")
+            else:
+                dark_headers.append(None)
+        else:
+            dark_headers.append(h['start']['uid'])
 
-    """
-    hover = {tag: AreaDetectorHDF5TimestampHandler}
-    img = [i for i in get_events(header, [tag],
-                                 handler_overrides=hover,
-                                 fill=True)]
-
-    timestamps = [i['data'][tag] for i in img if tag in i['data'].keys()]
-
-    return timestamps
-
-
-def calculate_flatfield(image, limits=(0.6, 1.4)):
-    """Calculate a flatfield from fluo data
-
-    This routine calculates the flatfield correction from fluorescence data
-    The image is thresholded by limits from the median value of the image.
-    The flatfield is then constructed from the mean of the image divided by
-    the masked (by NaN) image resulting in a true flatfield correction
-
-    Parameters
-    ----------
-    image : array_like
-        This is the 2D image to convert to a flatfield correction.
-    limits : tuple
-        Pixels outwith the median value multiplied by these limits will be
-        excluded by setting to NaN.
-
-    Returns
-    -------
-        Array of flatfield correction.
-
-    """
-
-    flat = image
-    limits = np.array(limits)
-    limits = np.nanmedian(image) * limits
-
-    flat[flat < limits[0]] = np.nan
-    flat[flat > limits[1]] = np.nan
-    flat = np.nanmean(flat) / flat
-    flat = np.rot90(flat)
-
-    return flat
+    return dark_headers
 
 
 def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4)):
@@ -322,3 +238,16 @@ def fccd_mask():
     flat = np.rot90(flat)
 
     return flat
+
+
+def _correct_images(light, dark, gain=(1, 4, 8)):
+
+    gain1 = ((light & 0xC000) == 0xC000)
+    gain2 = ((light & 0x8000) == 0x8000)
+    gain8 = ((light & 0xE000) == 0x0000)
+
+    gain = (gain1 * gain[2]) + (gain2 * gain[1]) + (gain8 * gain[0])
+    bgnd = (dark[0] * gain8) + (dark[1] * gain2) + (dark[2] * gain1)
+
+    images = (light - bgnd) * gain
+    return images
