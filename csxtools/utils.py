@@ -10,6 +10,7 @@ from .settings import detectors
 import logging
 logger = logging.getLogger(__name__)
 
+
 def get_fastccd_images(*args, **kwargs):
     """Convinience function to get fastccd images
 
@@ -17,6 +18,7 @@ def get_fastccd_images(*args, **kwargs):
 
     """
     return get_fastccd_data(*args, **kwargs)['images']
+
 
 def get_fastccd_data(light_header, dark_headers=None,
                      flat=None, gain=(1, 4, 8), config_name='csx',
@@ -144,8 +146,8 @@ def _extract_overscan(stack, overscan):
     cols = stack.shape[-2] / 2
 
     data_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) < 10)]
-    data_rows_2 = [x for x in range(rows) if ((x % (10 + overscan))
-                                              >= overscan)]
+    data_rows_2 = [x for x in range(rows)
+                   if ((x % (10 + overscan)) >= overscan)]
 
     os_rows_1 = [x for x in range(rows) if ((x % (10 + overscan)) >= 10)]
     os_rows_2 = [x for x in range(rows) if ((x % (10 + overscan)) < overscan)]
@@ -153,8 +155,8 @@ def _extract_overscan(stack, overscan):
     data_stack = da.concatenate([stack[:, :, :cols, data_rows_1],
                                  stack[:, :, cols:, data_rows_2]], axis=2)
 
-    os_stack= da.concatenate([stack[:, :, :cols, os_rows_1],
-                              stack[:, :, cols:, os_rows_2]], axis=2)
+    os_stack = da.concatenate([stack[:, :, :cols, os_rows_1],
+                               stack[:, :, cols:, os_rows_2]], axis=2)
 
     return data_stack, os_stack
 
