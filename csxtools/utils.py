@@ -226,8 +226,7 @@ def get_fastccd_timestamps(header, tag='fccd_image'):
 
     """
     with header.db.reg.handler_context({'AD_HDF5': AreaDetectorHDF5TimestampHandler}):
-        img = [i for i in get_events(header, [tag], fill=True)]
-        timestamps = [i['data'][tag] for i in img if tag in i['data'].keys()]
+        timestamps = list(header.data(tag))
 
     return timestamps
 
