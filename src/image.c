@@ -43,15 +43,7 @@
 #include "image.h"
 
 void rotate90(data_t *in, data_t *out, int ndims, index_t *dims, int sense){
-
-  index_t nimages;
-  if(ndims == 2)
-  {
-    nimages = 1;
-  } else {
-    nimages = dims[0];
-  }
-  
+  index_t nimages = dims[0];
   index_t M = dims[ndims-1];
   index_t N = dims[ndims-2];
   index_t imsize = N*M;
