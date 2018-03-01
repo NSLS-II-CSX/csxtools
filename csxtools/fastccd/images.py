@@ -35,6 +35,8 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     """
 
+    t = ttime.time()
+
     logger.info("Correcting image stack of shape %s", images.shape)
 
     if dark is None:
@@ -48,5 +50,8 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
         flat = np.asarray(flat, dtype=np.float32)
 
     data = fastccd.correct_images(images, dark, flat, gain)
+    t = ttime.time() - t
+
+    logger.info("Corrected image stack in %.3f seconds", t)
 
     return data

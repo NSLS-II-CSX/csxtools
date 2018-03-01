@@ -57,7 +57,7 @@ static PyObject* image_rotate90(PyObject *self, PyObject *args){
     return NULL;
   }
 
-  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_FLOAT, 2, 0,NPY_ARRAY_IN_ARRAY);
+  input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_FLOAT, 3, 0,NPY_ARRAY_IN_ARRAY);
   if(!input){
     goto error;
   }
