@@ -179,7 +179,7 @@ def get_images_to_3D(images, dtype=None):
 def _get_images(header, tag, roi=None):
     t = ttime.time()
     if isinstance(header, (list, tuple)):
-        images = header[0].data(tag)
+        images = [img for h in header for img in h.data(tag)]
     else:
         images = header.data(tag)
     t = ttime.time() - t
