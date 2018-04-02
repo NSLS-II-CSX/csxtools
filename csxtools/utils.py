@@ -179,9 +179,9 @@ def get_images_to_3D(images, dtype=None):
 def _get_images(header, tag, roi=None):
     t = ttime.time()
     if isinstance(header, (list, tuple)):
-        images = header[0].db.get_images(header, tag)
+        images = header[0].data(tag)
     else:
-        images = header.db.get_images(header, tag)
+        images = header.data(tag)
     t = ttime.time() - t
     logger.info("Took %.3f seconds to read data using get_images", t)
 
