@@ -179,7 +179,13 @@ def get_images_to_3D(images, dtype=None):
 def _get_images(header, tag, roi=None):
     t = ttime.time()
     if isinstance(header, (list, tuple)):
-        images = [h.db.get_images(h, tag) for h in header]
+        # assumes all headers are coming from the same db
+        db = header[0].db
+        for h in header:
+            if h.db is not db:
+                raise ValueError("All headers need to come from the same "
+                                 "Broker instance.")
+        images = db.get_images(header, tag)
     else:
         images = header.db.get_images(header, tag)
     t = ttime.time() - t
