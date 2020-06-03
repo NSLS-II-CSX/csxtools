@@ -1,0 +1,3 @@
+pip install pytest-pep8
+pip install coveralls
+pip install codecov

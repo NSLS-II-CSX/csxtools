@@ -40,13 +40,11 @@ install:
     - conda config --show
     - conda create -n testenv pytest cytoolz pandas ujson six jsonschema doct h5py tornado pymongo pytz numpy tifffile jinja2 coverage pyyaml tzlocal nose python=$TRAVIS_PYTHON_VERSION pims prettytable pip boltons requests databroker sphinx sphinx-bootstrap-theme pandoc ipython nbconvert jupyter  -c lightsource2-tag -c conda-forge
     - source activate testenv
-    - pip install pytest-pep8
-    - pip install coveralls
-    - pip install codecov
+    - pip install -r requirements-dev.txt
     - python setup.py install build_ext -i
 
 script:
-    - py.test --pep8 -m pep8
+    - flake8
     - coverage run --source=csxtools run_tests.py
     - cd $TRAVIS_BUILD_DIR/doc && make html
     #- cd $TRAVIS_BUILD_DIR && conda build conda-recipe
