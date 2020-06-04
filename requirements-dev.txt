@@ -1,0 +1,6 @@
+codecov
+coveralls
+flake8
+pytest
+sphinx
+sphinx-bootstrap-theme
