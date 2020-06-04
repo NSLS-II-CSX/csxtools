@@ -10,8 +10,7 @@ services:
 
 addons:
   apt:
-    sources:
-        - mongodb-3.2-precise
+    sources: - mongodb-3.2-precise
     packages:
         - mongodb-org-server
         - mongodb-org
@@ -33,6 +32,7 @@ before_install:
 
 install:
     - export GIT_FULL_HASH=`git rev-parse HEAD`
+    - pip install --upgrade numpy setuptools pip
     - pip install -r requirements-dev.txt
     - pip install -e .[complete]
 
