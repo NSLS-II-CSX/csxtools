@@ -33,6 +33,7 @@ before_install:
 
 install:
     - export GIT_FULL_HASH=`git rev-parse HEAD`
+    - pip install --upgrade numpy setuptools pip
     - pip install -r requirements-dev.txt
     - pip install -e .[complete]
 
