@@ -4,6 +4,12 @@ from distutils.core import setup, Extension
 import numpy as np
 import versioneer
 
+with open('requirements.txt') as f:
+    requirements = f.read().split()
+
+with open('requirements-extras.txt') as f:
+    extras_require = {'complete': f.read().split()}
+
 fastccd = Extension('fastccd',
                     sources=['src/fastccdmodule.c',
                              'src/fastccd.c'],
@@ -31,7 +37,8 @@ setup(
     include_dirs=[np.get_include()],
     ext_modules=[fastccd, image, phocount],
     tests_require=['pytest'],
-    install_requires=['numpy'],  # essential deps only
+    install_requires=requirements,
+    extras_require=extras_require,
     url='http://github.com/NSLS-II_CSX/csxtools',
     keywords='Xray Analysis',
     license='BSD'

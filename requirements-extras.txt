@@ -1,0 +1,4 @@
+databroker
+ipywidgets
+matplotlib
+pims

@@ -1,0 +1,5 @@
+requirements.txt
+requirements-extras.txt
+
+include versioneer.py
+include csxtools/_version.py
