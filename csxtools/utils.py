@@ -275,8 +275,9 @@ def calculate_flatfield(image, limits=(0.6, 1.4)):
     return flat
 
 
-def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4)):
-    """Calculate a flatfield from two headers
+
+def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=False, half_args =(7, 486)):
+    """Calculate a flatfield from two headers 
 
     This routine calculates the flatfield using the
     :func:calculate_flatfield() function after obtaining the images from
@@ -290,14 +291,23 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4)):
         The header from the run containin the dark images
     flat : flatfield image (optional)
         The array to be used for the initial flatfield
+    limits : tuple limits used for returning corrected pixel flatfield
+        The tuple setting lower and upper bound. np.nan returned value is outside bounds
+    half_mode : boolean to perform calculation for only half of the FastCCD
+        Default is False. If True, then half_args are used to exclude portion of FastCCD
+    half_args : tuple for lowest and highest row to exclude
+        Default is set to ignore left-side as seen at the beamline using FrameStore 0-OS.           Values are selected based on output of this function.
 
     Returns
     -------
     array_like
-        Flatfield correction
+        Flatfield correction.  
     """
     images = get_images_to_3D(get_fastccd_images(light, dark, flat))
     images = stackmean(images)
+    if half_mode:
+        row_start, row_stop = half_args
+        images[:, row_start:row_stop] = np.nan
     flat = calculate_flatfield(images, limits)
     removed = np.sum(np.isnan(flat))
     if removed != 0:
