@@ -287,8 +287,8 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=F
     ----------
     light : databroker header
         The header containing the light images
-    dark : databroker header
-        The header from the run containin the dark images
+    dark : databroker header(s)
+        The header(s) from the run containin the dark images. See get_fastccd_images for details
     flat : flatfield image (optional)
         The array to be used for the initial flatfield
     limits : tuple limits used for returning corrected pixel flatfield
@@ -296,7 +296,7 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=F
     half_mode : boolean to perform calculation for only half of the FastCCD
         Default is False. If True, then half_args are used to exclude portion of FastCCD
     half_args : tuple for lowest and highest row to exclude
-        Default is set to ignore left-side as seen at the beamline using FrameStore 0-OS.           Values are selected based on output of this function.
+        Default is set to ignore left-side as seen at the beamline using FrameStore 0-OS.           Values are selected based on output of this function
 
     Returns
     -------
