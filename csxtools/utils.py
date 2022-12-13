@@ -276,7 +276,7 @@ def calculate_flatfield(image, limits=(0.6, 1.4)):
 
 
 
-def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=False, half_args =(7, 486)):
+def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=False):
     """Calculate a flatfield from two headers 
 
     This routine calculates the flatfield using the
@@ -293,10 +293,10 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=F
         The array to be used for the initial flatfield
     limits : tuple limits used for returning corrected pixel flatfield
         The tuple setting lower and upper bound. np.nan returned value is outside bounds
-    half_mode : boolean to perform calculation for only half of the FastCCD
-        Default is False. If True, then half_args are used to exclude portion of FastCCD
-    half_args : tuple for lowest and highest row to exclude
-        Default is set to ignore left-side as seen at the beamline using FrameStore 0-OS.           Values are selected based on output of this function
+    half_interval : boolean or tuple to perform calculation for only half of the FastCCD
+        Default is False. If True, then the hard-code portion is retained.  Customize image 
+        manipulation using a tuple of length 2 for (row_start, row_stop).
+
 
     Returns
     -------
@@ -305,8 +305,9 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_mode=F
     """
     images = get_images_to_3D(get_fastccd_images(light, dark, flat))
     images = stackmean(images)
-    if half_mode:
-        row_start, row_stop = half_args
+    if half_interval:
+        if isinstance(half_interval, bool):
+            row_start, row_stop = (7, 486) #hard coded for the broken half of the fccd
         images[:, row_start:row_stop] = np.nan
     flat = calculate_flatfield(images, limits)
     removed = np.sum(np.isnan(flat))
