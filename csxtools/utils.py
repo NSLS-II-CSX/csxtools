@@ -308,6 +308,9 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interv
     if half_interval:
         if isinstance(half_interval, bool):
             row_start, row_stop = (7, 486) #hard coded for the broken half of the fccd
+        else:
+            row_start, row_stop = half_interval
+            print(row_start, row_stop)
         images[:, row_start:row_stop] = np.nan
     flat = calculate_flatfield(images, limits)
     removed = np.sum(np.isnan(flat))
