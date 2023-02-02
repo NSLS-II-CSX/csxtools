@@ -1,6 +1,5 @@
 import numpy as np
 import time as ttime
-from pims import pipeline
 
 from .fastccd import correct_images
 from .image import rotate90, stackmean
@@ -53,7 +52,7 @@ def get_fastccd_images(light_header, dark_headers=None,
 
     Returns
     -------
-        A corrected pims.pipeline of the data
+    dask.array : corrected images
 
     """
 
@@ -91,7 +90,7 @@ def get_fastccd_images(light_header, dark_headers=None,
                 # If we want to do something lazy
 
                 tt = ttime.time()
-                b = get_images_to_3D(bgnd_events, dtype=np.uint16)
+                b = bgnd_events.astype(dtype=np.uint16)
                 logger.info("Image conversion took %.3f seconds",
                             ttime.time() - tt)
 
@@ -177,34 +176,19 @@ def get_images_to_3D(images, dtype=None):
 
 
 def _get_images(header, tag, roi=None):
-    t = ttime.time()
-    if isinstance(header, (list, tuple)):
-        # assumes all headers are coming from the same db
-        db = header[0].db
-        for h in header:
-            if h.db is not db:
-                raise ValueError("All headers need to come from the same "
-                                 "Broker instance.")
-        images = db.get_images(header, tag)
-    else:
-        images = header.db.get_images(header, tag)
-    t = ttime.time() - t
-    logger.info("Took %.3f seconds to read data using get_images", t)
-
+    run = header.v2.new_variation(structure_clients="dask")
+    images = run["primary"]["data"][tag][:]
     if roi is not None:
         images = _crop_images(images, roi)
-
     return images
 
 
-@pipeline
 def _correct_fccd_images(image, bgnd, flat, gain):
     image = correct_images(image, bgnd, flat, gain)
     image = rotate90(image, 'cw')
     return image
 
 
-@pipeline
 def _crop_images(image, roi):
     return _crop(image, roi)
 
