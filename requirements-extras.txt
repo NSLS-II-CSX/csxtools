@@ -1,4 +1,3 @@
 databroker
 ipywidgets
 matplotlib
-pims
