@@ -1,8 +1,10 @@
 import pandas
 from collections import namedtuple
+import numpy as np
 
 from csxtools.image import rotate90, stackmean
 from csxtools.utils import  calculate_flatfield, get_images_to_3D,  get_fastccd_images, get_images_to_4D
+from csxtools.helpers.overscan import get_os_correction_images, get_os_dropped_images
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,7 +35,7 @@ def browse_3Darray(res,title='Frame'):#, extra_scalar_dict=None):
     
 #### FCCD specific stuff starts here    
 
-def find_possible_darks(header, dark_gain, search_time, return_debug_info,exposure_time_tolerance = 0.002):
+def find_possible_darks(header, dark_gain, search_time, return_debug_info,exposure_time_tolerance = 0.002, db=None):
     darks_possible ={'scan':[],'exp_time':[], 'delta_time':[] }
     start_time = header.start["time"]
     stop_time = header.stop["time"]
@@ -69,16 +71,17 @@ def find_possible_darks(header, dark_gain, search_time, return_debug_info,exposu
     
     return darks_possible
 
-def get_dark_near(header, dark_gain = 'auto', search_time=30*60, return_debug_info = False):
+def get_dark_near(header, dark_gain = 'auto', search_time=30*60, return_debug_info = False, db=None):
     """ Find and extract the most relevant dark image (relevant in time and gain setting) for a given scan.
     header      :  databroker header of blueksy scan
     dark_gain   :  string  
                    match dark gain settings as described in the start document ('auto', 'x2', 'x1')
     search_time :  int or float 
                    time in seconds before (after) the start (stop) document timestamps
+    db          :  Broker.name("csx") is expected.  Use databroker v1 or v2 or a wrapped tiled catalog
     """
     
-    darks_possible = find_possible_darks(header, dark_gain, search_time, return_debug_info)
+    darks_possible = find_possible_darks(header, dark_gain, search_time, return_debug_info, db=db)
     #print( darks_possible )
     try:
         dark = int(darks_possible.sort_values(by='delta_time').reset_index()['scan'][0])
@@ -91,8 +94,8 @@ def get_dark_near(header, dark_gain = 'auto', search_time=30*60, return_debug_in
     else:
         return db[dark]
 
-def get_dark_near_all(header, **kwargs):
-    d8,d2,d1 = (get_dark_near(header,dark_gain= dg, **kwargs) for dg in ['auto','x2','x1'])
+def get_dark_near_all(header, db=None, **kwargs):
+    d8,d2,d1 = (get_dark_near(header,dark_gain= dg, db=db, **kwargs) for dg in ['auto','x2','x1'])
     return d8,d2,d1    
 
 

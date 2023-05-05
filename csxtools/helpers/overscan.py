@@ -1,3 +1,5 @@
+import numpy as np
+
 def _extract_from_fccdwithOS_osdata(images, os_cols, data_cols):
     if len(images.shape) !=4:
         print(f'Input images should be 4D.')
