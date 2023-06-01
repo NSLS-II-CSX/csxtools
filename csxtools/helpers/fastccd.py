@@ -100,49 +100,49 @@ def get_dark_near_all(header, db=None, **kwargs):
 
 
 
-def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half=False, half_args = (7, 486)):
-    """MODIFIED from csxtools original: Calculate a flatfield 
-    This routine calculates the flatfield using the
-    :func:calculate_flatfield() function after obtaining the images from
-    the headers.
-    Parameters
-    ----------
-    light : databroker header
-        The header containing the light images
-    dark : databroker header
-        The header from the run containin the dark images
-    flat : flatfield image (optional)
-        The array to be used for the initial flatfield
-    half : calculate for just the "good" half - hard coded
-        Default is False
-    half_args : Tuple for exluding entire sides of detector (left versus right)
-        Left side is refers the the left side of the image after raw data is 
-        processed with get_fastccd_images().  Default arguments are for the left side
-        using the FrameStore mode.
-    Returns
-    -------
-    array_like
-        Flatfield correction
-    """
-    
-    logger.warning("See csxtools version 0.1.18 for better function.")
-    
-    images = get_images_to_3D(get_fastccd_images(light, dark, flat))
-    images = stackmean(images)
-    if half == True:
-        #rows because "super columns" are the large 10 pixel bins, but camera is on side.
-        row_start, row_stop = half_args
-        images[:,row_start:row_stop] = np.nan
-        #plt.figure()
-        #im = plt.imshow(images, vmin =0, vmax = 500)
-        #cbar = plt.colorbar(im)
-        #cbar.set_label('ADU gain corrected')
-    flat = calculate_flatfield(images, limits)
-    removed = np.sum(np.isnan(flat))
-    if removed != 0:
-        logger.warning("Flatfield correction removed %d pixels (%.2f %%)" %
-                       (removed, removed * 100 / flat.size))
-    return flat
+#def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half=False, half_args = (7, 486)):
+#    """MODIFIED from csxtools original: Calculate a flatfield 
+#    This routine calculates the flatfield using the
+#    :func:calculate_flatfield() function after obtaining the images from
+#    the headers.
+#    Parameters
+#    ----------
+#    light : databroker header
+#        The header containing the light images
+#    dark : databroker header
+#        The header from the run containin the dark images
+#    flat : flatfield image (optional)
+#        The array to be used for the initial flatfield
+#    half : calculate for just the "good" half - hard coded
+#        Default is False
+#    half_args : Tuple for exluding entire sides of detector (left versus right)
+#        Left side is refers the the left side of the image after raw data is 
+#        processed with get_fastccd_images().  Default arguments are for the left side
+#        using the FrameStore mode.
+#    Returns
+#    -------
+#    array_like
+#        Flatfield correction
+#    """
+#    
+#    logger.warning("See csxtools version 0.1.18 for better function.")
+#    
+#    images = get_images_to_3D(get_fastccd_images(light, dark, flat))
+#    images = stackmean(images)
+#    if half == True:
+#        #rows because "super columns" are the large 10 pixel bins, but camera is on side.
+#        row_start, row_stop = half_args
+#        images[:,row_start:row_stop] = np.nan
+#        #plt.figure()
+#        #im = plt.imshow(images, vmin =0, vmax = 500)
+#        #cbar = plt.colorbar(im)
+#        #cbar.set_label('ADU gain corrected')
+#    flat = calculate_flatfield(images, limits)
+#    removed = np.sum(np.isnan(flat))
+#    if removed != 0:
+#        logger.warning("Flatfield correction removed %d pixels (%.2f %%)" %
+#                       (removed, removed * 100 / flat.size))
+#    return flat
 
     
 
