@@ -74,10 +74,13 @@ def find_possible_darks(header, dark_gain, search_time, return_debug_info,exposu
 def get_dark_near(header, dark_gain = 'auto', search_time=30*60, return_debug_info = False, db=None):
     """ Find and extract the most relevant dark image (relevant in time and gain setting) for a given scan.
     header      :  databroker header of blueksy scan
+
     dark_gain   :  string  
                    match dark gain settings as described in the start document ('auto', 'x2', 'x1')
+
     search_time :  int or float 
                    time in seconds before (after) the start (stop) document timestamps
+    
     db          :  Broker.name("csx") is expected.  Use databroker v1 or v2 or a wrapped tiled catalog
     """
     
@@ -240,7 +243,7 @@ def get_fccd_pixel_readout(header):
     return FCCDconcat(overscan_cols, rows, row_offset)
 
 def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat = True, auto_overscan=True, return_overscan_array = False, drop_overscan=True):
-    """Normalazied images with proper contatenation and overscan data by calling get_fastccd_images
+    """Normalazied images with proper concatenation and overscan data by calling get_fastccd_images
     Parameters
     ----------
     light_header : databorker header  
@@ -274,9 +277,19 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
         
     Returns
     -------
-        Normalized fastccd data that has been properply concatenated and any overscan data
+    images : 4D array (points, frames-per-point, Vpixels, Hpixels)  
+        Normalized fastccd data.
+
+    overscan_data : OPTIONAL 4D array (points, frames-per-point, Vpixel, Hpixels)
+        Extracted overscan data (2 Vpixels for ever 10 Vpixels). 
+
+    auto_concat_performed : Boolean
+    
+    auto_os_drop_performed : Boolean
+    
+    auto_os_correct_performed : Boolean
                     
-    The new get_fastccd_images will always return the array (4D) so there is no need to use the get_images_to_3D or 4D.  We will just do 4D until official csxtools PR merge"""
+    """
     
     
     #print('Processing scan {}'.format(header['start']['scan_id']))
@@ -341,18 +354,19 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
         auto_os_drop_performed = True
         images = images - overscan_data
         auto_os_correct_performed = True
-    
     elif auto_overscan == False and images_have_overscan and drop_overscan:
         images = get_os_dropped_images(np.copy(images)) 
         print(images.shape,'only dropping os from images')
         auto_os_drop_performed = True
         auto_os_correct_performed = False
-    
     elif auto_overscan == False and images_have_overscan and drop_overscan == False:
         print(images.shape,'retaining os in returned data images')
         auto_os_drop_performed = False
         auto_os_correct_performed = False
-
+    else:
+        auto_os_drop_performed = False
+        auto_os_correct_performed = False
+    
     if return_overscan_array:
         return images, overscan_data, auto_concat_performed, auto_os_drop_performed, auto_os_correct_performed
     else:
