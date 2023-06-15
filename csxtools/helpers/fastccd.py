@@ -283,9 +283,8 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
     images = get_fastccd_images(header, dark_headers, flat=flat)
     ###TODO write if statement for image shape if the output is an array (future csxtools upgrade), then there is no need for next 2 lines
     stack = get_images_to_4D(images)
-    images =stack
+    images = stack
     total_rows = images.shape[-1] #TODO add to descriptors for image output saving?, but dan must have it somewhere in the handler.
-    
     fccd_concat_params = get_fccd_pixel_readout(header)
     
     #### SEE IF OVERSCAN WAS ENABLED
@@ -302,45 +301,62 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
             leftend = fccd_concat_params.rows*1 +fccd_concat_params.row_offset
             rightstart = total_rows - fccd_concat_params.row_offset -fccd_concat_params.rows
             rightend = total_rows - fccd_concat_params.row_offset + 1
-            print(leftstart, leftend, rightstart, rightend) #TODO add this to verbose warnings level
         else:
-            print('Concatenating images based on hard-coded values')#make this normal warning statement
             logging.warning('Concatenating images based on hard-coded values')
-            auto_concat =  False
+            #auto_concat =  False ## this seems useless.  should do soemthing to return that it was hard-code autoconcat
             if total_rows > 1001:   ##because non-framestore 
-                print('images are larger than 960 pixels, first image shape is' , images[0,0].shape)#make this normal warning statement
-                logging.warning('images are larger than 960 pixels, first image shape is' , images[0,0].shape)
+                logging.warning(f'images are larger than 960 pixels (possibly non-FS mode). The first image shape is {images[0,0].shape}')
                 leftstart = 486
                 leftend = 966
                 rightstart =  1034
-                rightstart =  1514
+                rightend =  1514
             elif total_rows == 1000:
                 leftstart = 7
                 leftend = 486
                 rightstart =  514
-                rightstart =  995
-        images = np.concatenate((images[:,:,:,leftstart : leftend],images[:,:,:, rightstart:rightend]),axis=3)
+                rightend =  995
+            else:
+                logging.warning(f'images are unexpected size for auto-concatenation. The first image shape is {images[0,0].shape}. ')
+                auto_concat =  False
+                auto_concat_performed = False
+
+        if auto_concat:
+            print(leftstart, leftend, rightstart, rightend) #TODO add this to verbose warnings level
+            images = np.concatenate((images[:,:,:,leftstart : leftend],images[:,:,:, rightstart:rightend]),axis=3)               
+            auto_concat_performed = True
     
+    ### if older images, overscan will not be in metadata, but it should be clear from the number of columns (960/10*2)+960=1152
+    if images.shape[-2] == 1152:
+        logging.warning(f'Overscan columns (2 per 10) are detected. {images_have_overscan}')
+        #if images_have_overscan == 'unknown':
+        logging.warning('Attempting to apply overscan removal')
+        images_have_overscan = True ###TODO this means we also have to return this
+   
     ### deal with overscan if present
     if auto_overscan and images_have_overscan:
         overscan_data = get_os_correction_images(images) ## this is "broadcastable" with images
         print(overscan_data.shape, 'os data returned in same shape as images should be')
         images = get_os_dropped_images(np.copy(images)) 
         print(images.shape, 'os dropped and substracting overscan')
-        
+        auto_os_drop_performed = True
         images = images - overscan_data
+        auto_os_correct_performed = True
     
     elif auto_overscan == False and images_have_overscan and drop_overscan:
         images = get_os_dropped_images(np.copy(images)) 
         print(images.shape,'only dropping os from images')
+        auto_os_drop_performed = True
+        auto_os_correct_performed = False
     
     elif auto_overscan == False and images_have_overscan and drop_overscan == False:
         print(images.shape,'retaining os in returned data images')
-    
+        auto_os_drop_performed = False
+        auto_os_correct_performed = False
+
     if return_overscan_array:
-        return images, overscan_data
+        return images, overscan_data, auto_concat_performed, auto_os_drop_performed, auto_os_correct_performed
     else:
-        return images
+        return images, auto_concat_performed, auto_os_drop_performed, auto_os_correct_performed
         
         
 
