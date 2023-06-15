@@ -323,61 +323,6 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
     else:
         return images, auto_concat_performed, auto_os_drop_performed, auto_os_correct_performed
         
-        
-
-    
-    
-
-# def get_images_scan(header, bgnd8, bgnd2=None, bgnd1 = None): #TODO combine with get_images_count_one_point so more modular 
-#     logger.warning("Deprecating this function. Use get_fastccd_images_sized()  ")
-#     if header['start'].get('num_points',header['start'].get('num_steps')) == 1:
-#         print('\n\nWarning: You may want a different function\n\n')
-#     print('Processing scan {}'.format(header['start']['scan_id']))
-#     images = get_fastccd_images(header, (bgnd8, bgnd2, bgnd1), flat=None)
-#     stack = get_images_to_4D(images)
-#     images =stack
-#     #print(images.shape)
-
-#     if images.shape[-1] > 1001:    
-#         print('images is larger than 960 pixels, first image shape is' , images[0].shape)
-#         images = np.concatenate((images[:,:,:,486:966],images[:,:,:,1034:1514]),axis=3)
-#     elif images.shape[-1] == 1000:
-#         images = np.concatenate((images[:,:,:,7:486],images[:,:,:,515:996]),axis=3) #TODO, make sure this is correct
-#     else:
-#         print('first image shape is', images[0].shape)
-#         pass
-#     return images
-
-# def get_image_mean(images, im_start = 10, im_end = -10, roi = [0, 960, 0 , 960]):
-#     if im_end == 0:
-#         im_end = images.shape[0]
-#     return np.nanmean(images[im_start:im_end, roi[0]:roi[1] ,  roi[2]:roi[3] ],axis=0)
-
-# def get_images_count_one_point(header, bgnd8, bgnd2=None, bgnd1 = None, flatfieldresult=None): #TODO combine with get_images_scan so more modular 
-#     """Higher level function that wraps XPCS like scans to return fully corrected images WITH IMAGE CROPPING.
-#     this function does need some work to not have pixel values hardcoded.
-#     #TODO implement fccd descriptors for image concat
-#     """
-    
-#     logger.warning("Deprecating this function. Use get_fastccd_images_sized()  ")
-    
-#     if header['start']['num_points'] < 1:
-#         print('\n\nWarning: This function will collapse all data into one stack - see csxtools: get_images_to_3D, get_images_to_4D\n\n')
-#     print('Processing scan {}'.format(header["start"]["scan_id"]))
-#     stack = get_fastccd_images(header, (bgnd8, bgnd2, bgnd1), flat=flatfieldresult, tag='fccd_image')
-#     images = stack[0]
-#     ###TODO -- convert this to rely on descriptors and EPICS instructions for concatenation.
-#     #if images.shape[-1] > 960:    
-#         #print('images is larger than 960 pixels, first image shape is' , images[0].shape)
-#         #images = np.concatenate((images[:,:,486:966],images[:,:,1034:1514]),axis=2)
-#     if images.shape[2]>1400:  #For non-framestore
-#         images = np.concatenate((images[:,:,486:966],images[:,:,1034:1514]),axis=2) #TODO, this is extra pix - check JJ data
-#     elif 1400>images.shape[2]>999:  #For framestore after new CCD installed
-#         images = np.concatenate((images[:,:,7:486],images[:,:,515:996]),axis=2) #TODO, make sure this is correct
-#     else:
-#         #print('first image shape is', images[0].shape)
-#         pass
-#     return images
 
 def convert_photons(images_input, energy, ADU_930 = 30, quantize_photons = True, make_int_strip_nan= True, round_to_tens=True):
     """Convert ADU to photons based on incident beamline energy.  FCCD #2 found to be ~30 ADU fro 930eV (ideally 25 ADU). 
