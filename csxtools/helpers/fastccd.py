@@ -14,9 +14,9 @@ from ipywidgets import interact #TODO move this and general untility to differen
 
 def browse_3Darray(res,title='Frame'):#, extra_scalar_dict=None):
     """ Widget for notebooks.  Sliding bar to browse 3D python array. Must plot using subplots method with 1 axes.
-    res         :  3D array with the first element being interated
-    dark_gain   :  string to be the title of the plot
-                   match dark gain settings as described in the start document ('auto', 'x2', 'x1')
+    res : 3D array with the first element being interated
+    
+    title : string to be the title of the plot
     """   
     N = len(res)
     def view_image(i=0):
