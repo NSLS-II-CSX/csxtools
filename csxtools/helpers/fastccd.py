@@ -153,6 +153,8 @@ def get_fccd_exp(header):
     """
     config = header.descriptors[0]['configuration']['fccd']['data']
     if config  == {}:                    #prior to mid 2017
+        ## this is done because of deprecated gs.DETS and replaced by descriptors.  i don't know if db v2 and tiled even handle this okay.
+        ## when we delete data from 2017 we can just delete this part of the code
         exp_t = header.table().get('fccd_acquire_time')[1]
         exp_p = header.table().get('fccd_acquire_period')[1]
         exp_im = header.table().get('fccd_num_images')[1]
