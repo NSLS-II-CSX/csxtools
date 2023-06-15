@@ -102,7 +102,7 @@ def get_dark_near_all(header, db=None, **kwargs):
     return d8,d2,d1    
 
 
-def get_fccd_roi(header, roi_number):
+def get_fastccd_roi(header, roi_number):
     """Returns named tuple to describe AreaDetector's ROI plugin configuraiton for STATS plugin computation for a given
     databroker header. The outputs will only be correct for a correctly cropped image matching the AreaDetector setup.
     Parameters
@@ -136,7 +136,7 @@ def get_fccd_roi(header, roi_number):
     FCCDroi = namedtuple('FCCDroi', ['start_x', 'size_x', 'start_y', 'size_y', 'name'])
     return FCCDroi(x_start, x_size, y_start, y_size, name)
 
-def get_fccd_exp(header):
+def get_fastccd_exp(header):
     """Returns named tuple of exposure time, exposure period and number of images per "point" for a databroker header. 
     Parameters
     ----------
@@ -166,7 +166,7 @@ def get_fccd_exp(header):
     FCCDexp = namedtuple('FCCDexposure_config', ['exp_time' , 'exp_period', 'num_images'])
     return FCCDexp(exp_t, exp_p, exp_im)
 
-def get_fccd_pixel_readout(header):
+def get_fastccd_pixel_readout(header):
     """Returns named tuple of details needed to properly concatenate the fccd images. 
     Parameters
     ----------
@@ -251,7 +251,7 @@ def get_fastccd_images_sized(header, dark_headers=None, flat=None, auto_concat =
     stack = get_images_to_4D(images)
     images = stack
     total_rows = images.shape[-1] #TODO add to descriptors for image output saving?, but dan must have it somewhere in the handler.
-    fccd_concat_params = get_fccd_pixel_readout(header)
+    fccd_concat_params = get_fastccd_pixel_readout(header)
     
     #### SEE IF OVERSCAN WAS ENABLED
     if fccd_concat_params.overscan_cols != 2:
