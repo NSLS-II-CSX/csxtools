@@ -25,7 +25,7 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
-        pip install --upgrade numpy setuptools pip
+        pip install --upgrade pip setuptools wheel numpy
         pip install -r requirements-dev.txt
         pip install -e .
         pip list
