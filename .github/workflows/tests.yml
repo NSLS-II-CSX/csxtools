@@ -27,7 +27,7 @@ jobs:
         set -vxeuo pipefail
         pip install --upgrade numpy setuptools pip
         pip install -r requirements-dev.txt
-        pip install .
+        pip install -e .
         pip list
 
     - name: Test with pytest
