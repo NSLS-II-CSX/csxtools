@@ -27,6 +27,7 @@ jobs:
         set -vxeuo pipefail
         pip install --upgrade pip setuptools wheel numpy
         pip install -r requirements-dev.txt
+        pip install -r requirements-extras.txt
         pip install -e .
         pip list
 
