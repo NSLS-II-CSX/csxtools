@@ -64,6 +64,7 @@ setup(
     packages=setuptools.find_packages(exclude=["src", "tests"]),
     python_requires=">={}".format(".".join(str(n) for n in min_version)),
     long_description=readme,
+    long_description_content_type='text/markdown',
     ext_package="csxtools.ext",
     include_dirs=[np.get_include()],
     ext_modules=[fastccd, image, phocount],
