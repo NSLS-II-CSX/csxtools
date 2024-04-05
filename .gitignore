@@ -29,6 +29,7 @@ var/
 *.egg
 *.eggs
 doc/_build
+venv/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
