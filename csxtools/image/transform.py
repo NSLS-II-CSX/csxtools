@@ -2,7 +2,7 @@ from ..ext import image as extimage
 from .dask import rotate90 as dask_rotate90
 
 
-def rotate90(a, sense="ccw", *, dask=True):
+def rotate90(a, sense="ccw", *, dask=False):
     """Rotate a stack of images by 90 degrees
 
     This routine rotates a stack of images by 90. The rotation is performed
