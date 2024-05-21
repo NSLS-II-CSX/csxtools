@@ -9,7 +9,16 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.9", "3.10"]
+        include:
+        - conda_env_name: '2023-1.2-py39-tiled'
+          zenodo_id: '7651500'
+          md5_checksum: '31586643a0cdd9aee8349ccb93ccac87'
+          python-version: '3.9'
+
+        - conda_env_name: '2023-1.2-py310-tiled'
+          zenodo_id: '7651500'
+          md5_checksum: 'ff8c0c475a007434c0011f5d8976d853'
+          python-version: '3.10'
 
       fail-fast: false
 
@@ -21,24 +30,14 @@ jobs:
         export REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}  # just the repo, as opposed to org/repo
         echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
-        export ZENODO_ID=7651500  # 2023-1.2 with Python 3.9 and Python 3.10
+        export CONDA_ENV_NAME=${{ matrix.conda_env_name }}
+        echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
+
+        export ZENODO_ID=${{ matrix.zenodo_id }}
         echo "ZENODO_ID=${ZENODO_ID}" >> $GITHUB_ENV
 
-        if [ "${{ matrix.python-version }}" == "3.9" ]; then
-          export CONDA_ENV_NAME='2023-1.2-py39-tiled'
-          echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
-
-          export MD5_CHECKSUM='31586643a0cdd9aee8349ccb93ccac87'
-          echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
-
-        elif [ "${{ matrix.python-version }}" == "3.10" ]; then
-          export CONDA_ENV_NAME='2023-1.2-py310-tiled'
-          echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
-
-          export MD5_CHECKSUM='ff8c0c475a007434c0011f5d8976d853'
-          echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
-
-        fi
+        export MD5_CHECKSUM='${{ matrix.md5_checksum }}
+        echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
 
     - name: Check out the code repo
       uses: actions/checkout@v4
