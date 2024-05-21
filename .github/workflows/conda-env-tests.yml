@@ -100,6 +100,7 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
         echo "Using conda environment at ${CONDA_PREFIX}"
         pip install --upgrade pip setuptools wheel numpy
         pip install -r requirements-dev.txt
@@ -111,6 +112,7 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
         echo "Using conda environment at ${CONDA_PREFIX}"
         coverage run --source=csxtools run_tests.py
         coverage xml
