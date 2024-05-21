@@ -10,15 +10,25 @@ jobs:
     strategy:
       matrix:
         include:
-        - conda_env_name: '2023-1.2-py39-tiled'
+        - conda_env_name: '2023-1.2-py39'
           zenodo_id: '7651500'
-          md5_checksum: '31586643a0cdd9aee8349ccb93ccac87'
+          md5_checksum: '14d0629f468df311918cfea2e6413bfa'
           python-version: '3.9'
 
-        - conda_env_name: '2023-1.2-py310-tiled'
+        - conda_env_name: '2023-1.2-py310'
           zenodo_id: '7651500'
-          md5_checksum: 'ff8c0c475a007434c0011f5d8976d853'
+          md5_checksum: '2dc85c4d2392f751c76ed7d01f363814'
           python-version: '3.10'
+
+        # - conda_env_name: '2023-1.2-py39-tiled'
+        #   zenodo_id: '7651500'
+        #   md5_checksum: '31586643a0cdd9aee8349ccb93ccac87'
+        #   python-version: '3.9'
+
+        # - conda_env_name: '2023-1.2-py310-tiled'
+        #   zenodo_id: '7651500'
+        #   md5_checksum: 'ff8c0c475a007434c0011f5d8976d853'
+        #   python-version: '3.10'
 
       fail-fast: false
 
