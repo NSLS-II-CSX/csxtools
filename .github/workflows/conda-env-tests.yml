@@ -102,7 +102,8 @@ jobs:
         set -vxeuo pipefail
         conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
         echo "Using conda environment at ${CONDA_PREFIX}"
-        pip install --upgrade pip setuptools wheel numpy
+        # pip install --upgrade pip setuptools wheel numpy
+        pip install --upgrade pip setuptools wheel
         pip install -r requirements-dev.txt
         pip install -r requirements-extras.txt
         pip install -e .
