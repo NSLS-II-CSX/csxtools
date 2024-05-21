@@ -27,16 +27,16 @@ jobs:
     - name: Set env vars
       shell: bash -l {0}
       run: |
-        export REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}  # just the repo, as opposed to org/repo
+        export REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"  # just the repo, as opposed to org/repo
         echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
-        export CONDA_ENV_NAME=${{ matrix.conda_env_name }}
+        export CONDA_ENV_NAME='${{ matrix.conda_env_name }}'
         echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
 
-        export ZENODO_ID=${{ matrix.zenodo_id }}
+        export ZENODO_ID='${{ matrix.zenodo_id }}'
         echo "ZENODO_ID=${ZENODO_ID}" >> $GITHUB_ENV
 
-        export MD5_CHECKSUM='${{ matrix.md5_checksum }}
+        export MD5_CHECKSUM='${{ matrix.md5_checksum }}'
         echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
 
     - name: Check out the code repo
