@@ -71,7 +71,6 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
-        # source $HOME/miniconda/etc/profile.d/conda.sh  # this makes all conda vars available
         conda activate "${{ env.REPOSITORY_NAME }}-py${{ matrix.python-version }}"
         url="https://zenodo.org/record/${ZENODO_ID}/files/${CONDA_ENV_NAME}.tar.gz?download=1"
         wget --progress=dot:giga ${url} -O ${CONDA_ENV_NAME}.tar.gz
@@ -101,6 +100,7 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
+        echo "Using conda environment at ${CONDA_PREFIX}"
         pip install --upgrade pip setuptools wheel numpy
         pip install -r requirements-dev.txt
         pip install -r requirements-extras.txt
@@ -111,6 +111,7 @@ jobs:
       shell: bash -l {0}
       run: |
         set -vxeuo pipefail
+        echo "Using conda environment at ${CONDA_PREFIX}"
         coverage run --source=csxtools run_tests.py
         coverage xml
 
