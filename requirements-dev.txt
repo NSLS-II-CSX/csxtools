@@ -2,5 +2,6 @@ codecov
 coveralls
 flake8
 pytest
+pytest-pep8
 sphinx
 sphinx-bootstrap-theme
