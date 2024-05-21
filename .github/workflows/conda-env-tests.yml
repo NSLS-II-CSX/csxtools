@@ -1,0 +1,95 @@
+name: Unit Tests in NSLS-II Conda Environments
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test-in-conda-env:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"]
+
+      fail-fast: false
+
+    steps:
+
+    - name: Set env vars
+      shell: bash -l {0}
+      run: |
+        export REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}  # just the repo, as opposed to org/repo
+        echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
+
+        export ZENODO_ID=7651500  # 2023-1.2 with Python 3.9 and Python 3.10
+        echo "ZENODO_ID=${ZENODO_ID}" >> $GITHUB_ENV
+
+        if [ "${{ matrix.python-version }}" == "3.9" ]; then
+          export CONDA_ENV_NAME='2023-1.2-py39-tiled'
+          echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
+        fi
+
+    - name: Check out the code repo
+      uses: actions/checkout@v4
+
+    # - name: Set up Python ${{ matrix.python-version }}
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: ${{ matrix.python-version }}
+
+    - name: Set up Python ${{ matrix.python-version }} with conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: ${{ env.REPOSITORY_NAME }}-py${{ matrix.python-version }}
+        auto-update-conda: true
+        miniconda-version: "latest"
+        python-version: ${{ matrix.python-version }}
+        mamba-version: "*"
+        channels: conda-forge
+
+    - name: Download and install the archived conda environment
+      shell: bash -l {0}
+      run: |
+        set -vxeuo pipefail
+        source $HOME/miniconda/etc/profile.d/conda.sh  # this makes all conda vars available
+        url="https://zenodo.org/record/${ZENODO_ID}/files/${CONDA_ENV_NAME}.tar.gz?download=1"
+        wget --progress=dot:giga ${url} -O ${CONDA_ENV_NAME}.tar.gz
+        status=$?
+        if [ $status -gt 0 ]; then
+            echo "Cannot download from ${url}. Exit code: ${status}"
+            exit $status
+        fi
+        echo "${MD5_CHECKSUM} ${CONDA_ENV_NAME}.tar.gz" > checksum.txt
+        md5sum --check checksum.txt
+        mkdir -p $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        tar -xf ${CONDA_ENV_NAME}.tar.gz -C $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        conda unpack
+
+        conda info -a
+        conda env list
+        conda list
+        pip list
+
+    - name: Install the package and its dependencies
+      shell: bash -l {0}
+      run: |
+        set -vxeuo pipefail
+        pip install --upgrade pip setuptools wheel numpy
+        pip install -r requirements-dev.txt
+        pip install -r requirements-extras.txt
+        pip install -e .
+        pip list
+
+    - name: Test with pytest
+      shell: bash -l {0}
+      run: |
+        set -vxeuo pipefail
+        coverage run --source=csxtools run_tests.py
+        coverage xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        file: ./coverage.xml 
+        flags: conda-env-unittests
