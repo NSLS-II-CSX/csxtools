@@ -34,22 +34,22 @@ jobs:
 
         # 2023-1.1
         - conda_env_name: '2023-1.1-py39'
-          zenodo_id: '7470912'
+          zenodo_id: '7603440'
           md5_checksum: '531a712033d907b781d24030182357f4'
           python-version: '3.9'
 
         - conda_env_name: '2023-1.1-py39-tiled'
-          zenodo_id: '7470912'
+          zenodo_id: '7603440'
           md5_checksum: '31dad55d53436605c47dbfc510e876a2'
           python-version: '3.9'
 
         - conda_env_name: '2023-1.1-py310'
-          zenodo_id: '7470912'
+          zenodo_id: '7603440'
           md5_checksum: 'd60ceb752a798590334cbec3d0155fb6'
           python-version: '3.10'
 
         - conda_env_name: '2023-1.1-py310-tiled'
-          zenodo_id: '7470912'
+          zenodo_id: '7603440'
           md5_checksum: 'f501314939d5237edb58244b0fcc6857'
           python-version: '3.10'
 
