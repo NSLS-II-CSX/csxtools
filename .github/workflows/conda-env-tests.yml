@@ -53,10 +53,10 @@ jobs:
         mamba-version: "*"
         channels: conda-forge
 
-    - name: Cache the archived conda environment file
+    - name: Cache the archived conda environment
       uses: actions/cache@v3
       with:
-        path: ${{ env.CONDA_ENV_NAME }}.tar.gz
+        path: ~/miniconda/envs/${{ env.CONDA_ENV_NAME }}
         key:
           ${{ env.CONDA_ENV_NAME }}-${{ runner.os }}--${{ runner.arch }}-${{
           env.MD5_CHECKSUM }}-${{ 
