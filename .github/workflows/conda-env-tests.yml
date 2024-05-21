@@ -56,7 +56,7 @@ jobs:
     - name: Cache the archived conda environment file
       uses: actions/cache@v3
       with:
-        path: ${CONDA_ENV_NAME}.tar.gz
+        path: ${{ env.CONDA_ENV_NAME }}.tar.gz
         key:
           ${{ env.CONDA_ENV_NAME }}-${{ runner.os }}--${{ runner.arch }}-${{
           env.MD5_CHECKSUM }}-${{ 
