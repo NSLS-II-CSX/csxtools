@@ -218,7 +218,8 @@ jobs:
         echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
 
         # Workaround for unset GDAL_DATA env variable used by newer conda envs
-        export GDAL_DATA="${GDAL_DATA:-}"
+        export GDAL_DATA="${GDAL_DATA-''}"
+        echo "GDAL_DATA=${GDAL_DATA}" >> $GITHUB_ENV
 
     - name: Check out the code repo
       uses: actions/checkout@v4
