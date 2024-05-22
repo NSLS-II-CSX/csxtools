@@ -7,132 +7,136 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash -l {0}
+
     strategy:
       max-parallel: 4
       matrix:
         include:
         # 2023-1.0
-        # - conda_env_name: '2023-1.0-py39'
-        #   zenodo_id: '7470912'
-        #   md5_checksum: '651be0e26cdb230dd8c809b4eed046e9'
-        #   python-version: '3.9'
+        - conda_env_name: '2023-1.0-py39'
+          zenodo_id: '7470912'
+          md5_checksum: '651be0e26cdb230dd8c809b4eed046e9'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.0-py39-tiled'
-        #   zenodo_id: '7470912'
-        #   md5_checksum: 'c092b113d19510ac9ecb68eda66d3e79'
-        #   python-version: '3.9'
+        - conda_env_name: '2023-1.0-py39-tiled'
+          zenodo_id: '7470912'
+          md5_checksum: 'c092b113d19510ac9ecb68eda66d3e79'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.0-py310'
-        #   zenodo_id: '7470912'
-        #   md5_checksum: '2c93e892a55d8c684acea4ccb2680ac5'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.0-py310'
+          zenodo_id: '7470912'
+          md5_checksum: '2c93e892a55d8c684acea4ccb2680ac5'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-1.0-py310-tiled'
-        #   zenodo_id: '7470912'
-        #   md5_checksum: '1de3a83f0ead58d3cb60d721478748a2'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.0-py310-tiled'
+          zenodo_id: '7470912'
+          md5_checksum: '1de3a83f0ead58d3cb60d721478748a2'
+          python-version: '3.10'
 
-        # # 2023-1.1
-        # - conda_env_name: '2023-1.1-py39'
-        #   zenodo_id: '7603440'
-        #   md5_checksum: '531a712033d907b781d24030182357f4'
-        #   python-version: '3.9'
+        # 2023-1.1
+        - conda_env_name: '2023-1.1-py39'
+          zenodo_id: '7603440'
+          md5_checksum: '531a712033d907b781d24030182357f4'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.1-py39-tiled'
-        #   zenodo_id: '7603440'
-        #   md5_checksum: '31dad55d53436605c47dbfc510e876a2'
-        #   python-version: '3.9'
+        - conda_env_name: '2023-1.1-py39-tiled'
+          zenodo_id: '7603440'
+          md5_checksum: '31dad55d53436605c47dbfc510e876a2'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.1-py310'
-        #   zenodo_id: '7603440'
-        #   md5_checksum: 'd60ceb752a798590334cbec3d0155fb6'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.1-py310'
+          zenodo_id: '7603440'
+          md5_checksum: 'd60ceb752a798590334cbec3d0155fb6'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-1.1-py310-tiled'
-        #   zenodo_id: '7603440'
-        #   md5_checksum: 'f501314939d5237edb58244b0fcc6857'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.1-py310-tiled'
+          zenodo_id: '7603440'
+          md5_checksum: 'f501314939d5237edb58244b0fcc6857'
+          python-version: '3.10'
 
-        # # 2023-1.2
-        # - conda_env_name: '2023-1.2-py39'
-        #   zenodo_id: '7651500'
-        #   md5_checksum: '14d0629f468df311918cfea2e6413bfa'
-        #   python-version: '3.9'
+        # 2023-1.2
+        - conda_env_name: '2023-1.2-py39'
+          zenodo_id: '7651500'
+          md5_checksum: '14d0629f468df311918cfea2e6413bfa'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.2-py39-tiled'
-        #   zenodo_id: '7651500'
-        #   md5_checksum: '31586643a0cdd9aee8349ccb93ccac87'
-        #   python-version: '3.9'
+        - conda_env_name: '2023-1.2-py39-tiled'
+          zenodo_id: '7651500'
+          md5_checksum: '31586643a0cdd9aee8349ccb93ccac87'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.2-py310'
-        #   zenodo_id: '7651500'
-        #   md5_checksum: '2dc85c4d2392f751c76ed7d01f363814'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.2-py310'
+          zenodo_id: '7651500'
+          md5_checksum: '2dc85c4d2392f751c76ed7d01f363814'
+          python-version: '3.10'
 
-        # # 2023-1.3
-        # - conda_env_name: '2023-1.3-py39'
-        #   zenodo_id: '7791542'
-        #   md5_checksum: '9cc18f3e09dfa30c4e8f165a932ca394'
-        #   python-version: '3.9'
+        # 2023-1.3
+        - conda_env_name: '2023-1.3-py39'
+          zenodo_id: '7791542'
+          md5_checksum: '9cc18f3e09dfa30c4e8f165a932ca394'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.3-py39-tiled'
-        #   zenodo_id: '7791542'
-        #   md5_checksum: '1f40f5786fc0c06baad3fd3b456a6abc'
-        #   python-version: '3.9'
+        - conda_env_name: '2023-1.3-py39-tiled'
+          zenodo_id: '7791542'
+          md5_checksum: '1f40f5786fc0c06baad3fd3b456a6abc'
+          python-version: '3.9'
 
-        # - conda_env_name: '2023-1.3-py310'
-        #   zenodo_id: '7791542'
-        #   md5_checksum: '3304bc674d14b2820d60b311b58661fd'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.3-py310'
+          zenodo_id: '7791542'
+          md5_checksum: '3304bc674d14b2820d60b311b58661fd'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-1.3-py310-tiled'
-        #   zenodo_id: '7791542'
-        #   md5_checksum: 'b7869b9fdb1c076bfba1f7eb2c63c6f0'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-1.3-py310-tiled'
+          zenodo_id: '7791542'
+          md5_checksum: 'b7869b9fdb1c076bfba1f7eb2c63c6f0'
+          python-version: '3.10'
 
-        # # 2023-2.0
-        # - conda_env_name: '2023-2.0-py310'
-        #   zenodo_id: '7876026'
-        #   md5_checksum: '2f81225554a16339e2a49432cd8a013b'
-        #   python-version: '3.10'
+        # 2023-2.0
+        - conda_env_name: '2023-2.0-py310'
+          zenodo_id: '7876026'
+          md5_checksum: '2f81225554a16339e2a49432cd8a013b'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-2.0-py310-tiled'
-        #   zenodo_id: '7876026'
-        #   md5_checksum: 'ef85af9ff76bd0afa527bdfc391b0442'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-2.0-py310-tiled'
+          zenodo_id: '7876026'
+          md5_checksum: 'ef85af9ff76bd0afa527bdfc391b0442'
+          python-version: '3.10'
 
-        # # 2023-2.1
-        # - conda_env_name: '2023-2.1-py310'
-        #   zenodo_id: '8098505'
-        #   md5_checksum: '31add8231d47d92821b5f4178cd9a58a'
-        #   python-version: '3.10'
+        # 2023-2.1
+        - conda_env_name: '2023-2.1-py310'
+          zenodo_id: '8098505'
+          md5_checksum: '31add8231d47d92821b5f4178cd9a58a'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-2.1-py310-tiled'
-        #   zenodo_id: '8098505'
-        #   md5_checksum: 'd75299b2a6ffc2ed5aca7d01150c97f0'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-2.1-py310-tiled'
+          zenodo_id: '8098505'
+          md5_checksum: 'd75299b2a6ffc2ed5aca7d01150c97f0'
+          python-version: '3.10'
 
-        # # 2023-3.0
-        # - conda_env_name: '2023-3.0-py310'
-        #   zenodo_id: '8342731'
-        #   md5_checksum: '49ad184de893ab1a27db3c4d3e91a045'
-        #   python-version: '3.10'
+        # 2023-3.0
+        - conda_env_name: '2023-3.0-py310'
+          zenodo_id: '8342731'
+          md5_checksum: '49ad184de893ab1a27db3c4d3e91a045'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-3.0-py310-tiled'
-        #   zenodo_id: '8342731'
-        #   md5_checksum: 'b727a21d791192bc3981fbe56deb44bd'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-3.0-py310-tiled'
+          zenodo_id: '8342731'
+          md5_checksum: 'b727a21d791192bc3981fbe56deb44bd'
+          python-version: '3.10'
 
-        # # 2023-3.1
-        # - conda_env_name: '2023-3.1-py310'
-        #   zenodo_id: '8342775'
-        #   md5_checksum: '06c16140f909b11ac6cb712c96c849af'
-        #   python-version: '3.10'
+        # 2023-3.1
+        - conda_env_name: '2023-3.1-py310'
+          zenodo_id: '8342775'
+          md5_checksum: '06c16140f909b11ac6cb712c96c849af'
+          python-version: '3.10'
 
-        # - conda_env_name: '2023-3.1-py310-tiled'
-        #   zenodo_id: '8342775'
-        #   md5_checksum: '1551a5591bfde30ddbb34d0798e4c94c'
-        #   python-version: '3.10'
+        - conda_env_name: '2023-3.1-py310-tiled'
+          zenodo_id: '8342775'
+          md5_checksum: '1551a5591bfde30ddbb34d0798e4c94c'
+          python-version: '3.10'
 
         # 2023-3.2
         - conda_env_name: '2023-3.2-py310'
@@ -203,7 +207,6 @@ jobs:
     steps:
 
     - name: Set env vars
-      shell: bash -l {0}
       run: |
         export REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"  # just the repo, as opposed to org/repo
         echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
@@ -257,7 +260,6 @@ jobs:
 
     - name: Download and install the archived conda environment
       if: steps.cache-conda-archive.outputs.cache-hit != 'true'
-      shell: bash -l {0}
       run: |
         set -vxeuo pipefail
         conda activate "${{ env.REPOSITORY_NAME }}-py${{ matrix.python-version }}"
@@ -274,7 +276,6 @@ jobs:
         tar -xf ${CONDA_ENV_NAME}.tar.gz -C $HOME/miniconda/envs/${CONDA_ENV_NAME}
 
     - name: Activate and inspect the archived conda environment
-      shell: bash -l {0}
       run: |
         set -vxeuo pipefail
         conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
@@ -286,12 +287,10 @@ jobs:
         pip list
 
     - name: Install the package and its dependencies
-      shell: bash -l {0}
       run: |
         set -vxeuo pipefail
         conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
         echo "Using conda environment at ${CONDA_PREFIX}"
-        # pip install --upgrade pip setuptools wheel numpy
         pip install --upgrade pip setuptools wheel
         pip install -r requirements-dev.txt
         pip install -r requirements-extras.txt
@@ -299,7 +298,6 @@ jobs:
         pip list
 
     - name: Test with pytest
-      shell: bash -l {0}
       run: |
         set -vxeuo pipefail
         conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
