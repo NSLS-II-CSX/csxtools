@@ -217,6 +217,9 @@ jobs:
         export MD5_CHECKSUM='${{ matrix.md5_checksum }}'
         echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
 
+        # Workaround for unset GDAL_DATA env variable used by newer conda envs
+        export GDAL_DATA="${GDAL_DATA:-}"
+
     - name: Check out the code repo
       uses: actions/checkout@v4
 
