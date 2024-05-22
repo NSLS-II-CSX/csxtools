@@ -21,6 +21,8 @@ jobs:
         echo "matrix_include=$(cat ${MATRIX_INCLUDE_FILE})" >> $GITHUB_OUTPUT
 
   test-in-conda-env:
+  
+    needs: matrix_prep
 
     runs-on: ubuntu-latest
 
