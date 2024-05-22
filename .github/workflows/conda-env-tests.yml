@@ -43,7 +43,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        include: ${{ needs.matrix_prep.matrix_include }}
+        include: ${{ needs.matrix_prep.outputs.matrix_include }}
 
       fail-fast: false
 
