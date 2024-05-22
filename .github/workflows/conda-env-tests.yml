@@ -225,6 +225,10 @@ jobs:
         export GEOTIFF_CSV="${GEOTIFF_CSV-''}"
         echo "GEOTIFF_CSV=${GEOTIFF_CSV}" >> $GITHUB_ENV
 
+        # Workaround for unset MKL env variables used by newer conda envs
+        export MKL_INTERFACE_LAYER="${MKL_INTERFACE_LAYER-''}"
+        echo "MKL_INTERFACE_LAYER=${MKL_INTERFACE_LAYER}" >> $GITHUB_ENV
+
     - name: Check out the code repo
       uses: actions/checkout@v4
 
