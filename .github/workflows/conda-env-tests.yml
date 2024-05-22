@@ -12,13 +12,23 @@ jobs:
     steps:
     - name: Check out the code repo
       uses: actions/checkout@v4
-    - id: set-matrix
+    - name: Install python interpreter
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        set -vxeuo pipefail
+        python -m pip install pyyaml
+    - name: Import matrix.include from config file
+      id: set-matrix
       run: |
         set -vxeuo pipefail
         export MATRIX_INCLUDE_DIR=${{ github.workspace }}/.github/conda-env-tests
         export MATRIX_INCLUDE_FILE=${MATRIX_INCLUDE_DIR}/recent-envs.yml
         echo "Building matrix from file ${MATRIX_INCLUDE_FILE}"
-        echo "matrix_include=$(cat ${MATRIX_INCLUDE_FILE})" >> $GITHUB_OUTPUT
+        export MATRIX_INCLUDE_SCRIPT=${MATRIX_INCLUDE_DIR}/matrix_include.py
+        echo "matrix_include=$(python ${MATRIX_INCLUDE_SCRIPT})" >> $GITHUB_OUTPUT
 
   test-in-conda-env:
   
