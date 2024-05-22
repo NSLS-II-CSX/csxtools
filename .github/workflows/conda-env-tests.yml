@@ -222,6 +222,8 @@ jobs:
         echo "GDAL_DATA=${GDAL_DATA}" >> $GITHUB_ENV
         export GDAL_DRIVER_PATH="${GDAL_DRIVER_PATH-''}"
         echo "GDAL_DRIVER_PATH=${GDAL_DRIVER_PATH}" >> $GITHUB_ENV
+        export GEOTIFF_CSV="${GEOTIFF_CSV-''}"
+        echo "GEOTIFF_CSV=${GEOTIFF_CSV}" >> $GITHUB_ENV
 
     - name: Check out the code repo
       uses: actions/checkout@v4
