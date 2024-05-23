@@ -38,12 +38,7 @@ jobs:
     needs: matrix_prep
     runs-on: ubuntu-latest
     steps:
-    - name: Debug
-      run: |
-        echo ${{ env.BRANCH_NAME }}
-    # - name: Check out the code repo
-    #   uses: actions/checkout@v4
-    # - name: Dispatch the test
-    #   uses: ./.github/actions/test-in-conda-env.yml@${{env.BRANCH_NAME}}
-    #   with:
-    #     matrix_include: ${{ fromJson(needs.matrix_prep.outputs.matrix_include) }}
+    - name: Dispatch the test
+      uses: ./.github/workflows/_test-in-conda-env.yml
+      with:
+        matrix_include: ${{ fromJson(needs.matrix_prep.outputs.matrix_include) }}
