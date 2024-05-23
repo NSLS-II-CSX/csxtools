@@ -1,0 +1,29 @@
+name: Unit Tests in NSLS-II Conda Environments
+
+on: [workflow_dispatch]
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
+jobs:
+
+  matrix_prep:
+  
+    uses: ./.github/workflows/_matrix_prep.yml
+    with:
+      config_prefix: legacy
+
+  test-in-conda-env:
+  
+    needs: matrix_prep
+    uses: ./.github/workflows/_test-in-conda-env.yml
+    with:
+      conda_env_name: ${{ matrix.conda_env_name }}
+      zenodo_id: ${{ matrix.zenodo_id }}
+      md5_checksum: ${{ matrix.md5_checksum }}
+      python-version: ${{ matrix.python-version }}
+    strategy:
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJson(needs.matrix_prep.outputs.matrix_include) }}
+      fail-fast: false
