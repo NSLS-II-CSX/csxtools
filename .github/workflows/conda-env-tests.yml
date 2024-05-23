@@ -38,4 +38,4 @@ jobs:
     needs: matrix_prep
     uses: ./.github/workflows/_test-in-conda-env.yml
     with:
-      matrix_include: ${{ fromJson(needs.matrix_prep.outputs.matrix_include) }}
+      matrix_include: ${{ needs.matrix_prep.outputs.matrix_include }}
