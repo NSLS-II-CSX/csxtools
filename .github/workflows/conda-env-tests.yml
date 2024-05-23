@@ -38,6 +38,9 @@ jobs:
     needs: matrix_prep
     runs-on: ubuntu-latest
     steps:
+    - name: Debug
+      run: |
+        echo ${{ env.BRANCH_NAME }}
     - name: Check out the code repo
       uses: actions/checkout@v4
     - name: Dispatch the test
