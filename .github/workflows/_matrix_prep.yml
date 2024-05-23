@@ -13,9 +13,8 @@ on:
 
     outputs:
       matrix_include:
-        description: 'JSON array of strategy.matrix.include entries'
+        description: 'JSON array of strategy.matrix.include entries, as string'
         value: ${{ jobs.matrix_prep.outputs.matrix_include }}
-        type: string
 
 jobs:
 
