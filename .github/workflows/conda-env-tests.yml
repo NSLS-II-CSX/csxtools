@@ -36,6 +36,6 @@ jobs:
   test-in-conda-env:
   
     needs: matrix_prep
-    uses: ./.github/conda-env-tests/test-in-conda-env.yml@${{env.BRANCH_NAME}}
+    uses: ./.github/workflows/reusable/test-in-conda-env.yml@${{env.BRANCH_NAME}}
     with:
       matrix_include: ${{ fromJson(needs.matrix_prep.outputs.matrix_include) }}
