@@ -38,6 +38,8 @@ jobs:
     needs: matrix_prep
     runs-on: ubuntu-latest
     steps:
+    - name: Check out the code repo
+      uses: actions/checkout@v4
     - name: Dispatch the test
       uses: ./.github/workflows/_test-in-conda-env.yml
       with:
