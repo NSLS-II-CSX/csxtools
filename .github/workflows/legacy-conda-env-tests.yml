@@ -1,4 +1,4 @@
-name: Unit Tests in NSLS-II Conda Environments
+name: Legacy Unit Tests in NSLS-II Conda Environments
 
 on: [workflow_dispatch]
 
