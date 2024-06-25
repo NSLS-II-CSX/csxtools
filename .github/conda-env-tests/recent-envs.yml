@@ -1,0 +1,54 @@
+---
+
+# 2023-3.3
+- conda_env_name: '2023-3.3-py310'
+  zenodo_id: '10148425'
+  md5_checksum: 'bb77ea6f7a5bb63980d5181f7666ecc2'
+  python-version: '3.10'
+
+- conda_env_name: '2023-3.3-py310-tiled'
+  zenodo_id: '10148425'
+  md5_checksum: '0a47934380db013b36f3e089afdff6aa'
+  python-version: '3.10'
+
+- conda_env_name: '2023-3.3-py311'
+  zenodo_id: '10148425'
+  md5_checksum: 'dd6c06a02e43b286cdf84908d8339992'
+  python-version: '3.11'
+
+- conda_env_name: '2023-3.3-py311-tiled'
+  zenodo_id: '10148425'
+  md5_checksum: '48d2a73ea743d34152400cd642fd7472'
+  python-version: '3.11'
+
+# 2024-1.0
+- conda_env_name: '2024-1.0-py310'
+  zenodo_id: '10548109'
+  md5_checksum: 'b6107d565f0ff9d7315eab96d28894e9'
+  python-version: '3.10'
+
+- conda_env_name: '2024-1.0-py310-tiled'
+  zenodo_id: '10548109'
+  md5_checksum: '216c4df93c6893a7ebe6456b678ac89e'
+  python-version: '3.10'
+
+- conda_env_name: '2024-1.0-py311'
+  zenodo_id: '10548109'
+  md5_checksum: '2592ed2002823c423b4a664183d384da'
+  python-version: '3.11'
+
+- conda_env_name: '2024-1.0-py311-tiled'
+  zenodo_id: '10548109'
+  md5_checksum: 'a51aac76916f19f5982650c1c6f21503'
+  python-version: '3.11'
+
+# 2024-2.0
+- conda_env_name: '2024-2.0-py310-tiled'
+  zenodo_id: '11122851'
+  md5_checksum: '91955234f1617df158e7301f05a89b64'
+  python-version: '3.10'
+
+- conda_env_name: '2024-2.0-py311-tiled'
+  zenodo_id: '11122851'
+  md5_checksum: 'd30ca6db3d93de99655a85a481c966c2'
+  python-version: '3.11'

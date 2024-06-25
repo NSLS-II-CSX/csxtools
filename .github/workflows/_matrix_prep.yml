@@ -1,0 +1,52 @@
+name: Prepare a matrix of NSLS-II Conda Environments
+
+on: 
+  workflow_call:
+  
+    inputs:
+      config_prefix:
+        description: >
+          'YAML file prefix {value}-env.yaml for a configuration file that'
+          'conains the strategy.matrix.includes for conda environments'
+        required: true
+        type: string
+        default: recent
+
+    outputs:
+      matrix_include:
+        description: 'JSON array of strategy.matrix.include entries, as string'
+        value: ${{ jobs.matrix_prep.outputs.matrix_include }}
+
+jobs:
+
+  matrix_prep:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix_include: ${{ steps.set-matrix.outputs.matrix_include }}
+
+    steps:
+
+    - name: Check out the code repo
+      uses: actions/checkout@v4
+
+    - name: Install python interpreter
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        set -vxeuo pipefail
+        python -m pip install pyyaml
+        
+    - name: Import matrix.include from config file
+      id: set-matrix
+      run: |
+        set -vxeuo pipefail
+        export MATRIX_INCLUDE_DIR=${{ github.workspace }}/.github/conda-env-tests
+        export MATRIX_INCLUDE_FILE=${MATRIX_INCLUDE_DIR}/${{ inputs.config_prefix }}-envs.yml
+        echo "Building matrix from file ${MATRIX_INCLUDE_FILE}"
+        export MATRIX_INCLUDE_SCRIPT=${MATRIX_INCLUDE_DIR}/matrix_include.py
+        echo "matrix_include=$(python ${MATRIX_INCLUDE_SCRIPT})" >> $GITHUB_OUTPUT

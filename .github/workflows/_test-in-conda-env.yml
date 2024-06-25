@@ -1,0 +1,138 @@
+name: Unit Test in NSLS-II Conda Environment
+
+on: 
+  workflow_call:
+    inputs:
+      conda_env_name:
+        description: 'Name of the conda environment to use for running the test'
+        required: true
+        type: string
+      zenodo_id:
+        description: 'Zenodo ID for the archived conda environment'
+        required: true
+        type: string
+      md5_checksum:
+        description: 'MD5 checksum for the archived conda environment'
+        required: true
+        type: string
+      python-version:
+        description: 'Python version ID to use for running the test'
+        required: true
+        type: string
+
+jobs:
+
+  test-in-conda-env:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+
+    - name: Set env vars
+      run: |
+        export REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"  # just the repo, as opposed to org/repo
+        echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
+
+        export CONDA_ENV_NAME='${{ inputs.conda_env_name }}'
+        echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
+
+        export ZENODO_ID='${{ inputs.zenodo_id }}'
+        echo "ZENODO_ID=${ZENODO_ID}" >> $GITHUB_ENV
+
+        export MD5_CHECKSUM='${{ inputs.md5_checksum }}'
+        echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
+
+        # Workaround for unset GDAL env variables used by newer conda envs
+        export GDAL_DATA="${GDAL_DATA-''}"
+        echo "GDAL_DATA=${GDAL_DATA}" >> $GITHUB_ENV
+        export GDAL_DRIVER_PATH="${GDAL_DRIVER_PATH-''}"
+        echo "GDAL_DRIVER_PATH=${GDAL_DRIVER_PATH}" >> $GITHUB_ENV
+        export GEOTIFF_CSV="${GEOTIFF_CSV-''}"
+        echo "GEOTIFF_CSV=${GEOTIFF_CSV}" >> $GITHUB_ENV
+
+        # Workaround for unset MKL env variables used by newer conda envs
+        export MKL_INTERFACE_LAYER="${MKL_INTERFACE_LAYER-''}"
+        echo "MKL_INTERFACE_LAYER=${MKL_INTERFACE_LAYER}" >> $GITHUB_ENV
+
+    - name: Check out the code repo
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ inputs.python-version }} with conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: ${{ env.REPOSITORY_NAME }}-py${{ inputs.python-version }}
+        auto-update-conda: true
+        miniconda-version: "latest"
+        python-version: ${{ inputs.python-version }}
+        mamba-version: "*"
+        channels: conda-forge
+
+    - name: Cache the archived conda environment
+      uses: actions/cache@v3
+      with:
+        path: ~/miniconda/envs/${{ env.CONDA_ENV_NAME }}
+        key:
+          ${{ env.CONDA_ENV_NAME }}-${{ runner.os }}--${{ runner.arch }}-${{
+          env.MD5_CHECKSUM }}-${{ 
+          env.CACHE_NUMBER }}
+      env:
+        # Increase this value to reset cache if ${CONDA_ENV_NAME}.tar.gz has not changed
+        CACHE_NUMBER: 0
+      id: cache-conda-archive
+
+    - name: Download and install the archived conda environment
+      if: steps.cache-conda-archive.outputs.cache-hit != 'true'
+      run: |
+        set -vxeuo pipefail
+        conda activate "${{ env.REPOSITORY_NAME }}-py${{ inputs.python-version }}"
+        url="https://zenodo.org/record/${ZENODO_ID}/files/${CONDA_ENV_NAME}.tar.gz?download=1"
+        wget --progress=dot:giga ${url} -O ${CONDA_ENV_NAME}.tar.gz
+        status=$?
+        if [ $status -gt 0 ]; then
+            echo "Cannot download from ${url}. Exit code: ${status}"
+            exit $status
+        fi
+        echo "${MD5_CHECKSUM} ${CONDA_ENV_NAME}.tar.gz" > checksum.txt
+        md5sum --check checksum.txt
+        mkdir -p $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        tar -xf ${CONDA_ENV_NAME}.tar.gz -C $HOME/miniconda/envs/${CONDA_ENV_NAME}
+
+    - name: Activate and inspect the archived conda environment
+      run: |
+        set -vxeuo pipefail
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        conda unpack
+
+        conda info -a
+        conda env list
+        conda list
+        pip list
+
+    - name: Install the package and its dependencies
+      run: |
+        set -vxeuo pipefail
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        echo "Using conda environment at ${CONDA_PREFIX}"
+        pip install --upgrade pip setuptools wheel
+        pip install -r requirements-dev.txt
+        pip install -r requirements-extras.txt
+        pip install -e .
+        pip list
+
+    - name: Test with pytest
+      run: |
+        set -vxeuo pipefail
+        conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
+        echo "Using conda environment at ${CONDA_PREFIX}"
+        coverage run --source=csxtools run_tests.py
+        coverage xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        file: ./coverage.xml 
+        flags: conda-env-unittests
