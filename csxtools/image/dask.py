@@ -23,9 +23,13 @@ def rotate90(images: DaskArray, sense: bool) -> DaskArray:
     """
     # Rotate images. The axes (1, 2) specify the plane of rotation (y-x plane for each image).
     # k controls the direction and repetitions of the rotation.
-    if sense:
+    if sense != 0:
+        # Counter-clockwise
         k = 1
-    elif sense:
+    elif sense == 0:
+        # Clockwise
         k = -1
+    else:
+        raise ValueError(f"{sense = } is not a valid integer")
     rotated_images = da.rot90(images, k=k, axes=(-2, -1))
     return rotated_images

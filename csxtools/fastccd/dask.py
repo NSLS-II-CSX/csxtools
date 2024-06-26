@@ -12,17 +12,17 @@ PIXEL_MASK = 0x1FFF
 
 
 def correct_images(images: DaskArray, dark: ArrayLike, flat: ArrayLike, gain: Tuple[float, float, float]):
-    """_summary_
+    """Apply intensity corrections to a stack of images.
 
     Parameters
     ----------
     images : DaskArray
-        Input array of images to correct of shape (N, y, x)  where N is the
+        Input array of images to correct; has shape (N, y, x)  where N is the
         number of images and x and y are the image size.
     dark : ArrayLike
         Input array of dark images. This should be of shape (3, y, x).
-        dark[0] is the gain 8 (most sensitive setting) dark image with
-        dark[2] being the gain 1 (least sensitive) dark image.
+        dark[0] is the GAIN_8 (most sensitive setting) dark image with
+        dark[2] being the GAIN_1 (least sensitive) dark image.
     flat : ArrayLike
         Input array for the flatfield correction. This should be of shape
         (y, x)
@@ -31,7 +31,7 @@ def correct_images(images: DaskArray, dark: ArrayLike, flat: ArrayLike, gain: Tu
         gain settings
 
     // Note GAIN_1 is the least sensitive setting which means we need to multiply the
-    // measured values by 8. Conversly GAIN_8 is the most sensitive and therefore only
+    // measured values by 8. Conversly GAIN_8 is the most sensitive and therefore
     // does not need a multiplier
     """
 
