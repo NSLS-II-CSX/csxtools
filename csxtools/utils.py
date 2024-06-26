@@ -1,17 +1,17 @@
-import numpy as np
+import logging
 import time as ttime
+
+import numpy as np
+from databroker.assets.handlers import AreaDetectorHDF5TimestampHandler
 
 from .fastccd import correct_images
 from .image import rotate90, stackmean
 from .settings import detectors
-from databroker.assets.handlers import AreaDetectorHDF5TimestampHandler
 
-import logging
 logger = logging.getLogger(__name__)
 
 
-def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag=None, roi=None):
+def get_fastccd_images(light_header, dark_headers=None, flat=None, gain=(1, 4, 8), tag=None, roi=None, *, dask=False):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
@@ -50,6 +50,9 @@ def get_fastccd_images(light_header, dark_headers=None,
         coordinates of the upper-left corner and width and height of
         the ROI: e.g., (x, y, w, h)
 
+    dask : bool, optional
+        Use dask for computation. Default is False.
+
     Returns
     -------
     dask.array : corrected images
@@ -57,7 +60,7 @@ def get_fastccd_images(light_header, dark_headers=None,
     """
 
     if tag is None:
-        tag = detectors['fccd']
+        tag = detectors["fccd"]
 
     # Now lets sort out the ROI
     if roi is not None:
@@ -72,8 +75,7 @@ def get_fastccd_images(light_header, dark_headers=None,
         logger.warning("Processing without dark images")
     else:
         if dark_headers[0] is None:
-            raise NotImplementedError("Use of header metadata to find dark"
-                                      " images is not implemented yet.")
+            raise NotImplementedError("Use of header metadata to find dark" " images is not implemented yet.")
 
         # Read the images for the dark headers
         t = ttime.time()
@@ -91,25 +93,20 @@ def get_fastccd_images(light_header, dark_headers=None,
 
                 tt = ttime.time()
                 b = bgnd_events.astype(dtype=np.uint16)
-                logger.info("Image conversion took %.3f seconds",
-                            ttime.time() - tt)
+                logger.info("Image conversion took %.3f seconds", ttime.time() - tt)
 
                 b = correct_images(b, gain=(1, 1, 1))
                 tt = ttime.time()
                 b = stackmean(b)
-                logger.info("Mean of image stack took %.3f seconds",
-                            ttime.time() - tt)
+                logger.info("Mean of image stack took %.3f seconds", ttime.time() - tt)
 
             else:
-                if (i == 0):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 8")
-                elif (i == 1):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 2")
-                elif (i == 2):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 1")
+                if i == 0:
+                    logger.warning("Missing dark image" " for gain setting 8")
+                elif i == 1:
+                    logger.warning("Missing dark image" " for gain setting 2")
+                elif i == 2:
+                    logger.warning("Missing dark image" " for gain setting 1")
 
             dark.append(b)
 
@@ -125,7 +122,7 @@ def get_fastccd_images(light_header, dark_headers=None,
     if flat is not None and roi is not None:
         flat = _crop(flat, roi)
 
-    return _correct_fccd_images(events, bgnd, flat, gain)
+    return _correct_fccd_images(events, bgnd, flat, gain, dask=dask)
 
 
 def get_images_to_4D(images, dtype=None):
@@ -147,8 +144,7 @@ def get_images_to_4D(images, dtype=None):
     >>> a = get_images_to_4D(images, dtype=np.float32)
 
     """
-    im = np.array([np.asarray(im, dtype=dtype) for im in images],
-                  dtype=dtype)
+    im = np.array([np.asarray(im, dtype=dtype) for im in images], dtype=dtype)
     return im
 
 
@@ -183,9 +179,9 @@ def _get_images(header, tag, roi=None):
     return images
 
 
-def _correct_fccd_images(image, bgnd, flat, gain):
-    image = correct_images(image, bgnd, flat, gain)
-    image = rotate90(image, 'cw')
+def _correct_fccd_images(image, bgnd, flat, gain, *, dask=False):
+    image = correct_images(image, bgnd, flat, gain, dask=dask)
+    image = rotate90(image, "cw", dask=dask)
     return image
 
 
@@ -196,11 +192,11 @@ def _crop_images(image, roi):
 def _crop(image, roi):
     image_shape = image.shape
     # Assuming ROI is specified in the "rotated" (correct) orientation
-    roi = [image_shape[-2]-roi[3], roi[0], image_shape[-1]-roi[1], roi[2]]
-    return image.T[roi[1]:roi[3], roi[0]:roi[2]].T
+    roi = [image_shape[-2] - roi[3], roi[0], image_shape[-1] - roi[1], roi[2]]
+    return image.T[roi[1] : roi[3], roi[0] : roi[2]].T
 
 
-def get_fastccd_timestamps(header, tag='fccd_image'):
+def get_fastccd_timestamps(header, tag="fccd_image"):
     """Return the FastCCD timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -218,8 +214,7 @@ def get_fastccd_timestamps(header, tag='fccd_image'):
         list of arrays of the timestamps
 
     """
-    with header.db.reg.handler_context(
-            {'AD_HDF5': AreaDetectorHDF5TimestampHandler}):
+    with header.db.reg.handler_context({"AD_HDF5": AreaDetectorHDF5TimestampHandler}):
         timestamps = list(header.data(tag))
 
     return timestamps
@@ -259,9 +254,8 @@ def calculate_flatfield(image, limits=(0.6, 1.4)):
     return flat
 
 
-
 def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=False):
-    """Calculate a flatfield from two headers 
+    """Calculate a flatfield from two headers
 
     This routine calculates the flatfield using the
     :func:calculate_flatfield() function after obtaining the images from
@@ -278,7 +272,7 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interv
     limits : tuple limits used for returning corrected pixel flatfield
         The tuple setting lower and upper bound. np.nan returned value is outside bounds
     half_interval : boolean or tuple to perform calculation for only half of the FastCCD
-        Default is False. If True, then the hard-code portion is retained.  Customize image 
+        Default is False. If True, then the hard-code portion is retained.  Customize image
         manipulation using a tuple of length 2 for (row_start, row_stop).
 
 
@@ -291,7 +285,7 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interv
     images = stackmean(images)
     if half_interval:
         if isinstance(half_interval, bool):
-            row_start, row_stop = (7, 486) #hard coded for the broken half of the fccd
+            row_start, row_stop = (7, 486)  # hard coded for the broken half of the fccd
         else:
             row_start, row_stop = half_interval
             print(row_start, row_stop)
@@ -299,8 +293,7 @@ def get_fastccd_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interv
     flat = calculate_flatfield(images, limits)
     removed = np.sum(np.isnan(flat))
     if removed != 0:
-        logger.warning("Flatfield correction removed %d pixels (%.2f %%)" %
-                       (removed, removed * 100 / flat.size))
+        logger.warning("Flatfield correction removed %d pixels (%.2f %%)" % (removed, removed * 100 / flat.size))
     return flat
 
 

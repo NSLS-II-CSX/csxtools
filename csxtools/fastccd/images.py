@@ -1,12 +1,15 @@
-import numpy as np
-from ..ext import fastccd
+import logging
 import time as ttime
 
-import logging
+import numpy as np
+
+from ..ext import fastccd
+from .dask import correct_images as dask_correct_images
+
 logger = logging.getLogger(__name__)
 
 
-def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
+def correct_images(images, dark=None, flat=None, gain=(1, 4, 8), *, dask=False):
     """Subtract backgrond and gain correct images
 
     This routine subtrtacts the backgrond and corrects the images
@@ -27,6 +30,11 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     gain : tuple, optional
         These are the gain multiplication factors for the three different
         gain settings
+    dask : bool, optional
+        Do computation in dask instead of in C extension over full array.
+        This returns a DaskArray or DaskArrayClient with pending execution instead of a numpy array.
+        You can use the .compute() method to get the numpy array.
+        Default is False.
 
     Returns
     -------
@@ -49,8 +57,10 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    data = fastccd.correct_images(images.astype(np.uint16),
-                                  dark, flat, gain)
+    if dask:
+        data = dask_correct_images(images.astype(np.uint16), dark, flat, gain)
+    else:
+        data = fastccd.correct_images(images.astype(np.uint16), dark, flat, gain)
     t = ttime.time() - t
 
     logger.info("Corrected image stack in %.3f seconds", t)
