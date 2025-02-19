@@ -44,8 +44,11 @@
 
 
 // Correct fast ccd images by looping over all images correcting for background
+// Nisar
+//int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
+//                        int ndims, index_t *dims, data_t* gain){
 int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-                        int ndims, index_t *dims, data_t* gain){
+			int ndims, index_t *dims){
   index_t nimages,k;
   int n;
 
@@ -61,7 +64,9 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
 
   index_t imsize = dims[ndims-1] * dims[ndims-2];
 
-#pragma omp parallel for private(k) shared(in, out, bg, imsize, gain, flat) schedule(static,imsize)
+// Nisar
+//#pragma omp parallel for private(k) shared(in, out, bg, imsize, gain, flat) schedule(static,imsize)
+#pragma omp parallel for private(k) shared(in, out, bg, imsize, flat) schedule(static,imsize)
   for(k=0;k<nimages*imsize;k++){
     // Reset the background pointer each time
     data_t *bgp = bg + (k % imsize);
@@ -71,6 +76,8 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
     // measured values by 8. Conversly GAIN_8 is the most sensitive and therefore only
     // does not need a multiplier
     //
+    // Nisar
+    /*
     if((in[k] & BAD_PIXEL) == BAD_PIXEL){
       out[k] = NAN;
     } else if((in[k] & GAIN_1) == GAIN_1){
@@ -79,6 +86,10 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
       out[k] = *flatp * gain[1] * ((data_t)(in[k] & PIXEL_MASK) - *(bgp + imsize));
     } else {
       out[k] = *flatp * gain[0] * ((data_t)(in[k] & PIXEL_MASK) - *bgp);
+    }
+    */
+    if(in[k]){
+      out[k] = *flatp * ((data_t)(in[k] & PIXEL_MASK) - *bgp);
     }
   }
 

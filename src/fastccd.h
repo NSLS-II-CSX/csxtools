@@ -41,13 +41,16 @@
 typedef long index_t;
 typedef float data_t;
 
-#define GAIN_8      0x0000
-#define GAIN_2      0x8000
-#define GAIN_1      0xC000
-#define BAD_PIXEL   0x2000
-#define PIXEL_MASK  0x1FFF
+// Nisar
+//#define GAIN_8      0x0000
+//#define GAIN_2      0x8000
+//#define GAIN_1      0xC000
+//#define BAD_PIXEL   0x2000
+//#define PIXEL_MASK  0x1FFF
+
+//int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
+//                        int ndims, index_t *dims, data_t *gain);
 
 int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-                        int ndims, index_t *dims, data_t *gain);
-
+                        int ndims, index_t *dims);
 #endif

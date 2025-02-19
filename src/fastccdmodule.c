@@ -57,14 +57,18 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
   npy_intp *dims_bgnd;
   npy_intp *dims_flat;
   int ndims;
-  float gain[3];
+  //float gain[3];
 
 
-  if(!PyArg_ParseTuple(args, "OOO(fff)", &_input, &_bgnd, &_flat,
-                                         &gain[0], &gain[1], &gain[2])){
+  //if(!PyArg_ParseTuple(args, "OOO(fff)", &_input, &_bgnd, &_flat,
+  //                                       &gain[0], &gain[1], &gain[2])){
+  //  return NULL;
+  //}
+
+  if(!PyArg_ParseTuple(args, "OOO", &_input, &_bgnd, &_flat)){   
     return NULL;
   }
-
+  
   input = (PyArrayObject*)PyArray_FROMANY(_input, NPY_UINT16, 2, 0,NPY_ARRAY_IN_ARRAY);
   if(!input){
     goto error;
@@ -111,9 +115,12 @@ static PyObject* fastccd_correct_images(PyObject *self, PyObject *args){
   // Ok now we don't touch Python Object ... Release the GIL
   Py_BEGIN_ALLOW_THREADS
 
-  correct_fccd_images(input_p, out_p, bgnd_p, flat_p, 
-                      ndims, (index_t*)dims, (data_t*)gain);
+  //correct_fccd_images(input_p, out_p, bgnd_p, flat_p, 
+  //                  ndims, (index_t*)dims, (data_t*)gain);
 
+  correct_fccd_images(input_p, out_p, bgnd_p, flat_p,
+		      ndims, (index_t*)dims);
+  
   Py_END_ALLOW_THREADS
 
   Py_XDECREF(input);
