@@ -89,7 +89,7 @@ int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
     }
     */
     if(in[k]){
-      out[k] = *flatp * ((data_t)(in[k] & PIXEL_MASK) - *bgp);
+      out[k] = *flatp * ((data_t)(in[k]) - *bgp);
     }
   }
 
