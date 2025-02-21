@@ -10,15 +10,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_fastccd_images(light_header, dark_headers=None,
-                       flat=None, gain=(1, 4, 8), tag=None, roi=None):
+def get_fastccd_images(light_header, dark_header=None,
+                       flat=None, tag=None, roi=None):
     """Retreive and correct FastCCD Images from associated headers
 
     Retrieve FastCCD Images from databroker and correct for:
 
     -   Bad Pixels (converted to ``np.nan``)
     -   Backgorund.
-    -   Multigain bits.
     -   Flatfield correction.
     -   Rotation (returned images are rotated 90 deg cw)
 
@@ -27,19 +26,13 @@ def get_fastccd_images(light_header, dark_headers=None,
     light_header : databorker header
         This header defines the images to convert
 
-    dark_headers : tuple of 3 databroker headers , optional
-        These headers are the dark images. The tuple should be formed
-        from the dark image sets for the Gain 8, Gain 2 and Gain 1
-        (most sensitive to least sensitive) settings. If a set is not
-        avaliable then ``None`` can be entered.
+    dark_headers : databroker headers , optional
+        The header is the dark images. 
 
     flat : array_like
         Array to use for the flatfield correction. This should be a 2D
         array sized as the last two dimensions of the image stack.
 
-    gain : tuple
-        Gain multipliers for the 3 gain settings (most sensitive to
-        least sensitive)
 
     tag : string
         Data tag used to retrieve images. Used in the call to
@@ -57,7 +50,7 @@ def get_fastccd_images(light_header, dark_headers=None,
     """
 
     if tag is None:
-        tag = detectors['fccd']
+        tag = detectors['axis1']
 
     # Now lets sort out the ROI
     if roi is not None:
@@ -67,53 +60,27 @@ def get_fastccd_images(light_header, dark_headers=None,
         roi[3] = roi[1] + roi[3]
         logger.info("Computing with ROI of %s", str(roi))
 
-    if dark_headers is None:
+    if dark_header is None:
         bgnd = None
         logger.warning("Processing without dark images")
     else:
-        if dark_headers[0] is None:
-            raise NotImplementedError("Use of header metadata to find dark"
-                                      " images is not implemented yet.")
 
         # Read the images for the dark headers
         t = ttime.time()
 
-        dark = []
-        for i, d in enumerate(dark_headers):
-            if d is not None:
-                # Get the images
+        d = dark_header        
+        bgnd_events = _get_images(d, tag, roi)
 
-                bgnd_events = _get_images(d, tag, roi)
-
-                # We assume that all images are for the background
-                # TODO : Perhaps we can loop over the generator
-                # If we want to do something lazy
-
-                tt = ttime.time()
-                b = bgnd_events.astype(dtype=np.uint16)
-                logger.info("Image conversion took %.3f seconds",
+        tt = ttime.time()
+        b = bgnd_events.astype(dtype=np.uint16)
+        logger.info("Image conversion took %.3f seconds",
+                            ttime.time() - tt)
+        tt = ttime.time()
+        b = stackmean(b)
+        logger.info("Mean of image stack took %.3f seconds",
                             ttime.time() - tt)
 
-                b = correct_images(b, gain=(1, 1, 1))
-                tt = ttime.time()
-                b = stackmean(b)
-                logger.info("Mean of image stack took %.3f seconds",
-                            ttime.time() - tt)
-
-            else:
-                if (i == 0):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 8")
-                elif (i == 1):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 2")
-                elif (i == 2):
-                    logger.warning("Missing dark image"
-                                   " for gain setting 1")
-
-            dark.append(b)
-
-        bgnd = np.array(dark)
+        bgnd = np.array(b)
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
@@ -125,7 +92,7 @@ def get_fastccd_images(light_header, dark_headers=None,
     if flat is not None and roi is not None:
         flat = _crop(flat, roi)
 
-    return _correct_fccd_images(events, bgnd, flat, gain)
+    return _correct_fccd_images(events, bgnd, flat)
 
 
 def get_images_to_4D(images, dtype=None):
@@ -183,8 +150,8 @@ def _get_images(header, tag, roi=None):
     return images
 
 
-def _correct_fccd_images(image, bgnd, flat, gain):
-    image = correct_images(image, bgnd, flat, gain)
+def _correct_fccd_images(image, bgnd, flat):
+    image = correct_images(image, bgnd, flat)
     image = rotate90(image, 'cw')
     return image
 

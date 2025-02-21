@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
+def correct_images(images, dark=None, flat=None):
     """Subtract backgrond and gain correct images
 
     This routine subtrtacts the backgrond and corrects the images
@@ -24,9 +24,6 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     flat : array_like, optional
         Input array for the flatfield correction. This should be of shape
         (y, x)
-    gain : tuple, optional
-        These are the gain multiplication factors for the three different
-        gain settings
 
     Returns
     -------
@@ -41,7 +38,6 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
 
     if dark is None:
         dark = np.zeros(images.shape[-2:], dtype=np.float32)
-        dark = np.array((dark, dark, dark))
         logger.info("Not correcting for darkfield. No input.")
     if flat is None:
         flat = np.ones(images.shape[-2:], dtype=np.float32)
@@ -49,8 +45,7 @@ def correct_images(images, dark=None, flat=None, gain=(1, 4, 8)):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    data = fastccd.correct_images(images.astype(np.uint16),
-                                  dark, flat, gain)
+    data = fastccd.correct_images(images.astype(np.uint16),dark, flat)
     t = ttime.time() - t
 
     logger.info("Corrected image stack in %.3f seconds", t)
