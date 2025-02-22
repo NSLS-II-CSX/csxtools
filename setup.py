@@ -6,8 +6,16 @@ from os import path
 
 import numpy as np
 import setuptools
-
+from setuptools.command.build_ext import build_ext  # Import build_ext
 import versioneer
+
+# Custom build_ext to remove cpython-XX suffix
+class CustomBuildExt(build_ext):
+    def get_ext_filename(self, ext_name):
+        # Default filename: fastccd.cpython-38-x86_64-linux-gnu.so
+        filename = super().get_ext_filename(ext_name)
+        # Strip platform-specific suffix: fastccd.so
+        return filename.split('.')[0] + '.so'
 
 min_version = (3, 8)
 if sys.version_info < min_version:
@@ -58,7 +66,11 @@ phocount = Extension(
 setup(
     name="csxtools",
     version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    #cmdclass=versioneer.get_cmdclass(),
+    cmdclass={
+        **versioneer.get_cmdclass(),
+        'build_ext': CustomBuildExt,  #  Use the custom build_ext
+    },
     author="Brookhaven National Laboratory",
     description="Python library for tools to be used at the Coherent Soft X-ray scattering (CSX) beamline at NSLS-II.",
     packages=setuptools.find_packages(exclude=["src", "tests"]),

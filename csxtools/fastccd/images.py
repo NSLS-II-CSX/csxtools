@@ -45,7 +45,10 @@ def correct_images(images, dark=None, flat=None):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    data = fastccd.correct_images(images.astype(np.uint16),dark, flat)
+    #print(f'Nisar type: {type(images)}')
+    images_numpy = images.compute()
+    images_uint16 = images_numpy.astype(np.uint16)
+    data = fastccd.correct_images(images_uint16, dark, flat)
     t = ttime.time() - t
 
     logger.info("Corrected image stack in %.3f seconds", t)
