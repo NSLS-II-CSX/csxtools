@@ -423,7 +423,7 @@ def get_axis1_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval
     light : databroker header
         The header containing the light images
     dark : databroker header(s)
-        The header(s) from the run containin the dark images. See get_fastccd_images for details
+        The header(s) from the run containin the dark images.
     flat : flatfield image (optional)
         The array to be used for the initial flatfield
     limits : tuple limits used for returning corrected pixel flatfield
