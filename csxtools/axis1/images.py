@@ -1,12 +1,13 @@
 import numpy as np
-from ..ext import fastccd
+#from ..ext import fastccd
+from ..ext import axis1
 import time as ttime
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-def correct_images(images, dark=None, flat=None):
+def correct_images_axis(images, dark=None, flat=None):
     """Subtract backgrond and gain correct images
 
     This routine subtrtacts the backgrond and corrects the images
@@ -45,10 +46,8 @@ def correct_images(images, dark=None, flat=None):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    #print(f'Nisar type: {type(images)}')
-    images_numpy = images.compute()
-    images_uint16 = images_numpy.astype(np.uint16)
-    data = fastccd.correct_images(images_uint16, dark, flat)
+    #data = fastccd.correct_images(images.astype(np.uint16), dark, flat)
+    data = axis1.correct_images_axis(images.astype(np.uint16), dark, flat)
     t = ttime.time() - t
 
     logger.info("Corrected image stack in %.3f seconds", t)

@@ -34,23 +34,44 @@
  *
  */
 
-#ifndef _FASTCCD_H
-#define _FASTCCD_H
+#include <omp.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdint.h>
 
-// Use a size of long for big arrays
-typedef long index_t;
-typedef float data_t;
+#include "axis1.h"
 
-// Nisar
-//#define GAIN_8      0x0000
-//#define GAIN_2      0x8000
-//#define GAIN_1      0xC000
-//#define BAD_PIXEL   0x2000
-//#define PIXEL_MASK  0x1FFF
 
-//int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-//                        int ndims, index_t *dims, data_t *gain);
+// Correct axis1 images by looping over all images correcting for background
+int correct_axis_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
+			int ndims, index_t *dims){
+  index_t nimages,k;
+  int n;
 
-int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-                        int ndims, index_t *dims);
-#endif
+  if(ndims == 2)
+  {
+    nimages = 1;
+  } else {
+    nimages = dims[0];
+    for(n=1;n<(ndims-2);n++){
+      nimages = nimages * dims[n];
+    }   
+  }
+
+  index_t imsize = dims[ndims-1] * dims[ndims-2];
+
+#pragma omp parallel for private(k) shared(in, out, bg, imsize, flat) schedule(static,imsize)
+  for(k=0;k<nimages*imsize;k++){
+    // Reset the background pointer each time
+    data_t *bgp = bg + (k % imsize);
+    data_t *flatp = flat + (k % imsize);
+
+    if(in[k]){
+      out[k] = *flatp * ((data_t)(in[k]) - *bgp);
+    }
+  }
+
+  return 0;
+}
+

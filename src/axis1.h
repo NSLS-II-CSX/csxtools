@@ -34,65 +34,13 @@
  *
  */
 
-#include <omp.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <stdint.h>
+#ifndef _AXIS1_H
+#define _AXIS1_H
 
-#include "fastccd.h"
+// Use a size of long for big arrays
+typedef long index_t;
+typedef float data_t;
 
-
-// Correct fast ccd images by looping over all images correcting for background
-// Nisar
-//int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-//                        int ndims, index_t *dims, data_t* gain){
-int correct_fccd_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-			int ndims, index_t *dims){
-  index_t nimages,k;
-  int n;
-
-  if(ndims == 2)
-  {
-    nimages = 1;
-  } else {
-    nimages = dims[0];
-    for(n=1;n<(ndims-2);n++){
-      nimages = nimages * dims[n];
-    }   
-  }
-
-  index_t imsize = dims[ndims-1] * dims[ndims-2];
-
-// Nisar
-//#pragma omp parallel for private(k) shared(in, out, bg, imsize, gain, flat) schedule(static,imsize)
-#pragma omp parallel for private(k) shared(in, out, bg, imsize, flat) schedule(static,imsize)
-  for(k=0;k<nimages*imsize;k++){
-    // Reset the background pointer each time
-    data_t *bgp = bg + (k % imsize);
-    data_t *flatp = flat + (k % imsize);
-    //
-    // Note GAIN_1 is the least sensitive setting which means we need to multiply the
-    // measured values by 8. Conversly GAIN_8 is the most sensitive and therefore only
-    // does not need a multiplier
-    //
-    // Nisar
-    /*
-    if((in[k] & BAD_PIXEL) == BAD_PIXEL){
-      out[k] = NAN;
-    } else if((in[k] & GAIN_1) == GAIN_1){
-      out[k] = *flatp * gain[2] * ((data_t)(in[k] & PIXEL_MASK) - *(bgp + 2 * imsize));
-    } else if((in[k] & GAIN_2) == GAIN_2){
-      out[k] = *flatp * gain[1] * ((data_t)(in[k] & PIXEL_MASK) - *(bgp + imsize));
-    } else {
-      out[k] = *flatp * gain[0] * ((data_t)(in[k] & PIXEL_MASK) - *bgp);
-    }
-    */
-    if(in[k]){
-      out[k] = *flatp * ((data_t)(in[k]) - *bgp);
-    }
-  }
-
-  return 0;
-}
-
+int correct_axis_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
+                        int ndims, index_t *dims);
+#endif
