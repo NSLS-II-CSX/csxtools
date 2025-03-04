@@ -129,10 +129,10 @@ def get_fastccd_images(light_header, dark_headers=None,
 
 def get_axis1_images(light_header, dark_header=None,
                        flat=None, tag=None, roi=None):
-    flipped_image = _get_axis1_images(light_header, dark_header=None,flat=None, tag=None, roi=None)
+    flipped_image = _get_axis1_images(light_header, dark_header, flat, tag, roi)
     return flipped_image[...,::-1]
     
-def _get_axis1_images(light_header, dark_header=None
+def _get_axis1_images(light_header, dark_header=None,
                        flat=None, tag=None, roi=None):
     """Retreive and correct FastCCD Images from associated headers
 
