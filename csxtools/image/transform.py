@@ -1,7 +1,7 @@
 from ..ext import image as extimage
 
 
-def rotate90(a, sense='ccw'):
+def rotate90(a, sense="ccw"):
     """Rotate a stack of images by 90 degrees
 
     This routine rotates a stack of images by 90. The rotation is performed
@@ -22,9 +22,9 @@ def rotate90(a, sense='ccw'):
 
     """
 
-    if sense == 'ccw':
+    if sense == "ccw":
         sense = 1
-    elif sense == 'cw':
+    elif sense == "cw":
         sense = 0
     else:
         raise ValueError("sense must be 'cw' or 'ccw'")

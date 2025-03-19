@@ -123,29 +123,23 @@ error:
   return NULL;
 }
 
-//static PyMethodDef FastCCDMethods[] = {
-//  { "correct_images", fastccd_correct_images, METH_VARARGS,
 static PyMethodDef AXIS1_Methods[] = {
   { "correct_images_axis", axis1_correct_images, METH_VARARGS,
     "Correct AXIS1 Images"},
   {NULL, NULL, 0, NULL}
 };
 
-//static struct PyModuleDef fastccdmodule = {
 static struct PyModuleDef axis1module = {  
    PyModuleDef_HEAD_INIT,
-   //"fastccd",   /* name of module */
-   "axis1",   /* name of module */
+   "axis1",     /* name of module */
    NULL,        /* module documentation, may be NULL */
    -1,          /* size of per-interpreter state of the module,
                    or -1 if the module keeps state in global variables. */
    AXIS1_Methods
 };
 
-//PyMODINIT_FUNC PyInit_fastccd(void) {
 PyMODINIT_FUNC PyInit_axis1(void) {
   PyObject *m;
-  //m = PyModule_Create(&fastccdmodule);
   m = PyModule_Create(&axis1module);
   if(m == NULL){
     return NULL;

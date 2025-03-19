@@ -1,9 +1,9 @@
 import numpy as np
-#from ..ext import fastccd
 from ..ext import axis1
 import time as ttime
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -11,11 +11,11 @@ def correct_images_axis(images, dark=None, flat=None):
     """Subtract backgrond and gain correct images
 
     This routine subtrtacts the backgrond and corrects the images
-    for the multigain FastCCD ADC.
+    for AXIS1.
 
     Parameters
     ----------
-    in : array_like
+    images : array_like
         Input array of images to correct of shape (N, y, x)  where N is the
         number of images and x and y are the image size.
     dark : array_like, optional
@@ -46,7 +46,7 @@ def correct_images_axis(images, dark=None, flat=None):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    #data = fastccd.correct_images(images.astype(np.uint16), dark, flat)
+    # data = fastccd.correct_images(images.astype(np.uint16), dark, flat)
     data = axis1.correct_images_axis(images.astype(np.uint16), dark, flat)
     t = ttime.time() - t
 

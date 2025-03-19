@@ -9,13 +9,15 @@ import setuptools
 from setuptools.command.build_ext import build_ext  # Import build_ext
 import versioneer
 
+
 # Custom build_ext to remove cpython-XX suffix
 class CustomBuildExt(build_ext):
     def get_ext_filename(self, ext_name):
         # Default filename: fastccd.cpython-38-x86_64-linux-gnu.so
         filename = super().get_ext_filename(ext_name)
         # Strip platform-specific suffix: fastccd.so
-        return filename.split('.')[0] + '.so'
+        return filename.split(".")[0] + ".so"
+
 
 min_version = (3, 8)
 if sys.version_info < min_version:
@@ -61,7 +63,10 @@ axis1 = Extension(
 )
 
 image = Extension(
-    "image", sources=["src/imagemodule.c", "src/image.c"], extra_compile_args=["-fopenmp"], extra_link_args=["-lgomp"]
+    "image",
+    sources=["src/imagemodule.c", "src/image.c"],
+    extra_compile_args=["-fopenmp"],
+    extra_link_args=["-lgomp"],
 )
 
 phocount = Extension(
@@ -73,20 +78,20 @@ phocount = Extension(
 setup(
     name="csxtools",
     version=versioneer.get_version(),
-    #cmdclass=versioneer.get_cmdclass(),
+    # cmdclass=versioneer.get_cmdclass(),
     cmdclass={
         **versioneer.get_cmdclass(),
-        'build_ext': CustomBuildExt,  #  Use the custom build_ext
+        "build_ext": CustomBuildExt,  #  Use the custom build_ext
     },
     author="Brookhaven National Laboratory",
     description="Python library for tools to be used at the Coherent Soft X-ray scattering (CSX) beamline at NSLS-II.",
     packages=setuptools.find_packages(exclude=["src", "tests"]),
     python_requires=">={}".format(".".join(str(n) for n in min_version)),
     long_description=readme,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     ext_package="csxtools.ext",
     include_dirs=[np.get_include()],
-    #ext_modules=[fastccd, image, phocount],
+    # ext_modules=[fastccd, image, phocount],
     ext_modules=[fastccd, axis1, image, phocount],
     tests_require=["pytest"],
     install_requires=requirements,

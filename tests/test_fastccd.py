@@ -1,7 +1,10 @@
 import numpy as np
 from csxtools.fastccd import correct_images, photon_count
-from numpy.testing import (assert_array_max_ulp, assert_array_equal,
-                           assert_array_almost_equal)
+from numpy.testing import (
+    assert_array_max_ulp,
+    assert_array_equal,
+    assert_array_almost_equal,
+)
 
 
 def test_correct_images():
@@ -19,24 +22,32 @@ def test_correct_images():
 
 
 def test_photon_count():
-    x = np.array([[0,  0,  0,  0,  0,  0,  0,  0],
-                  [0,  0,  0,  0,  0,  4,  3,  0],
-                  [0,  0,  0, 10,  0,  4,  0,  0],
-                  [0,  0,  4,  6,  2,  0,  0,  0],
-                  [0,  0,  0,  0,  0,  0,  0,  0],
-                  [0,  0,  0,  0,  0,  0,  0,  0]], dtype=np.float32)
+    x = np.array(
+        [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 4, 3, 0],
+            [0, 0, 0, 10, 0, 4, 0, 0],
+            [0, 0, 4, 6, 2, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+        ],
+        dtype=np.float32,
+    )
 
     nsum = 3
 
     y = np.zeros_like(x)
     y[2, 3] = 20
     z = np.zeros_like(x)
-    z[2, 3] = np.std(np.array([10, 6, 4, 2, 0, 0, 0, 0, 0],
-                              dtype=np.float32)[:nsum])
+    z[2, 3] = np.std(np.array([10, 6, 4, 2, 0, 0, 0, 0, 0], dtype=np.float32)[:nsum])
 
-    op = photon_count(np.array([x, x, x], dtype=np.float32),
-                      thresh=(5, 13), mean_filter=(10, 30),
-                      std_filter=(0, 100), nsum=nsum)
+    op = photon_count(
+        np.array([x, x, x], dtype=np.float32),
+        thresh=(5, 13),
+        mean_filter=(10, 30),
+        std_filter=(0, 100),
+        nsum=nsum,
+    )
 
     assert_array_equal(op[0], np.array([y, y, y]))
     assert_array_almost_equal(op[1], np.array([z, z, z]), decimal=6)

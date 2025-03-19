@@ -7,37 +7,41 @@ from databroker.pivot import pivot_timeseries, zip_events, reset_time
 
 
 def correct_events(evs, data_key, dark_images, drop_raw=False):
-    out_data_key = data_key + '_corrected'
+    out_data_key = data_key + "_corrected"
     ev0 = next(evs)
-    new_desc = dict(ev0['descriptor'])
-    new_desc['data_keys'][out_data_key] = dict(new_desc['data_keys'][data_key])
-    new_desc['data_keys'][out_data_key]['source'] = 'subtract_background'
-    new_desc['uid'] = uuid.uuid4()
+    new_desc = dict(ev0["descriptor"])
+    new_desc["data_keys"][out_data_key] = dict(new_desc["data_keys"][data_key])
+    new_desc["data_keys"][out_data_key]["source"] = "subtract_background"
+    new_desc["uid"] = uuid.uuid4()
     if drop_raw:
-        new_desc['data_keys'].pop(data_key)
-    for ev in chain((ev0, ), evs):
-        new_ev = {'uid': str(uuid.uuid4()),
-                  'time': ttime.time(),
-                  'descriptor': new_desc,
-                  'seq_no': ev['seq_no'],
-                  'data': dict(ev['data']),
-                  'timestamps': dict(ev['timestamps'])}
-        corr, gain_img = subtract_background(ev['data'][data_key], dark_images) # noqa F821 TODO
-        new_ev['data'][out_data_key] = corr
-        new_ev['timestamps'][out_data_key] = ttime.time()
+        new_desc["data_keys"].pop(data_key)
+    for ev in chain((ev0,), evs):
+        new_ev = {
+            "uid": str(uuid.uuid4()),
+            "time": ttime.time(),
+            "descriptor": new_desc,
+            "seq_no": ev["seq_no"],
+            "data": dict(ev["data"]),
+            "timestamps": dict(ev["timestamps"]),
+        }
+        corr, gain_img = subtract_background(
+            ev["data"][data_key], dark_images
+        )  # noqa F821 TODO
+        new_ev["data"][out_data_key] = corr
+        new_ev["timestamps"][out_data_key] = ttime.time()
         if drop_raw:
-            new_ev['data'].pop(data_key)
-            new_ev['timestamps'].pop(data_key)
+            new_ev["data"].pop(data_key)
+            new_ev["timestamps"].pop(data_key)
         yield new_ev
 
 
 def clean_images(header, pivot_key, timesource_key, dark_images=None, static_keys=None):
     if static_keys is None:
-        static_keys = ['sx', 'sy', 'temp_a', 'temp_b', 'sz']
+        static_keys = ["sx", "sy", "temp_a", "temp_b", "sz"]
     # sort out which descriptor has the key we want to pivot on
-    pv_desc = [d for d in header['descriptors'] if pivot_key in d['data_keys']][0]
+    pv_desc = [d for d in header["descriptors"] if pivot_key in d["data_keys"]][0]
     # sort out which descriptor has the key that we want to zip with to get time stamps
-    ts_desc = [d for d in header['descriptors'] if timesource_key in d['data_keys']][0]
+    ts_desc = [d for d in header["descriptors"] if timesource_key in d["data_keys"]][0]
 
     ts_events = get_events_generator(ts_desc)
     pv_events = get_events_generator(pv_desc)
@@ -53,9 +57,9 @@ def clean_images(header, pivot_key, timesource_key, dark_images=None, static_key
 
 
 def extract_darkfield(header, dark_key):
-    cam_desc = [d for d in header['descriptors'] if dark_key in d['data_keys']][0]
+    cam_desc = [d for d in header["descriptors"] if dark_key in d["data_keys"]][0]
     events = get_events_generator(cam_desc)
     events = list(((ev, fill_event(ev))[0] for ev in events))
     event = events[0]
-    ims = (event['data'][dark_key] << 2) >> 2
+    ims = (event["data"][dark_key] << 2) >> 2
     return ims.mean(axis=0)

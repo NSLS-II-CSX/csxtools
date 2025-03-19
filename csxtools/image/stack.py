@@ -2,6 +2,7 @@ import numpy as np
 from ..ext import image as extimage
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
