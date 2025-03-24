@@ -315,7 +315,7 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
     return timestamps
 
 
-def get_axis1_timestamps(header, tag="axis1_image"):
+def get_axis1_timestamps(header, tag="axis1_hdf5_time_stamp"):
     """Return the AXIS1 timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -333,9 +333,9 @@ def get_axis1_timestamps(header, tag="axis1_image"):
         list of arrays of the timestamps
 
     """
-    with header.db.reg.handler_context({"AD_HDF5": AreaDetectorHDF5TimestampHandler}):
-        timestamps = list(header.data(tag))
 
+    timestamps = list(header.data(tag))
+        
     return timestamps
 
 
