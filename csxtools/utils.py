@@ -275,10 +275,13 @@ def _correct_fccd_images(image, bgnd, flat, gain):
 
 
 def _correct_axis_images(image, bgnd, flat):
+    t1 = ttime.time()
     image = correct_images_axis(image, bgnd, flat)
-    image = rotate90(image, "cw")
+    logger.info("correct_images_axis took %.3f seconds", ttime.time() - t1)
+    #t2 = ttime.time()
+    #image = rotate90(image, "cw")
+    #logger.info("rotate90 took %.3f seconds", ttime.time() - t2)
     return image
-
 
 def _crop_images(image, roi):
     return _crop(image, roi)

@@ -45,33 +45,45 @@
 
 // Correct axis1 images by looping over all images correcting for background
 int correct_axis_images(uint16_t *in, data_t *out, data_t *bg, data_t *flat,
-			int ndims, index_t *dims){
-  index_t nimages,k;
-  int n;
+                        int ndims, index_t *dims) {
+    index_t nimages, k;
+    int n;
 
-  if(ndims == 2)
-  {
-    nimages = 1;
-  } else {
-    nimages = dims[0];
-    for(n=1;n<(ndims-2);n++){
-      nimages = nimages * dims[n];
-    }   
-  }
-
-  index_t imsize = dims[ndims-1] * dims[ndims-2];
-
-#pragma omp parallel for private(k) shared(in, out, bg, imsize, flat) schedule(static,imsize)
-  for(k=0;k<nimages*imsize;k++){
-    // Reset the background pointer each time
-    data_t *bgp = bg + (k % imsize);
-    data_t *flatp = flat + (k % imsize);
-
-    if(in[k]){
-      out[k] = *flatp * ((data_t)(in[k]) - *bgp);
+    if (ndims == 2) {
+        nimages = 1;
+    } else {
+        nimages = dims[0];
+        for (n = 1; n < (ndims - 2); n++) {
+            nimages = nimages * dims[n];
+        }
     }
-  }
 
-  return 0;
+    index_t height = dims[ndims - 2];  // y
+    index_t width = dims[ndims - 1];   // x
+    index_t imsize = height * width;
+
+#pragma omp parallel for private(k) schedule(static)
+    for (index_t img = 0; img < nimages; img++) {
+        for (index_t y = 0; y < height; y++) {
+            for (index_t x = 0; x < width; x++) {
+                index_t in_idx = img * imsize + y * width + x;
+                index_t rot_x = height - 1 - y;  // flip rows
+                index_t rot_y = x;
+                index_t out_idx = img * imsize + rot_y * height + rot_x;  // (N, x, y) layout
+
+                data_t bg_val = bg[y * width + x];
+                data_t flat_val = flat[y * width + x];
+
+                if (in[in_idx]) {
+                    out[out_idx] = flat_val * ((data_t)(in[in_idx]) - bg_val);
+                } else {
+                    out[out_idx] = 0.0f;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
+
 
