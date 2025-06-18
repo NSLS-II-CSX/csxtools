@@ -46,7 +46,6 @@ def correct_images_axis(images, dark=None, flat=None):
     else:
         flat = np.asarray(flat, dtype=np.float32)
 
-    # data = fastccd.correct_images(images.astype(np.uint16), dark, flat)
     data = axis1.correct_images_axis(images.astype(np.uint16), dark, flat)
     t = ttime.time() - t
 

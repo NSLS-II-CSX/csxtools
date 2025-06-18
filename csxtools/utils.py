@@ -127,7 +127,7 @@ def get_fastccd_images(
     return _correct_fccd_images(events, bgnd, flat, gain)
 
 
-def get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
+def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
     """Retreive and correct AXIS1 Images from associated headers
 
     Retrieve AXIS1 Images from databroker and correct for:
@@ -278,9 +278,7 @@ def _correct_axis_images(image, bgnd, flat):
     """
     The correct_images_axis modified to include rotate90
     """
-    t1 = ttime.time()
     image = correct_images_axis(image, bgnd, flat)
-    logger.info("correct_images_axis took %.3f seconds", ttime.time() - t1)
     return image
 
 def _crop_images(image, roi):
@@ -318,7 +316,7 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
     return timestamps
 
 
-def get_axis1_timestamps(header, tag="axis1_hdf5_time_stamp"):
+def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
     """Return the AXIS1 timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -424,7 +422,7 @@ def get_fastccd_flatfield(
     return flat
 
 
-def get_axis1_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=False):
+def get_axis_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=False):
     """Calculate a flatfield from two headers
 
     This routine calculates the flatfield using the
