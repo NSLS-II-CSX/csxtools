@@ -281,6 +281,7 @@ def _correct_axis_images(image, bgnd, flat):
     image = correct_images_axis(image, bgnd, flat)
     return image
 
+
 def _crop_images(image, roi):
     return _crop(image, roi)
 
@@ -336,7 +337,7 @@ def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
     """
 
     timestamps = list(header.data(tag))
-        
+
     return timestamps
 
 
