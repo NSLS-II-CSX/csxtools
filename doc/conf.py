@@ -13,9 +13,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
-import shlex
+# import sys
+# import os
+# import shlex
 import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
