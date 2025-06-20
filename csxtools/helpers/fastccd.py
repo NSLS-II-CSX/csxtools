@@ -1,21 +1,14 @@
+import logging
+import numpy as np
 import pandas
 from collections import namedtuple
-import numpy as np
 
-from csxtools.utils import (
-    get_fastccd_images,
-    get_images_to_4D,
-)
+from ipywidgets import interact  # TODO move this and general utility to different module later
+
+from csxtools.utils import get_fastccd_images, get_images_to_4D
 from csxtools.helpers.overscan import get_os_correction_images, get_os_dropped_images
 
-import logging
-
 logger = logging.getLogger(__name__)
-
-
-from ipywidgets import (
-    interact,
-)  # TODO move this and general untility to different module later (like movie making)
 
 
 def browse_3Darray(res, title="Frame"):  # , extra_scalar_dict=None):
@@ -117,7 +110,6 @@ def find_possible_darks(
         darks_possible["exp_time"].apply(
             np.isclose, b=exp_time, atol=exposure_time_tolerance
         )
-        == True
     ]
 
     return darks_possible
@@ -346,7 +338,7 @@ def get_fastccd_images_sized(
         ):  # goback and change to None when testing
             leftstart = (
                 fccd_concat_params.row_offset + 1
-            )  ##TODO make sure it works for non-framestore (is it 'fccd_cam_image_mode'=2?)
+            )  # TODO make sure it works for non-framestore (is it 'fccd_cam_image_mode'=2?)
             leftend = fccd_concat_params.rows + fccd_concat_params.row_offset
             rightstart = (
                 total_rows - fccd_concat_params.row_offset - fccd_concat_params.rows
@@ -408,12 +400,12 @@ def get_fastccd_images_sized(
         auto_os_drop_performed = True
         images = images - overscan_data
         auto_os_correct_performed = True
-    elif auto_overscan == False and images_have_overscan and drop_overscan:
+    elif not auto_overscan and images_have_overscan and drop_overscan:
         images = get_os_dropped_images(np.copy(images))
         print(images.shape, "only dropping os from images")
         auto_os_drop_performed = True
         auto_os_correct_performed = False
-    elif auto_overscan == False and images_have_overscan and drop_overscan == False:
+    elif not auto_overscan and images_have_overscan and not drop_overscan:
         print(images.shape, "retaining os in returned data images")
         auto_os_drop_performed = False
         auto_os_correct_performed = False
@@ -472,8 +464,8 @@ def convert_photons(
     else:
         ADUpPH = round(ADU_930 * np.nanmean(energy) / 930, 2)
     images_input = images_input / ADUpPH
-    if quantize_photons == True:
-        if make_int_strip_nan == True:
+    if quantize_photons:
+        if make_int_strip_nan:
             images_output = np.round(images_input).astype("int")
         else:
             images_output = np.round(images_input)

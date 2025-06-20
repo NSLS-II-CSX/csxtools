@@ -3,7 +3,7 @@ import numpy as np
 
 def _extract_from_fccdwithOS_osdata(images, os_cols, data_cols):
     if len(images.shape) != 4:
-        print(f"Input images should be 4D.")
+        print("Input images should be 4D.")
         raise
     # print(images.shape)
     points, frames, total_cols, horz_pix = images.shape
@@ -44,7 +44,7 @@ def _make_os_correction_data(
 ):
     # print(f'{os_data.shape=}')
     if len(images_data_shape) != 4 and len(os_data.shape) != 4:
-        print(f"Input images should be 4D.")
+        print("Input images should be 4D.")
         raise
     points, frames, total_cols, horz_pix = images_data_shape
     super_cols = int(total_cols / (os_cols + data_cols))
@@ -68,7 +68,7 @@ def _make_os_correction_data(
 
 def _drop_os_data(images, os_cols, data_cols):
     if len(images.shape) != 4:
-        print(f"Input images should be 4D.")
+        print("Input images should be 4D.")
         raise
     points, frames, total_cols, horz_pix = images.shape
     super_cols = int(total_cols / (os_cols + data_cols))
@@ -115,7 +115,7 @@ def get_os_correction_images(
 
     if os_mean == "False" and os_single_col is None:
         print("select nth column if not using mean")
-        raise
+        raise ValueError("Must provide os_single_col if os_mean is False")
 
     images_left, images_right = _make_left_right(images)
     # print(images_left.shape, images_right.shape)
@@ -139,7 +139,7 @@ def get_os_correction_images(
             not os_single_col
         )  # preserving readout order, not location in flipped array
         os_imgs_right = _make_os_correction_data(
-            s_extract_right[os_single_col], os_cols, data_cols, images_right.shape
+            os_extract_right[os_single_col], os_cols, data_cols, images_right.shape
         )
 
     # print(os_imgs_left.shape, os_imgs_right.shape)
