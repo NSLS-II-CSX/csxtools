@@ -2,10 +2,7 @@ import pandas
 from collections import namedtuple
 import numpy as np
 
-from csxtools.image import rotate90, stackmean
 from csxtools.utils import (
-    calculate_flatfield,
-    get_images_to_3D,
     get_fastccd_images,
     get_images_to_4D,
 )
@@ -44,7 +41,7 @@ def browse_3Darray(res, title="Frame"):  # , extra_scalar_dict=None):
     interact(view_image, i=(0, N - 1))
 
 
-#### FCCD specific stuff starts here
+# FCCD specific stuff starts here
 
 
 def find_possible_darks(
@@ -216,8 +213,8 @@ def get_fastccd_exp(header):
     """
     config = header.descriptors[0]["configuration"]["fccd"]["data"]
     if config == {}:  # prior to mid 2017
-        ## this is done because of deprecated gs.DETS and replaced by descriptors.  i don't know if db v2 and tiled even handle this okay.
-        ## when we delete data from 2017 we can just delete this part of the code
+        # this is done because of deprecated gs.DETS and replaced by descriptors.  i don't know if db v2 and tiled even handle this okay.
+        # when we delete data from 2017 we can just delete this part of the code
         exp_t = header.table().get("fccd_acquire_time")[1]
         exp_p = header.table().get("fccd_acquire_period")[1]
         exp_im = header.table().get("fccd_num_images")[1]
@@ -256,10 +253,10 @@ def get_fastccd_pixel_readout(header):
         row_offset = config["fccd_fccd1_row_offset"]
     except:
         rows = (
-            "unknown"  ##need to rely on hardcoded concatenation ; test setting to None
+            "unknown"  # need to rely on hardcoded concatenation ; test setting to None
         )
         row_offset = (
-            "unknown"  ##need to rely on hardcoded concatenation ; test setting to None
+            "unknown"  # need to rely on hardcoded concatenation ; test setting to None
         )
 
     FCCDconcat = namedtuple("FCCDconcat", ["overscan_cols", "rows", "row_offset"])
@@ -325,7 +322,7 @@ def get_fastccd_images_sized(
 
     # print('Processing scan {}'.format(header['start']['scan_id']))
     images = get_fastccd_images(header, dark_headers, flat=flat)
-    ###TODO write if statement for image shape if the output is an array (future csxtools upgrade), then there is no need for next 2 lines
+    # TODO write if statement for image shape if the output is an array (future csxtools upgrade), then there is no need for next 2 lines
     stack = get_images_to_4D(images)
     images = stack
     total_rows = images.shape[
@@ -333,7 +330,7 @@ def get_fastccd_images_sized(
     ]  # TODO add to descriptors for image output saving?, but dan must have it somewhere in the handler.
     fccd_concat_params = get_fastccd_pixel_readout(header)
 
-    #### SEE IF OVERSCAN WAS ENABLED
+    # SEE IF OVERSCAN WAS ENABLED
     if fccd_concat_params.overscan_cols != 2:
         images_have_overscan = None
         # TODO future elif to look at shape of data (1132 pix, not 960)
@@ -342,7 +339,7 @@ def get_fastccd_images_sized(
             True  # TODO later, go back and add code later to capture the overscan data
         )
 
-    ### make FCCD images the correct shape (except for overscan)
+    # make FCCD images the correct shape (except for overscan)
     if auto_concat:
         if (
             fccd_concat_params.rows != "unknown"
@@ -358,7 +355,7 @@ def get_fastccd_images_sized(
         else:
             logging.warning("Concatenating images based on hard-coded values")
             # auto_concat =  False ## this seems useless.  should do soemthing to return that it was hard-code autoconcat
-            if total_rows > 1001:  ##because non-framestore
+            if total_rows > 1001:  # because non-framestore
                 logging.warning(
                     f"images are larger than 960 pixels (possibly non-FS mode). The first image shape is {images[0,0].shape}"
                 )
@@ -391,20 +388,20 @@ def get_fastccd_images_sized(
             )
             auto_concat_performed = True
 
-    ### if older images, overscan will not be in metadata, but it should be clear from the number of columns (960/10*2)+960=1152
+    # if older images, overscan will not be in metadata, but it should be clear from the number of columns (960/10*2)+960=1152
     if images.shape[-2] == 1152:
         logging.warning(
             f"Overscan columns (2 per 10) are detected. {images_have_overscan}"
         )
         # if images_have_overscan == 'unknown':
         logging.warning("Attempting to apply overscan removal")
-        images_have_overscan = True  ###TODO this means we also have to return this
+        images_have_overscan = True  # TODO this means we also have to return this
 
-    ### deal with overscan if present
+    # deal with overscan if present
     if auto_overscan and images_have_overscan:
         overscan_data = get_os_correction_images(
             images
-        )  ## this is "broadcastable" with images
+        )  # this is "broadcastable" with images
         print(overscan_data.shape, "os data returned in same shape as images should be")
         images = get_os_dropped_images(np.copy(images))
         print(images.shape, "os dropped and substracting overscan")
