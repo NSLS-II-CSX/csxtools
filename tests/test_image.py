@@ -1,34 +1,86 @@
 import numpy as np
-from csxtools.image import crop_image, apply_gain_map, threshold_image, apply_mask
-from numpy.testing import assert_array_equal
+from csxtools.image import (
+    rotate90,
+    stackmean,
+    stacksum,
+    stackstd,
+    stackvar,
+    stackstderr,
+    images_mean,
+    images_sum,
+)
+from numpy.testing import assert_array_equal, assert_allclose
 
 
-def test_crop_image():
-    image = np.arange(100).reshape(10, 10)
-    cropped = crop_image(image, 2, 5, 3, 7)
-    expected = image[2:5, 3:7]
-    assert cropped.shape == (3, 4)
-    assert_array_equal(cropped, expected)
+def test_rotate90():
+    image = np.array([[1, 2], [3, 4]])
+    rotated = rotate90(image)
+    expected = np.array([[2, 4], [1, 3]])
+    assert_array_equal(rotated, expected)
 
 
-def test_apply_gain_map():
-    image = np.full((10, 10), 2.0)
-    gain = np.full((10, 10), 0.5)
-    corrected = apply_gain_map(image, gain)
-    expected = np.ones((10, 10))
-    assert_array_equal(corrected, expected)
+def test_stackmean():
+    stack = np.ones((2, 3, 3)) * np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    result = stackmean(stack)
+    expected = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    assert_allclose(result, expected)
 
 
-def test_threshold_image():
-    image = np.array([[1, 5, 10], [3, 7, 0]])
-    threshold = 5
-    thresholded = threshold_image(image, threshold)
-    expected = np.array([[0, 5, 10], [0, 7, 0]])
-    assert_array_equal(thresholded, expected)
+def test_stacksum():
+    stack = np.ones((2, 2, 2), dtype=np.float32)
+    result = stacksum(stack)
+    expected = np.full((2, 2), 2.0)
+    assert_array_equal(result, expected)
 
 
-def test_apply_mask():
-    image = np.ones((5, 5))
-    mask = np.zeros((5, 5))
-    masked = apply_mask(image, mask)
-    assert_array_equal(masked, np.zeros((5, 5)))
+def test_stackstd():
+    stack = np.array(
+        [
+            [[1, 2], [3, 4]],
+            [[5, 6], [7, 8]],
+        ]
+    )
+    result = stackstd(stack)
+    expected = np.std(stack, axis=0)
+    assert_allclose(result, expected)
+
+
+def test_stackvar():
+    stack = np.array(
+        [
+            [[2, 2], [2, 2]],
+            [[4, 4], [4, 4]],
+        ]
+    )
+    result = stackvar(stack)
+    expected = np.var(stack, axis=0)
+    assert_allclose(result, expected)
+
+
+def test_stackstderr():
+    stack = np.array(
+        [
+            [[1, 2], [3, 4]],
+            [[5, 6], [7, 8]],
+        ]
+    )
+    result = stackstderr(stack)
+    # Standard error = std / sqrt(N)
+    expected = np.std(stack, axis=0, ddof=1) / np.sqrt(stack.shape[0])
+    assert_allclose(result, expected)
+
+
+def test_images_mean():
+    img1 = np.array([[1, 2], [3, 4]])
+    img2 = np.array([[5, 6], [7, 8]])
+    result = images_mean(img1, img2)
+    expected = np.array([[3, 4], [5, 6]])
+    assert_allclose(result, expected)
+
+
+def test_images_sum():
+    img1 = np.array([[1, 2], [3, 4]])
+    img2 = np.array([[5, 6], [7, 8]])
+    result = images_sum(img1, img2)
+    expected = np.array([[6, 8], [10, 12]])
+    assert_array_equal(result, expected)
