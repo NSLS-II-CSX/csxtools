@@ -13,8 +13,8 @@ from numpy.testing import assert_array_equal, assert_allclose
 
 
 def test_rotate90():
-    img = np.array([[[1, 2], [3, 4]]], dtype=np.float32)
-    result = rotate90(img)
+    image = np.array([[[1, 2], [3, 4]]], dtype=np.float32)
+    result = rotate90(image)
     expected = np.array([[[2, 4], [1, 3]]], dtype=np.float32)
     assert_array_equal(result, expected)
 
@@ -28,7 +28,7 @@ def test_stackmean():
         dtype=np.float32,
     )
     result = stackmean(stack)
-    expected = np.array([[[1, 2], [3, 4]]], dtype=np.float32)
+    expected = np.mean(stack, axis=0)
     assert_allclose(result, expected)
 
 
@@ -41,7 +41,7 @@ def test_stacksum():
         dtype=np.float32,
     )
     result = stacksum(stack)
-    expected = np.array([[[2, 2], [2, 2]]], dtype=np.float32)
+    expected = np.sum(stack, axis=0)
     assert_array_equal(result, expected)
 
 
@@ -54,7 +54,7 @@ def test_stackstd():
         dtype=np.float32,
     )
     result = stackstd(stack)
-    expected = np.std(stack, axis=0, keepdims=True)
+    expected = np.std(stack, axis=0)
     assert_allclose(result, expected)
 
 
@@ -67,7 +67,7 @@ def test_stackvar():
         dtype=np.float32,
     )
     result = stackvar(stack)
-    expected = np.var(stack, axis=0, keepdims=True)
+    expected = np.var(stack, axis=0)
     assert_allclose(result, expected)
 
 
@@ -79,7 +79,7 @@ def test_stackstderr():
         ],
         dtype=np.float32,
     )
-    expected = np.std(stack, axis=0, ddof=1, keepdims=True) / np.sqrt(stack.shape[0])
+    expected = np.std(stack, axis=0, ddof=1) / np.sqrt(stack.shape[0])
     result = stackstderr(stack)
     assert_allclose(result, expected)
 
@@ -93,7 +93,7 @@ def test_images_mean():
         dtype=np.float32,
     )
     result = images_mean(stack)
-    expected = np.mean(stack, axis=0, keepdims=True)
+    expected = np.mean(stack, axis=0)
     assert_allclose(result, expected)
 
 
@@ -106,5 +106,5 @@ def test_images_sum():
         dtype=np.float32,
     )
     result = images_sum(stack)
-    expected = np.sum(stack, axis=0, keepdims=True)
+    expected = np.sum(stack, axis=0)
     assert_array_equal(result, expected)

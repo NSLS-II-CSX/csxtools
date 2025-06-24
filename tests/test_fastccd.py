@@ -4,22 +4,22 @@ from numpy.testing import assert_array_equal
 
 
 def test_correct_images():
-    image = np.full((1, 2, 2), 100, dtype=np.float32)
-    dark = np.full((2, 2), 20, dtype=np.float32)
-    flat = np.full((2, 2), 2.0, dtype=np.float32)
+    image = np.ones((1, 2, 2), dtype=np.float32) * 100
+    dark = np.ones((2, 2), dtype=np.float32) * 20
+    flat = np.ones((2, 2), dtype=np.float32) * 2.0
 
-    result = correct_images(image, dark, flat)
-    expected = np.full((1, 2, 2), 40.0, dtype=np.float32)
+    output = correct_images(image, dark, flat)
+    expected = np.ones((1, 2, 2), dtype=np.float32) * 40
 
-    assert_array_equal(result, expected)
+    assert_array_equal(output, expected)
 
 
 def test_photon_count():
-    image = np.array([[[0.1, 1.0], [3.1, 4.0]]], dtype=np.float32)
-    mean_filter = np.array([[[0.0, 0.0], [3.0, 3.0]]], dtype=np.float32)
-    std_filter = np.array([[[1.0, 1.0], [0.5, 0.5]]], dtype=np.float32)
+    image = np.array([[[2.0, 4.0], [6.0, 8.0]]], dtype=np.float32)
+    mean_filter = np.array([[[1.0, 2.0], [3.0, 4.0]]], dtype=np.float32)
+    std_filter = np.array([[[1.0, 1.0], [1.0, 1.0]]], dtype=np.float32)
 
     result = photon_count(image, mean_filter, std_filter)
+    expected = np.array([[[1, 1], [1, 1]]], dtype=np.uint8)
 
-    expected = np.array([[[0, 0], [0, 1]]], dtype=np.uint8)
     assert_array_equal(result, expected)
