@@ -94,15 +94,15 @@ def test_images_mean():
         )
         for ii in range(1, 11)
     ]
-    
-   # x = np.array(
-   #     [
-   #         np.repeat(ii * np.ones(ii * 100, dtype=np.float32), 400).reshape(
-   #             (ii * 100, 20, 20)
-   #         )
-   #         for ii in range(1, 11)
-   #     ]
-   # )
+
+    # x = np.array(
+    #     [
+    #         np.repeat(ii * np.ones(ii * 100, dtype=np.float32), 400).reshape(
+    #             (ii * 100, 20, 20)
+    #         )
+    #         for ii in range(1, 11)
+    #     ]
+    # )
     m = images_mean(x)
     assert_array_equal(m, np.array([np.mean(x1) for x1 in x]), 3)
 
@@ -115,7 +115,7 @@ def test_images_sum():
         for ii in range(1, 11)
     ]
 
-    #x = np.array(
+    # x = np.array(
     #    [
     #        np.repeat(ii * np.ones(ii * 100, dtype=np.float32), 400).reshape(
     #            (ii * 100, 20, 20)

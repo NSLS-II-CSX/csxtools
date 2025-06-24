@@ -1,39 +1,33 @@
 from __future__ import absolute_import, division, print_function
 
 import sys
-from distutils.core import Extension, setup
+from distutils.core import Extension
 from os import path
 
-import numpy as np
 import setuptools
-from setuptools.command.build_ext import build_ext  # Import build_ext
+from setuptools.command.build_ext import build_ext
 import versioneer
 
 
-# Custom build_ext to remove cpython-XX suffix
+# Custom build_ext to delay NumPy import and strip suffix
 class CustomBuildExt(build_ext):
+    def finalize_options(self):
+        super().finalize_options()
+        import numpy  # <== DELAY numpy import until now
+
+        self.include_dirs.append(numpy.get_include())
+
     def get_ext_filename(self, ext_name):
-        # Default filename: fastccd.cpython-38-x86_64-linux-gnu.so
         filename = super().get_ext_filename(ext_name)
-        # Strip platform-specific suffix: fastccd.so
         return filename.split(".")[0] + ".so"
 
 
 min_version = (3, 8)
 if sys.version_info < min_version:
-    error = """
-bluesky-adaptive does not support Python {0}.{1}.
-Python {2}.{3} and above is required. Check your Python version like so:
-
-python3 --version
-
-This may be due to an out-of-date pip. Make sure you have pip >= 9.0.1.
-Upgrade pip like so:
-
-pip install --upgrade pip
-""".format(
-        *(sys.version_info[:2] + min_version)
-    )
+    error = f"""
+csxtools does not support Python {sys.version_info[0]}.{sys.version_info[1]}.
+Python {min_version[0]}.{min_version[1]} and above is required.
+"""
     sys.exit(error)
 
 here = path.abspath(path.dirname(__file__))
@@ -41,13 +35,13 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.md"), encoding="utf-8") as readme_file:
     readme = readme_file.read()
 
-
 with open("requirements.txt") as f:
     requirements = f.read().split()
 
 with open("requirements-extras.txt") as f:
     extras_require = {"complete": f.read().split()}
 
+# C extensions
 fastccd = Extension(
     "fastccd",
     sources=["src/fastccdmodule.c", "src/fastccd.c"],
@@ -75,13 +69,14 @@ phocount = Extension(
     extra_compile_args=["-fopenmp"],
     extra_link_args=["-lgomp"],
 )
-setup(
+
+# Setup
+setuptools.setup(
     name="csxtools",
     version=versioneer.get_version(),
-    # cmdclass=versioneer.get_cmdclass(),
     cmdclass={
         **versioneer.get_cmdclass(),
-        "build_ext": CustomBuildExt,  # Use the custom build_ext
+        "build_ext": CustomBuildExt,
     },
     author="Brookhaven National Laboratory",
     description="Python library for tools to be used at the Coherent Soft X-ray scattering (CSX) beamline at NSLS-II.",
@@ -89,13 +84,10 @@ setup(
     python_requires=">={}".format(".".join(str(n) for n in min_version)),
     long_description=readme,
     long_description_content_type="text/markdown",
-    ext_package="csxtools.ext",
-    include_dirs=[np.get_include()],
-    # ext_modules=[fastccd, image, phocount],
-    ext_modules=[fastccd, axis1, image, phocount],
-    tests_require=["pytest"],
     install_requires=requirements,
     extras_require=extras_require,
+    ext_package="csxtools.ext",
+    ext_modules=[fastccd, axis1, image, phocount],
     url="https://github.com/NSLS-II-CSX/csxtools",
     keywords="Xray Analysis",
     license="BSD",
