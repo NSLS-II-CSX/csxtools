@@ -25,7 +25,7 @@ def correct_events(evs, data_key, dark_images, drop_raw=False):
             "timestamps": dict(ev["timestamps"]),
         }
         # TODO: replace stub with actual subtract_background implementation
-        corr, gain_img = subtract_background( # noqa F821
+        corr, gain_img = subtract_background(  # noqa F821
             ev["data"][data_key], dark_images
         )
         new_ev["data"][out_data_key] = corr

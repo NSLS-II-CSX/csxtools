@@ -3,7 +3,9 @@ import numpy as np
 import pandas
 from collections import namedtuple
 
-from ipywidgets import interact  # TODO move this and general utility to different module later
+from ipywidgets import (
+    interact,
+)  # TODO move this and general utility to different module later
 
 from csxtools.utils import get_fastccd_images, get_images_to_4D
 from csxtools.helpers.overscan import get_os_correction_images, get_os_dropped_images
