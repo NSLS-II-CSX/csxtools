@@ -13,80 +13,56 @@ from numpy.testing import assert_array_equal, assert_allclose
 
 
 def test_rotate90():
-    image = np.array([[1, 2], [3, 4]], dtype=np.float32)
-    rotated = rotate90(image)
-    expected = np.array([[2, 4], [1, 3]], dtype=np.float32)
-    assert_array_equal(rotated, expected)
+    image = np.array([[[1, 2], [3, 4]]], dtype=np.float32)  # shape (1, 2, 2)
+    result = rotate90(image)
+    expected = np.array([[[2, 4], [1, 3]]], dtype=np.float32)
+    assert_array_equal(result, expected)
 
 
 def test_stackmean():
-    base = np.array([[1, 2], [3, 4]], dtype=np.float32)
-    stack = np.stack([base, base])
+    stack = np.array([[[1, 2], [3, 4]], [[1, 2], [3, 4]]], dtype=np.float32)
     result = stackmean(stack)
-    expected = base
+    expected = np.array([[[1, 2], [3, 4]]], dtype=np.float32)
     assert_allclose(result, expected)
 
 
 def test_stacksum():
-    base = np.ones((2, 2), dtype=np.float32)
-    stack = np.stack([base, base])
+    stack = np.array([[[1, 1], [1, 1]], [[1, 1], [1, 1]]], dtype=np.float32)
     result = stacksum(stack)
-    expected = np.full((2, 2), 2.0, dtype=np.float32)
+    expected = np.array([[[2, 2], [2, 2]]], dtype=np.float32)
     assert_array_equal(result, expected)
 
 
 def test_stackstd():
-    stack = np.array(
-        [
-            [[1, 2], [3, 4]],
-            [[5, 6], [7, 8]],
-        ],
-        dtype=np.float32,
-    )
+    stack = np.array([[[1, 2], [3, 4]], [[3, 4], [5, 6]]], dtype=np.float32)
     result = stackstd(stack)
-    expected = np.std(stack, axis=0)
+    expected = np.std(stack, axis=0, keepdims=True)
     assert_allclose(result, expected)
 
 
 def test_stackvar():
-    stack = np.array(
-        [
-            [[2, 2], [2, 2]],
-            [[4, 4], [4, 4]],
-        ],
-        dtype=np.float32,
-    )
+    stack = np.array([[[1, 2], [3, 4]], [[3, 4], [5, 6]]], dtype=np.float32)
     result = stackvar(stack)
-    expected = np.var(stack, axis=0)
+    expected = np.var(stack, axis=0, keepdims=True)
     assert_allclose(result, expected)
 
 
 def test_stackstderr():
-    stack = np.array(
-        [
-            [[1, 2], [3, 4]],
-            [[5, 6], [7, 8]],
-        ],
-        dtype=np.float32,
-    )
+    stack = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], dtype=np.float32)
+    expected = np.std(stack, axis=0, ddof=1, keepdims=True) / np.sqrt(stack.shape[0])
     result = stackstderr(stack)
-    expected = np.std(stack, axis=0, ddof=1) / np.sqrt(stack.shape[0])
     assert_allclose(result, expected)
 
 
 def test_images_mean():
-    img1 = np.array([[1, 2], [3, 4]], dtype=np.float32)
-    img2 = np.array([[5, 6], [7, 8]], dtype=np.float32)
-    stack = np.stack([img1, img2])
+    stack = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], dtype=np.float32)
     result = images_mean(stack)
-    expected = np.mean(stack, axis=0)
+    expected = np.mean(stack, axis=0, keepdims=True)
     assert_allclose(result, expected)
 
 
 def test_images_sum():
-    img1 = np.array([[1, 2], [3, 4]], dtype=np.float32)
-    img2 = np.array([[5, 6], [7, 8]], dtype=np.float32)
-    stack = np.stack([img1, img2])
+    stack = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]], dtype=np.float32)
     result = images_sum(stack)
-    expected = np.sum(stack, axis=0)
+    expected = np.sum(stack, axis=0, keepdims=True)
     assert_array_equal(result, expected)
