@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def correct_images_axis(images, dark=None, flat=None):
-    """Subtract backgrond and gain correct images
+    """Subtract backgrond and correct images
 
     This routine subtrtacts the backgrond and corrects the images
     for AXIS1.
@@ -19,9 +19,7 @@ def correct_images_axis(images, dark=None, flat=None):
         Input array of images to correct of shape (N, y, x)  where N is the
         number of images and x and y are the image size.
     dark : array_like, optional
-        Input array of dark images. This should be of shape (3, y, x).
-        dark[0] is the gain 8 (most sensitive setting) dark image with
-        dark[2] being the gain 1 (least sensitive) dark image.
+        Input array of dark images. This should be of shape (y, x)
     flat : array_like, optional
         Input array for the flatfield correction. This should be of shape
         (y, x)

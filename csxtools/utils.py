@@ -128,9 +128,9 @@ def get_fastccd_images(
 
 
 def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
-    """Retreive and correct AXIS1 Images from associated headers
+    """Retreive and correct AXIS Images from associated headers
 
-    Retrieve AXIS1 Images from databroker and correct for:
+    Retrieve AXIS Images from databroker and correct for:
 
     -   Bad Pixels (converted to ``np.nan``)
     -   Backgorund.
@@ -142,7 +142,7 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
     light_header : databorker header
         This header defines the images to convert
 
-    dark_headers : databroker headers , optional
+    dark_header : databroker header , optional
         The header is the dark images.
 
     flat : array_like
@@ -318,7 +318,7 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
 
 
 def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
-    """Return the AXIS1 timestamps from the Areadetector Data File
+    """Return the AXIS timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
     recorded in the datafile.
@@ -486,7 +486,7 @@ def fccd_mask():
 
 
 def axis_mask():
-    """Return the initial flatfield mask for the AXIS1
+    """Return the initial flatfield mask for the AXIS
 
     Returns
     -------
