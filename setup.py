@@ -95,5 +95,6 @@ setuptools.setup(
         "Development Status :: 2 - Pre-Alpha",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
+        "Programming Language :: C",
     ],
 )
