@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function
 
 import sys
-from distutils.core import Extension
+from setuptools import Extension
 from os import path
 
 import setuptools
