@@ -173,7 +173,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
     if tag is None:
         logger.error("Must pass 'tag' argument to get_axis_images()")
         raise ValueError("Must pass 'tag' argument")
-    
+
     # Now lets sort out the ROI
     if roi is not None:
         roi = list(roi)
@@ -472,22 +472,6 @@ def get_axis_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=
 
 def fccd_mask():
     """Return the initial flatfield mask for the FastCCD
-
-    Returns
-    -------
-    np.array of flatfield
-
-    """
-    flat = np.ones((960, 960))
-    flat[120:250, 0:480] = np.nan
-    flat[:, 476:484] = np.nan
-    flat = np.rot90(flat)
-
-    return flat
-
-
-def axis_mask():
-    """Return the initial flatfield mask for the AXIS
 
     Returns
     -------
