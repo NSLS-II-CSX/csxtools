@@ -171,8 +171,9 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
 
     if tag is None:
-        tag = detectors["axis1"]
-
+        logger.error("Must pass 'tag' argument to get_axis_images()")
+        raise ValueError("Must pass 'tag' argument")
+    
     # Now lets sort out the ROI
     if roi is not None:
         roi = list(roi)
