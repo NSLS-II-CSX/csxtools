@@ -4,6 +4,7 @@ CSX Data Analysis Tools
 
 
 [![Build Status](https://travis-ci.org/NSLS-II-CSX/csxtools.svg?branch=master)](https://travis-ci.org/NSLS-II-CSX/csxtools)
+[![Unit Tests](https://github.com/NSLS-II-CSX/csxtools/actions/workflows/tests.yml/badge.svg)](https://github.com/NSLS-II-CSX/csxtools/actions/workflows/tests.yml)
 [![Coverage Status](https://coveralls.io/repos/NSLS-II-CSX/csxtools/badge.svg?branch=master&service=github)](https://coveralls.io/github/NSLS-II-CSX/csxtools?branch=master)
 
 
