@@ -138,7 +138,7 @@ def get_dark_near(
     # print( darks_possible )
     try:
         dark = int(darks_possible.sort_values(by="delta_time").reset_index()["scan"][0])
-    except:
+    except:  # noqa: E722
         dark = None
         return None
 
@@ -240,12 +240,12 @@ def get_fastccd_pixel_readout(header):
     config = header.descriptors[0]["configuration"]["fccd"]["data"]
     try:
         overscan_cols = config["fccd_cam_overscan_cols"]  # this is hardware config
-    except:
+    except:  # noqa: E722
         overscan_cols = "unknown"  # can code using tiled to infer by Xarray shape; test setting to None
     try:
         rows = config["fccd_fccd1_rows"]
         row_offset = config["fccd_fccd1_row_offset"]
-    except:
+    except:  # noqa: E722
         rows = (
             "unknown"  # need to rely on hardcoded concatenation ; test setting to None
         )

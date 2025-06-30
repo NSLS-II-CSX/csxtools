@@ -79,7 +79,8 @@ setuptools.setup(
         "build_ext": CustomBuildExt,
     },
     author="Brookhaven National Laboratory",
-    description="Python library for tools to be used at the Coherent Soft X-ray scattering (CSX) beamline at NSLS-II.",
+    description="""Python library for tools to be used at the Coherent Soft X-ray scattering (CSX)
+    beamline at NSLS-II.""",
     packages=setuptools.find_packages(exclude=["src", "tests"]),
     python_requires=">={}".format(".".join(str(n) for n in min_version)),
     long_description=readme,

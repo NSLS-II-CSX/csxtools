@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 
 
 def correct_images_axis(images, dark=None, flat=None):
-    """Subtract backgrond and correct images
+    """Subtract background and correct images
 
-    This routine subtrtacts the backgrond and corrects the images
-    for AXIS1.
+    This routine subtracts the background and corrects the images
+    for AXIS1 detector.
 
     Parameters
     ----------
