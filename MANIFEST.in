@@ -1,7 +1,20 @@
-include requirements.txt
-include requirements-extras.txt
-
+# Metadata and versioning
+include README.md
+include LICENSE.txt
 include versioneer.py
 include csxtools/_version.py
 
-recursive-include src * *.[hc]
+# Requirements
+include requirements.txt
+include requirements-extras.txt
+
+# Source code
+recursive-include csxtools *.py *.so
+
+# C sources and headers
+recursive-include src *.c *.h
+
+# Documentation and notebooks
+recursive-include doc *
+recursive-include examples *.ipynb
+

@@ -61,6 +61,11 @@ jobs:
     - name: Check out the code repo
       uses: actions/checkout@v4
 
+    - name: Workaround: Fix .condarc MultipleKeysError
+      run: |
+        sed -i '/auto_activate_base/d' /home/runner/.condarc || true
+        sed -i '/auto_activate:/d' /home/runner/.condarc || true
+
     - name: Set up Python ${{ inputs.python-version }} with conda
       uses: conda-incubator/setup-miniconda@v3
       with:

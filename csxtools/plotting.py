@@ -1,12 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-golden_mean = (np.sqrt(5)-1.0)/2.0
+golden_mean = (np.sqrt(5) - 1.0) / 2.0
 
 
-def make_panel_plot(n, fig=None,
-                    xlmargin=0.15, ytmargin=0.10,
-                    xrmargin=0.05, ybmargin=0.10):
+def make_panel_plot(
+    n, fig=None, xlmargin=0.15, ytmargin=0.10, xrmargin=0.05, ybmargin=0.10
+):
     """Make a multi panel plot using matplotlib
 
     This function, makes a typical panel plot and returns a list
@@ -33,8 +33,8 @@ def make_panel_plot(n, fig=None,
     if fig is None:
         fig = plt.figure(figsize=[6, 6 * golden_mean * n])
 
-    xsize = (1. - (xlmargin + xrmargin))
-    ysize = (1. - (ybmargin + ytmargin)) / n
+    xsize = 1.0 - (xlmargin + xrmargin)
+    ysize = (1.0 - (ybmargin + ytmargin)) / n
 
     pos = np.array([xlmargin, ybmargin, xsize, ysize])
 
