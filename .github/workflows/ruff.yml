@@ -15,5 +15,4 @@ jobs:
           python -m pip install --upgrade pip setuptools numpy
           pip install ruff
       - name: Run ruff
-        run: |
-          ruff .
+        run: ruff check .
