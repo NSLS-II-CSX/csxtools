@@ -1,4 +1,4 @@
-name: Check Code Style - FLAKE8
+name: Check Code Style - RUFF
 
 on: [push, pull_request]
 
@@ -12,12 +12,8 @@ jobs:
           python-version: "3.10"
       - name: Install Dependencies
         run: |
-          # These packages are installed in the base environment but may be older
-          # versions. Explicitly upgrade them because they often create
-          # installation problems if out of date.
           python -m pip install --upgrade pip setuptools numpy
-
-          pip install flake8
-      - name: Run flake8
+          pip install ruff
+      - name: Run ruff
         run: |
-          flake8
+          ruff .
