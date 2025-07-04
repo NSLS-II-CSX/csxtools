@@ -173,7 +173,13 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
     if tag is None:
         logger.error("Must pass 'tag' argument to get_axis_images()")
         raise ValueError("Must pass 'tag' argument")
+    
+    if tag not in detectors:
+        raise ValueError(f"Unknown detector tag '{tag}'. Valid options: {list(detectors)}")
 
+    tag_mapped = detectors[tag]
+    logger.info(f"Using detector tag '{tag}' mapped to internal tag '{tag_mapped}'")
+        
     # Now lets sort out the ROI
     if roi is not None:
         roi = list(roi)
@@ -191,7 +197,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
         t = ttime.time()
 
         d = dark_header
-        bgnd_events = _get_images(d, tag, roi)
+        bgnd_events = _get_images(d, tag_mapped, roi)
 
         tt = ttime.time()
         b = bgnd_events.astype(dtype=np.uint16)
@@ -204,7 +210,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag, roi)
+    events = _get_images(light_header, tag_mapped, roi)
 
     # Ok, so lets return a pims pipeline which does the image conversion
 
