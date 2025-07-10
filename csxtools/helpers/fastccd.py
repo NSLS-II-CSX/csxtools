@@ -13,7 +13,7 @@ from csxtools.helpers.overscan import get_os_correction_images, get_os_dropped_i
 logger = logging.getLogger(__name__)
 
 
-def browse_3Darray(res, title="Frame"):  # , extra_scalar_dict=None):
+def browse_3Darray(res, fig, ax, im, title="Frame"):  # , extra_scalar_dict=None):
     """Widget for notebooks.  Sliding bar to browse 3D python array. Must plot using subplots method with 1 axes.
     res : 3D array with the first element being interated
 
@@ -21,23 +21,14 @@ def browse_3Darray(res, title="Frame"):  # , extra_scalar_dict=None):
     """
     N = len(res)
 
-    def view_image(i=0):
+    def view_image(i=0, fig = fig, ax = ax, im = im):
         im.set_data(res[i])
-        # if extra_scalar_dict is not None:
-        #    key = extra_scalr_dict.keys()[0]
-        #    values = extra_scalar_dict.values()
-
-        # if extra_scalar_dict is None:
-        #    ax.set_title(f'{title} {i} {key} {values[i]}')
-        # else:
         ax.set_title(f"{title} {i}")
         fig.canvas.draw_idle()
 
     interact(view_image, i=(0, N - 1))
 
-
 # FCCD specific stuff starts here
-
 
 def find_possible_darks(
     header,
