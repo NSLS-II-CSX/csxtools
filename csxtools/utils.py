@@ -323,6 +323,34 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
 
     return timestamps
 
+def get_axis_timestamps(header, tag= None):
+    """Return the AXIS timestamps from the Areadetector Data File
+
+    Return a list of numpy arrays of the timestamps for the images as
+    recorded in the datafile.
+
+    Parameters
+    ----------
+    header : databroker header
+        This header defines the run
+    tag : string
+        User-level tag (e.g., 'axis1'). Internally mapped to the correct timestamp key.
+
+    Returns
+    -------
+    list of arrays of the timestamps
+    """
+
+    if tag is None:
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
+
+    tag_key = f"{tag}_hdf5_time_stamp"
+    logger.info(f"Using detector tag '{tag}' mapped to timestamp key '{tag_key}'")
+
+    timestamps = list(header.data(tag_key))
+
+    return timestamps
+
 
 def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
     """Return the AXIS timestamps from the Areadetector Data File
