@@ -177,8 +177,8 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
     if tag not in detectors:
         raise ValueError(f"Unknown detector tag '{tag}'. Valid options: {list(detectors)}")
 
-    tag_mapped = detectors[tag]
-    logger.info(f"Using detector tag '{tag}' mapped to internal tag '{tag_mapped}'")
+    tag_key = f"{tag}_image"
+    logger.info(f"Using detector tag '{tag}' converted to internal tag '{tag_key}'")
         
     # Now lets sort out the ROI
     if roi is not None:
@@ -197,7 +197,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
         t = ttime.time()
 
         d = dark_header
-        bgnd_events = _get_images(d, tag_mapped, roi)
+        bgnd_events = _get_images(d, tag_key, roi)
 
         tt = ttime.time()
         b = bgnd_events.astype(dtype=np.uint16)
@@ -210,7 +210,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag_mapped, roi)
+    events = _get_images(light_header, tag_key, roi)
 
     # Ok, so lets return a pims pipeline which does the image conversion
 
@@ -334,7 +334,7 @@ def get_axis_timestamps(header, tag= None):
     header : databroker header
         This header defines the run
     tag : string
-        User-level tag (e.g., 'axis1'). Internally mapped to the correct timestamp key.
+        User-level tag (e.g., 'axis1'). Internally converted to the correct timestamp key.
 
     Returns
     -------
@@ -345,36 +345,11 @@ def get_axis_timestamps(header, tag= None):
         raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
 
     tag_key = f"{tag}_hdf5_time_stamp"
-    logger.info(f"Using detector tag '{tag}' mapped to timestamp key '{tag_key}'")
+    logger.info(f"Using detector tag '{tag}' converted to timestamp key '{tag_key}'")
 
     timestamps = list(header.data(tag_key))
 
     return timestamps
-
-
-def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
-    """Return the AXIS timestamps from the Areadetector Data File
-
-    Return a list of numpy arrays of the timestamps for the images as
-    recorded in the datafile.
-
-    Parameters
-    ----------
-    header : databorker header
-        This header defines the run
-    tag : string
-        This is the tag or name of the fastccd.
-
-    Returns
-    -------
-        list of arrays of the timestamps
-
-    """
-
-    timestamps = list(header.data(tag))
-
-    return timestamps
-
 
 def calculate_flatfield(image, limits=(0.6, 1.4)):
     """Calculate a flatfield from fluo data
