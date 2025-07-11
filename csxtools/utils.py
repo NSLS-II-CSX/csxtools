@@ -152,8 +152,7 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 
     tag : string
         Data tag used to retrieve images. Used in the call to
-        ``databroker.get_images()``. If `None`, use the defualt from
-        the settings.
+        ``databroker.get_images()``.
 
     roi : tuple
         coordinates of the upper-left corner and width and height of
@@ -171,14 +170,9 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
 
     if tag is None:
-        logger.error("Must pass 'tag' argument to get_axis_images()")
-        raise ValueError("Must pass 'tag' argument")
-    
-    if tag not in detectors:
-        raise ValueError(f"Unknown detector tag '{tag}'. Valid options: {list(detectors)}")
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
 
     tag_key = f"{tag}_image"
-    logger.info(f"Using detector tag '{tag}' converted to internal tag '{tag_key}'")
         
     # Now lets sort out the ROI
     if roi is not None:
@@ -345,8 +339,6 @@ def get_axis_timestamps(header, tag= None):
         raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
 
     tag_key = f"{tag}_hdf5_time_stamp"
-    logger.info(f"Using detector tag '{tag}' converted to timestamp key '{tag_key}'")
-
     timestamps = list(header.data(tag_key))
 
     return timestamps
