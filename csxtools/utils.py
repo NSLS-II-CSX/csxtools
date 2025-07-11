@@ -152,8 +152,7 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 
     tag : string
         Data tag used to retrieve images. Used in the call to
-        ``databroker.get_images()``. If `None`, use the defualt from
-        the settings.
+        ``databroker.get_images()``.
 
     roi : tuple
         coordinates of the upper-left corner and width and height of
@@ -171,9 +170,10 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
 
     if tag is None:
-        logger.error("Must pass 'tag' argument to get_axis_images()")
-        raise ValueError("Must pass 'tag' argument")
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
 
+    tag_key = f"{tag}_image"
+        
     # Now lets sort out the ROI
     if roi is not None:
         roi = list(roi)
@@ -191,7 +191,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
         t = ttime.time()
 
         d = dark_header
-        bgnd_events = _get_images(d, tag, roi)
+        bgnd_events = _get_images(d, tag_key, roi)
 
         tt = ttime.time()
         b = bgnd_events.astype(dtype=np.uint16)
@@ -204,7 +204,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag, roi)
+    events = _get_images(light_header, tag_key, roi)
 
     # Ok, so lets return a pims pipeline which does the image conversion
 
@@ -317,8 +317,7 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
 
     return timestamps
 
-
-def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
+def get_axis_timestamps(header, tag= None):
     """Return the AXIS timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -326,21 +325,23 @@ def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
 
     Parameters
     ----------
-    header : databorker header
+    header : databroker header
         This header defines the run
     tag : string
-        This is the tag or name of the fastccd.
+        User-level tag (e.g., 'axis1'). Internally converted to the correct timestamp key.
 
     Returns
     -------
-        list of arrays of the timestamps
-
+    list of arrays of the timestamps
     """
 
-    timestamps = list(header.data(tag))
+    if tag is None:
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
+
+    tag_key = f"{tag}_hdf5_time_stamp"
+    timestamps = list(header.data(tag_key))
 
     return timestamps
-
 
 def calculate_flatfield(image, limits=(0.6, 1.4)):
     """Calculate a flatfield from fluo data
