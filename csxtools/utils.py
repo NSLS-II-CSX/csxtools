@@ -128,42 +128,35 @@ def get_fastccd_images(
 
 
 def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
-    """Retreive and correct AXIS Images from associated headers
+    """Retrieve and correct AXIS Images from associated headers.
 
-    Retrieve AXIS Images from databroker and correct for:
-
-    -   Bad Pixels (converted to ``np.nan``)
-    -   Backgorund.
-    -   Flatfield correction.
-    -   Rotation (returned images are rotated 90 deg cw)
-
+    This function retrieves AXIS images from a databroker header and applies several corrections:
+    -   **Bad Pixels**: Converts bad pixels to ``np.nan``.
+    -   **Background Subtraction**: Subtracts a background from the images.
+    -   **Flatfield Correction**: Applies a flatfield correction.
+    -   **Rotation**: Rotates the returned images by 90 degrees clockwise.
+    
     Parameters
     ----------
-    light_header : databorker header
-        This header defines the images to convert
-
-    dark_header : databroker header , optional
-        The header is the dark images.
-
-    flat : array_like
-        Array to use for the flatfield correction. This should be a 2D
-        array sized as the last two dimensions of the image stack.
-
-
-    tag : string
-        Data tag used to retrieve images. Used in the call to
-        ``databroker.get_images()``. If `None`, use the defualt from
-        the settings.
-
-    roi : tuple
-        coordinates of the upper-left corner and width and height of
-        the ROI: e.g., (x, y, w, h)
+    light_header : databroker header
+        This header defines the images to convert.
+    dark_header : databroker header, optional
+        The header containing dark images for background subtraction.
+    flat : array_like, optional, default=None
+        2D array to use for the flatfield correction, sized as the last two
+        dimensions of the image stack. If None, no flatfield correction is applied.
+    tag : str
+        Data tag used to retrieve images (e.g., obtained by ``header.start["detectors"]``).
+    roi : tuple, optional, default=None
+        Coordinates of the upper-left corner and width and height of the ROI:
+        e.g., ``(x, y, w, h)``. If None, the entire image is used.
 
     Returns
     -------
-    dask.array : corrected images
-
+    dask.array
+        The corrected image stack.
     """
+
     flipped_image = _get_axis1_images(light_header, dark_header, flat, tag, roi)
     return flipped_image[..., ::-1]
 
@@ -171,9 +164,10 @@ def get_axis_images(light_header, dark_header=None, flat=None, tag=None, roi=Non
 def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=None):
 
     if tag is None:
-        logger.error("Must pass 'tag' argument to get_axis_images()")
-        raise ValueError("Must pass 'tag' argument")
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
 
+    tag_key = f"{tag}_image"
+        
     # Now lets sort out the ROI
     if roi is not None:
         roi = list(roi)
@@ -191,7 +185,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
         t = ttime.time()
 
         d = dark_header
-        bgnd_events = _get_images(d, tag, roi)
+        bgnd_events = _get_images(d, tag_key, roi)
 
         tt = ttime.time()
         b = bgnd_events.astype(dtype=np.uint16)
@@ -204,7 +198,7 @@ def _get_axis1_images(light_header, dark_header=None, flat=None, tag=None, roi=N
 
         logger.info("Computed dark images in %.3f seconds", ttime.time() - t)
 
-    events = _get_images(light_header, tag, roi)
+    events = _get_images(light_header, tag_key, roi)
 
     # Ok, so lets return a pims pipeline which does the image conversion
 
@@ -317,8 +311,7 @@ def get_fastccd_timestamps(header, tag="fccd_image"):
 
     return timestamps
 
-
-def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
+def get_axis_timestamps(header, tag= None):
     """Return the AXIS timestamps from the Areadetector Data File
 
     Return a list of numpy arrays of the timestamps for the images as
@@ -326,21 +319,24 @@ def get_axis_timestamps(header, tag="axis1_hdf5_time_stamp"):
 
     Parameters
     ----------
-    header : databorker header
+    header : databroker header
         This header defines the run
     tag : string
-        This is the tag or name of the fastccd.
+        User-level tag (e.g., 'axis1', 'axis_standard', etc.). 
+        Internally converted to the correct timestamp key.
 
     Returns
     -------
-        list of arrays of the timestamps
-
+    list of arrays of the timestamps
     """
 
-    timestamps = list(header.data(tag))
+    if tag is None:
+        raise ValueError("Must pass a detector tag (e.g., 'axis1', 'axis_standard', etc.)")
+
+    tag_key = f"{tag}_hdf5_time_stamp"
+    timestamps = list(header.data(tag_key))
 
     return timestamps
-
 
 def calculate_flatfield(image, limits=(0.6, 1.4)):
     """Calculate a flatfield from fluo data
@@ -423,35 +419,48 @@ def get_fastccd_flatfield(
         )
     return flat
 
+def get_axis_flatfield(light, dark, flat=None, tag=None, limits=(0.6, 1.4), half_interval=False):
+    """Calculate a flatfield from two databroker headers.
 
-def get_axis_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=False):
-    """Calculate a flatfield from two headers
-
-    This routine calculates the flatfield using the
-    :func:calculate_flatfield() function after obtaining the images from
-    the headers.
+    This routine calculates the flatfield using the :func:`calculate_flatfield()`
+    function after obtaining the images from the provided light and dark headers.
 
     Parameters
     ----------
     light : databroker header
-        The header containing the light images
-    dark : databroker header(s)
-        The header(s) from the run containin the dark images.
-    flat : flatfield image (optional)
-        The array to be used for the initial flatfield
-    limits : tuple limits used for returning corrected pixel flatfield
-        The tuple setting lower and upper bound. np.nan returned value is outside bounds
-    half_interval : boolean or tuple to perform calculation for only half of the FastCCD
-        Default is False. If True, then the hard-code portion is retained.  Customize image
-        manipulation using a tuple of length 2 for (row_start, row_stop).
-
+        The header containing the light images.
+    dark : databroker header
+        The header from the run containing the dark images. This can be a
+        single header or a list/tuple of headers if dark images span multiple
+        runs.
+    flat : array_like, optional, default=None
+        An array to be used as the initial flatfield. If provided, the calculation
+        will refine this initial flatfield. If None, a flatfield is calculated
+        from scratch.
+    tag : str
+        Data tag used to retrieve images (e.g., obtained by ``header.start["detectors"]``).     
+    limits : tuple, optional, default=None
+        A tuple ``(lower_bound, upper_bound)`` defining the limits for the
+        corrected pixel flatfield values. Any calculated flatfield values
+        outside these bounds will be converted to ``np.nan``. If None, no
+        clipping is performed.
+    half_interval : bool or tuple, optional, default=False
+        Controls the image manipulation for FastCCD.
+        - If ``False`` (default), calculations are performed on the full image.
+        - If ``True``, a hard-coded portion (e.g., half) of the FastCCD image
+          is retained for the calculation.
+        - If a ``tuple`` of length 2, ``(row_start, row_stop)``, it specifies
+          a custom row interval for image manipulation.
 
     Returns
     -------
     array_like
-        Flatfield correction.  The correction is orientated as "raw data" not final data generated by get_fastccd_images().
+        The calculated flatfield correction array. The orientation of this
+        correction array corresponds to the "raw data" orientation, not the
+        final data generated by ``get_axis_images()``.
     """
-    images = get_images_to_3D(_get_axis1_images(light, dark, flat))
+    
+    images = get_images_to_3D(_get_axis1_images(light, dark, flat, tag))
     images = stackmean(images)
     if half_interval:
         if isinstance(half_interval, bool):
@@ -468,7 +477,6 @@ def get_axis_flatfield(light, dark, flat=None, limits=(0.6, 1.4), half_interval=
             % (removed, removed * 100 / flat.size)
         )
     return flat
-
 
 def fccd_mask():
     """Return the initial flatfield mask for the FastCCD
