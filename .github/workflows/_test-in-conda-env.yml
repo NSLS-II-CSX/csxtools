@@ -37,13 +37,13 @@ jobs:
         export REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"  # just the repo, as opposed to org/repo
         echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
 
-        export CONDA_ENV_NAME='${{ inputs.conda_env_name }}'
+        export CONDA_ENV_NAME=${{ inputs.conda_env_name }}
         echo "CONDA_ENV_NAME=${CONDA_ENV_NAME}" >> $GITHUB_ENV
 
-        export ZENODO_ID='${{ inputs.zenodo_id }}'
+        export ZENODO_ID=${{ inputs.zenodo_id }}
         echo "ZENODO_ID=${ZENODO_ID}" >> $GITHUB_ENV
 
-        export MD5_CHECKSUM='${{ inputs.md5_checksum }}'
+        export MD5_CHECKSUM=${{ inputs.md5_checksum }}
         echo "MD5_CHECKSUM=${MD5_CHECKSUM}" >> $GITHUB_ENV
 
         # Workaround for unset GDAL env variables used by newer conda envs
