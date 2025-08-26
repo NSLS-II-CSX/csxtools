@@ -80,7 +80,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/miniconda/envs/${{ env.CONDA_ENV_NAME }}
-        key: ${{ env.CONDA_ENV_NAME }}-${{ runner.os }}--${{ runner.arch }}-${{env.MD5_CHECKSUM }}-${{env.CACHE_NUMBER }}
+        key: ${{ env.CONDA_ENV_NAME }}-${{ runner.os }}-${{ runner.arch }}-${{env.MD5_CHECKSUM }}-${{env.CACHE_NUMBER }}
       env:
         # Increase this value to reset cache if ${CONDA_ENV_NAME}.tar.gz has not changed
         CACHE_NUMBER: 0
