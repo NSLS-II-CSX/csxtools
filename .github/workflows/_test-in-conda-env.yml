@@ -117,12 +117,9 @@ jobs:
           conda activate $HOME/miniconda/envs/${CONDA_ENV_NAME}
           echo "Using conda environment at ${CONDA_PREFIX}"
           pip install --upgrade pip setuptools wheel
-
-	  # Fix backports issue
           pip uninstall -y backports || true
           pip install backports.tarfile
-
-	  pip install -r requirements-dev.txt
+          pip install -r requirements-dev.txt
           pip install -r requirements-extras.txt
           pip install -e .
           pip list
