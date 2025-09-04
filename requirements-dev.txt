@@ -1,8 +1,6 @@
 codecov
 coveralls
 ruff>=0.4.0
-flake8
 pytest
-pytest-flake8
 sphinx
 sphinx-bootstrap-theme
